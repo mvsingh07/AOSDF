@@ -1,0 +1,178 @@
+# Folder Map
+# AOSDF v2.2 — Quick Reference
+# Canonical workspace layout. Every project using AOSDF follows this structure.
+
+---
+
+## Workspace Layout
+
+```
+{ProjectName}-Orchestrum/                          ← WORKSPACE ROOT (not a git repo itself)
+│
+├── .gitignore                                     ← excludes AOSDF/ and {ProjectName}-Documents/
+│
+├── AOSDF/                                         ← General AI Development Model (shared, not project-specific)
+│   ├── framework.md                               Full specification
+│   ├── manual.md                                  Plain-language guide
+│   ├── setup_aosdf.md                             New project setup + upgrade guide
+│   ├── workflow_initiator.md                      Entry-point agent
+│   ├── templates.md                               Document templates (00–05)
+│   ├── templates/
+│   │   ├── reference_readme.md
+│   │   └── module_template/                       [v2.3] Canonical NNN_<name>_module/ skeleton
+│   │                                              → cloned into 03_System_Design/_template/ at project setup
+│   ├── agents/                                    All agent definitions (general templates)
+│   │   ├── identify_missing_documents.md          Structure auditor
+│   │   ├── captain_agent.md
+│   │   ├── research_and_refine_agent.md
+│   │   ├── research_and_review_agent.md
+│   │   ├── architect_agent.md
+│   │   ├── backend_agent.md
+│   │   ├── infra_agent.md
+│   │   ├── qa_agent.md
+│   │   ├── frontend_agent.md
+│   │   ├── commander_agent.md
+│   │   ├── execution_agent.md
+│   │   ├── reviewer_agent.md
+│   │   ├── validator_agent.md
+│   │   └── addendum_agent.md
+│   ├── reference/                                 Quick-reference docs (YOU ARE HERE)
+│   │   ├── agent_index.md                         Agent roles, call order, permissions
+│   │   ├── folder_map.md                          This file
+│   │   ├── formatting_standard.md                 Table formatting rules
+│   │   └── rules.md                               Non-negotiable framework rules
+│   └── designing_aosfd/                           Framework design history
+│
+├── {ProjectName}/                                 ← Application Code only (git repo)
+│   └── [backend/, frontend/, etc.]
+│
+└── {ProjectName}-Documents/                       ← Project Documentation (gitignored)
+    ├── CLAUDE.md                                  ← AI agent context (entry point — READ FIRST)
+    ├── project_status.md                          ← Execution readiness gate
+    ├── identified_gaps.md                         ← All identified gaps
+    ├── research_results.md                        ← Output from research_and_refine_agent
+    ├── reference/                                 ← [v2.2] Raw product knowledge inputs
+    │   ├── README.md                              ← Index of what's in this folder
+    │   └── [human-provided raw docs]              ← briefs, research, vendor docs, stakeholder notes
+    └── documents/
+        ├── 00_Project_Context/
+        │   └── project_context.md
+        ├── 01_Project_Definition/
+        │   ├── PRD.md
+        │   ├── FRD.md
+        │   └── BRD.md
+        ├── 02_Security_Framework/
+        │   ├── security_requirements.md
+        │   ├── threat_model.md
+        │   └── compliance_checklist.md
+        ├── 03_System_Design/                   ← [v2.3] cross-cutting design + per-module design
+        │   ├── README.md                       ← module index (number, name, status, milestone)
+        │   ├── _template/                      ← skeleton cloned for every new module
+        │   ├── system_architecture.md          ← cross-cutting
+        │   ├── service_design.md
+        │   ├── data_flow.md
+        │   ├── ADR/                            ← cross-cutting ADRs
+        │   ├── 001_<name>_module/              ← one folder per core module
+        │   │   ├── README.md
+        │   │   ├── 00_overview.md
+        │   │   ├── 01_requirements.md
+        │   │   ├── 02_domain_model.md
+        │   │   ├── 03_architecture.md
+        │   │   ├── 04_data_model.md
+        │   │   ├── 05_interfaces.md
+        │   │   ├── 06_operations.md
+        │   │   ├── decisions/                  ← module-scoped ADRs
+        │   │   └── _archive/                   ← prior-art docs (where they exist)
+        │   └── 002_<name>_module/
+        │       └── …
+        ├── 04_Infrastructure_Design/
+        │   ├── infra_architecture.md
+        │   ├── scaling_strategy.md
+        │   ├── cost_estimation.md
+        │   └── observability.md
+        ├── 05_AI_Agent_System/
+        │   ├── agents/                            ← Project-specific copies of AOSDF/agents/
+        │   ├── prompt_templates/
+        │   │   ├── task_prompt.md
+        │   │   ├── review_prompt.md
+        │   │   └── debug_prompt.md
+        │   └── implementation_prompts/            ← Generated per task before execution
+        ├── 06_Execution_Plan/
+        │   └── execution_plan.md                  ← Generated by captain_agent
+        ├── 07_Milestones/
+        │   ├── M0_Project_Setup/
+        │   │   └── milestone.md
+        │   ├── M1_Foundation/
+        │   │   └── milestone.md
+        │   ├── M2_Core_Features/
+        │   │   └── milestone.md
+        │   └── M3_Hardening/
+        │       └── milestone.md
+        ├── 08_Tracking_System/
+        │   └── tracking_board.md                  ← Generated by captain_agent; updated by execution/validator
+        ├── 09_Testing_Validation/
+        │   ├── test_plan.md
+        │   ├── test_cases.md
+        │   └── load_test_plan.md
+        ├── 10_Deployment_Runbook/
+        │   ├── deployment.md
+        │   ├── rollback.md
+        │   └── incident_response.md
+        ├── 11_Future_Extensibility/
+        │   └── future_scope.md
+        ├── 12_Manual_Actions/                     ← [v1.7] Two-file manual action system
+        │   ├── actions.md                         ← Tracker: all human steps, per-env status
+        │   └── guides.md                          ← Step-by-step instructions per action ID
+        ├── 13_Legal_Requirements/                 ← [v1.9] OPTIONAL — legal obligations
+        │   └── concern_<n>.md
+        ├── 14_Future_Migrations/                  ← [v2.0] RECOMMENDED — portability guide
+        │   ├── research.md                        (optional — human-authored raw research)
+        │   └── alternatives.md                    ← Authoritative; required reading for captain_agent
+        └── 15_Addendums/                          ← [v2.1] OPTIONAL — post-baseline changes
+            ├── <slug>.md                          (human-authored)
+            ├── <slug>_plan.md                     (addendum_agent-generated)
+            └── tracking_addendums.md              (addendum_agent-generated; append-only)
+
+llm-wiki/                                          ← [v1.6] Persistent LLM knowledge base
+    ├── WIKI.md
+    ├── index.md
+    ├── overview.md
+    ├── log.md
+    ├── sessions/
+    ├── sources/
+    ├── entities/
+    ├── concepts/
+    └── analyses/
+```
+
+---
+
+## Naming Conventions
+
+| Component | Pattern | Example |
+| --------- | ------- | ------- |
+| Workspace root | `{ProjectName}-Orchestrum` | `Comms-Engine-Orchestrum` |
+| Application code | `{ProjectName}` | `Comms-Engine` |
+| Project documentation | `{ProjectName}-Documents` | `Comms-Engine-Documents` |
+| AI Development Model | `AOSDF` | `AOSDF` (same for all projects) |
+| Persistent wiki | `llm-wiki` | `llm-wiki` (same for all projects) |
+| Milestone folders | `M{N}_{Name}` | `M1_Foundation` |
+| Task IDs | `M{N}-T{N}` | `M1-T3` |
+| Module folders | `{NNN}_{name}_module` | `007_payments_module` |
+| Module IDs | `{NNN}` — permanent, never renumbered | `007` |
+| Module ADR files | `ADR-{NNN}-{NNN}-{slug}.md` | `ADR-007-001-idempotent-capture.md` |
+| ADR files | `ADR-{NNN}-{slug}.md` | `ADR-001-event-sourcing.md` |
+| Addendum task IDs | `ADD-{slug}-T{N}` | `ADD-security-patch-T1` |
+| Implementation prompts | `{TASK-ID}_{short-name}_prompt.md` | `M1-T3-rate-limiting_prompt.md` |
+
+---
+
+## .gitignore at Workspace Root
+
+```gitignore
+# AOSDF — AI Development Model (not project-specific, not committed)
+AOSDF/
+
+# Project documentation — planning docs, agent definitions, gap trackers, never committed
+{ProjectName}-Documents/
+```
