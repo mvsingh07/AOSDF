@@ -1,5 +1,5 @@
 # Agent Index
-# AOSDF v2.2 — Quick Reference
+# AOSDF v2.3 — Quick Reference
 # Read this to understand which agent to call and when.
 
 ---
@@ -34,15 +34,15 @@ addendum_agent         ← human calls when a cross-cutting requirement arrives 
 | `identify_missing_documents` | `AOSDF/identify_missing_documents.md` | `workflow_initiator` or Human | Nothing | `identified_gaps.md` (append) |
 | `research_and_review` | `agents/research_and_review_agent.md` | Human | Nothing | `research_notes.md`, `identified_gaps.md` |
 | `research_and_refine` | `agents/research_and_refine_agent.md` | Human | Nothing | `research_results.md` only — never existing docs |
-| `captain_agent` | `agents/captain_agent.md` | Human or `workflow_initiator` | Nothing | `execution_plan.md`, `07_Milestones/*/milestone.md`, `tracking_board.md`, `project_status.md` |
+| `captain_agent` | `agents/captain_agent.md` | Human or `workflow_initiator` | Nothing | `execution_plan.md`, `07_Milestones/*/milestone.md`, `08_Tracking_System/decisions_log.md` (created if absent — decisions log only, not a task board), `project_status.md` |
 | `commander_agent` | `agents/commander_agent.md` | Human | `execution_agent` (A) or `architect_agent` (B) | `project_status.md` |
-| `execution_agent` | `agents/execution_agent.md` | `commander_agent` | Nothing | `implementation_prompts/`, `tracking_board.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md` |
+| `execution_agent` | `agents/execution_agent.md` | `commander_agent` | Nothing | `implementation_prompts/`; `execution_plan.md` Status column (the only status record); `identified_gaps.md`, `12_Manual_Actions/actions.md` |
 | `architect_agent` | `agents/architect_agent.md` | `commander_agent` (B) | `reviewer_agent` | `ADR/`, `service_design.md`, `implementation_prompts/` |
 | `reviewer_agent` | `agents/reviewer_agent.md` | `architect_agent` (B) | Nothing (returns decision) | Nothing |
-| `validator_agent` | `agents/validator_agent.md` | Implementor (B) | Nothing | `tracking_board.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md` |
-| `infra_agent` | `agents/infra_agent.md` | `commander_agent` | Nothing | IaC code, `tracking_board.md` |
-| `qa_agent` | `agents/qa_agent.md` | `commander_agent` | Nothing | Test results, `tracking_board.md` |
-| `frontend_agent` | `agents/frontend_agent.md` | `commander_agent` | Nothing | UI code, tests, `tracking_board.md` |
+| `validator_agent` | `agents/validator_agent.md` | Implementor (B) | Nothing | `execution_plan.md` Status column (the only status record — the only agent in Strategy B that does so); `identified_gaps.md`, `12_Manual_Actions/actions.md` |
+| `infra_agent` | `agents/infra_agent.md` | `commander_agent` | Nothing | IaC code; `execution_plan.md` Status column |
+| `qa_agent` | `agents/qa_agent.md` | `commander_agent` | Nothing | Test results; `execution_plan.md` Status column |
+| `frontend_agent` | `agents/frontend_agent.md` | `commander_agent` | Nothing | UI code, tests; `execution_plan.md` Status column |
 | `addendum_agent` | `agents/addendum_agent.md` | Human | Nothing | `15_Addendums/<slug>_plan.md`, `15_Addendums/tracking_addendums.md` |
 
 ---

@@ -1,6 +1,6 @@
 # {{ID}} {{TITLE}} — Data Model
 
-> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}`
+> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}_module`
 
 ## 1. Schema
 

@@ -1,6 +1,6 @@
 # {{ID}} {{TITLE}} — Operations
 
-> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}`
+> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}_module`
 
 ## 1. Failure Modes
 

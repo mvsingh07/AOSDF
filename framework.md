@@ -1,5 +1,5 @@
 # AI-Orchestrated Software Development Framework (AOSDF)
-# Version 2.1
+# Version 2.3
 
 ---
 
@@ -36,9 +36,9 @@
  │    14_Future_Migrations/alternatives.md  (if exists)                        │
  │                                                                             │
  │  captain_agent produces:                                                    │
- │    06_Execution_Plan/execution_plan.md                                      │
+ │    06_Execution_Plan/execution_plan.md  (the only task-status record)       │
  │    07_Milestones/M{0–3}_*/milestone.md                                      │
- │    08_Tracking_System/tracking_board.md  (skeleton)                         │
+ │    08_Tracking_System/decisions_log.md  (if absent — decisions log only)    │
  │    identified_gaps.md  (coverage gaps → Critical)                           │
  │                                                                             │
  │  Validates FRD coverage → every service spec maps to ≥1 task                │
@@ -59,7 +59,7 @@
  │  ┌─────────────────────────────────┐                                        │
  │  │       commander_agent           │                                        │
  │  │  reads project_status.md        │                                        │
- │  │  reads tracking_board.md        │                                        │
+ │  │  reads execution_plan.md        │                                        │
  │  │  finds next Planned subtask     │                                        │
  │  └──────────────┬──────────────────┘                                        │
  │                 │                                                           │
@@ -72,14 +72,14 @@
  │  │ execution │    │  architect   │──► reviewer ──► implementor ──► validator│
  │  │  _agent   │    │   _agent     │       ↑ redline if rejected              │
  │  └─────┬─────┘    └──────────────┘                                          │
- │        │                 │  (validator updates tracking_board)              │
+ │        │                 │  (validator updates execution_plan.md Status)    │
  │        │                 │                                                  │
  │        └────────┬────────┘                                                  │
  │                 ▼                                                           │
  │  ┌──────────────────────────────────────────────────────────────┐           │
  │  │  For each task:                                              │           │
  │  │  generate prompt → save to implementation_prompts/           │           │
- │  │  → Human approves → execute → validate → tracking_board Done │           │
+ │  │  → Human approves → execute → validate → execution_plan Done │           │
  │  └──────────────────────────────────────────────────────────────┘           │
  └───────────────────────────┬─────────────────────────────────────────────────┘
                              │  all M3 exit criteria pass
@@ -90,7 +90,7 @@
 
  ─────────────────────────────────────────────────────────────────────────────
   SCOPE CHANGE at any point:  Human re-runs captain_agent
-    → diffs new plan against tracking_board (Done rows preserved)
+    → diffs new plan against execution_plan.md (Done rows preserved)
     → appends new tasks, marks removed tasks Cancelled
     → project_status stays IN_PROGRESS if execution had started
  ─────────────────────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@
   ADDENDUMS (any time after M0, for post-baseline cross-cutting requirements):
     Human writes 15_Addendums/<slug>.md
     Human calls addendum_agent ──► <slug>_plan.md + tracking_addendums.md (scoped to 15_Addendums/)
-    Main tracking_board.md and milestone files are NOT touched
+    Main execution_plan.md and milestone files are NOT touched
 ```
 
 ---
@@ -148,7 +148,8 @@
 - **[v1.9]** Introduces `13_Legal_Requirements/` as an optional section — when present, all files are required reading for `captain_agent` and any architecture agent before planning or design work begins; legal constraints must produce concrete execution plan tasks
 - **[v2.0]** Introduces `14_Future_Migrations/` as a portability reference section — `alternatives.md` is required reading for `captain_agent` and any architecture agent; every infrastructure client must be wrapped behind an abstraction interface so providers can be swapped without business-logic rewrites
 - **[v2.1]** Introduces `15_Addendums/` as a post-baseline change management section — `addendum_agent` parses a human-authored addendum document and produces a scoped implementation plan and tracking file, entirely contained within `15_Addendums/`; the main tracking board and milestone files are never touched
-- **[v2.2]** `execution_plan.md` is the authoritative source of truth for task status — the Status column in every row is the canonical record of whether a task is Planned / In Progress / Done. `tracking_board.md` is demoted to a lightweight session dashboard showing only the current running task and the last 5 completed tasks; all full task history and feature history are removed from the tracking board.
+- **[v2.2]** `execution_plan.md` is the only task-status record — the Status column in every row is the canonical record of whether a task is Planned / In Progress / Done. There is no separate tracking board: `tracking_board.md` is removed; `08_Tracking_System/` holds only `decisions_log.md`, a lightweight decisions log with no status authority.
+- **[v2.3]** `03_System_Design` replaces `03_Architecture_Design` — cross-cutting design stays at the folder root; per-module design lives in numbered `NNN_<name>_module/` folders (seven-document set, cloned from `_template/`). Module numbers are permanent, never reused or renumbered.
 
 ---
 
@@ -184,8 +185,11 @@ System runs on agent execution with human approval gates only.
 **[v1.2] 10. Execution-ready gate**
 `project_status.md` is the single source of truth for whether the project is ready to begin execution. No agent begins implementation work unless `project_status.md` shows `READY`.
 
-**[v2.2] 18. execution_plan.md is the status source of truth**
-The Status column in `execution_plan.md` is the canonical record of task progress. Agents update the Status column directly when a task moves from `Planned` → `In Progress` → `Done`. `tracking_board.md` is a session dashboard only — it shows the current running task and the last 5 completed tasks. The tracking board has no status authority; it is never the source agents read to determine what to execute next.
+**[v2.2] 22. execution_plan.md is the only task-status record — no separate tracking board**
+The Status column in `execution_plan.md` is the canonical record of task progress. Agents update the Status column directly when a task moves from `Planned` → `In Progress` → `Done`. There is no `tracking_board.md`. `08_Tracking_System/decisions_log.md` holds only a lightweight decisions log — it has no status authority and is never the source agents read to determine what to execute next.
+
+**[v2.3] 23. System design is per-module**
+`03_System_Design/` (formerly `03_Architecture_Design/`) splits into cross-cutting root docs (`system_architecture.md`, `service_design.md`, `data_flow.md`, `ADR/`) and one `NNN_<name>_module/` folder per core module, cloned from `_template/`. See the `03_System_Design` section below for the full module convention.
 
 **[v1.2] 11. Implementation prompts are tracked artifacts**
 Every prompt generated for a task is saved to `05_AI_Agent_System/implementation_prompts/` before execution. Not ephemeral — they are part of the project record.
@@ -485,8 +489,8 @@ M0 = Project Setup. Contains:
 
 No code is written in M1+ until M0 is complete.
 
-### 08_Tracking_System — `tracking_board.md`
-**[v2.2] Session dashboard only.** Status source of truth is `execution_plan.md` (Status column). The tracking board shows two things and nothing else: (1) the current task in execution, and (2) the last 5 completed tasks. Full task history is not stored here. Updated by: `execution_agent` (Strategy A) or `validator_agent` (Strategy B) only. Commander reads `execution_plan.md` to find the next `Planned` task — not this file.
+### 08_Tracking_System — `decisions_log.md`
+**[v2.2] No separate tracking board.** `execution_plan.md`'s Status column is the only task-status record — there is no `tracking_board.md`. `08_Tracking_System/` holds only `decisions_log.md`, a lightweight log of cross-cutting decisions made during execution; it has no status authority and agents never read it to find work. Created by `captain_agent` if absent. Commander reads `execution_plan.md` to find the next `Planned` task.
 
 ### [v2.0] 14_Future_Migrations — Portability Reference Section
 
@@ -545,7 +549,7 @@ without disrupting the in-progress milestone workflow.
 
 **Agent rule — when this directory exists:**
 - `addendum_agent` is the only agent that creates files in `15_Addendums/`
-- `addendum_agent` MUST NOT touch `tracking_board.md`, `execution_plan.md`, or any
+- `addendum_agent` MUST NOT touch `execution_plan.md` or any
   milestone file — those are captain_agent territory
 - `tracking_addendums.md` is append-only — earlier addendum blocks are never modified
 - When an addendum is complete (all tasks Done, all exit criteria checked), set the
@@ -609,7 +613,7 @@ No execution agent may begin implementation until status = `READY`.
 
 - **Role:** Reads all completed 00–05 documents and generates the execution plan and milestones. This is the bridge from "documentation complete" to "ready to build." Must be run before `commander_agent` ever starts.
 - **Inputs:** FRD, PRD, security_requirements.md, system_architecture.md, service_design.md, data_flow.md, infra_architecture.md
-- **Outputs:** `06_Execution_Plan/execution_plan.md`, `07_Milestones/M*/milestone.md`, updated `08_Tracking_System/tracking_board.md`, updated `project_status.md`
+- **Outputs:** `06_Execution_Plan/execution_plan.md`, `07_Milestones/M*/milestone.md`, `08_Tracking_System/decisions_log.md` (created if absent — decisions log only, not a task board), updated `project_status.md`
 - **Coverage validation:** Every FRD service spec → at least one task. Unmapped specs → `identified_gaps.md` as Critical.
 - **Never starts if:** 00–05 docs are incomplete (defers back to workflow_initiator).
 - **Sets:** `project_status.md` → `READY` on success, `PLANNING` if gaps remain.
@@ -629,16 +633,16 @@ No execution agent may begin implementation until status = `READY`.
 ### [v2.1] addendum_agent — Post-Baseline Change Planning
 
 - **Role:** Receives a human-authored addendum document from `15_Addendums/<slug>.md`.
-  Parses the requirement, cross-checks existing tracking board for overlap, generates a
-  scoped flat implementation plan (`<slug>_plan.md`), and appends an entry to
+  Parses the requirement, cross-checks existing `execution_plan.md` Status column for overlap,
+  generates a scoped flat implementation plan (`<slug>_plan.md`), and appends an entry to
   `tracking_addendums.md`. All output is confined to `15_Addendums/`. Does not modify the
-  main execution plan, milestone files, or tracking board.
+  main execution plan or milestone files.
 - **Inputs:** `15_Addendums/<slug>.md` (addendum doc), `CLAUDE.md`, `project_status.md`,
-  `tracking_board.md` (read-only), `llm-wiki/` (read-only)
+  `execution_plan.md` (read-only, Status column), `llm-wiki/` (read-only)
 - **Outputs:** `15_Addendums/<slug>_plan.md` (implementation plan),
   `15_Addendums/tracking_addendums.md` (tracking entry appended)
 - **Task IDs:** `ADD-<slug>-T<seq>` — scoped to the addendum, never conflict with M-series IDs
-- **Never:** touches `tracking_board.md`, `execution_plan.md`, or any milestone file
+- **Never:** touches `execution_plan.md` or any milestone file
 - **Called by:** Human only. After `15_Addendums/<slug>.md` is saved and reviewed.
 
 ---
@@ -651,25 +655,25 @@ No execution agent may begin implementation until status = `READY`.
 
 ### [v1.3] validator_agent (Strategy B)
 
-- **Role:** Receives completed implementation from implementor. Runs tests (unit, integration, schema validation). If all pass: marks task `Done` in tracking board and notifies commander. If fail: returns to implementor with failure details.
+- **Role:** Receives completed implementation from implementor. Runs tests (unit, integration, schema validation). If all pass: marks task `Done` in `execution_plan.md` and notifies commander. If fail: returns to implementor with failure details.
 - **Called by:** implementor (Strategy B only)
-- **Updates:** `tracking_board.md` (the only agent in Strategy B that does so)
+- **Updates:** `execution_plan.md` Status column (the only agent in Strategy B that does so)
 
 ### New Agents in v1.2
 
 #### commander_agent
-- **Role:** The sole orchestrator of execution. Called once per session. Reads `project_status.md` and `execution_plan.md` (finds the first row with Status = `Planned`), then delegates to the right agent. Does NOT use `tracking_board.md` to find work — that file is a session dashboard only.
+- **Role:** The sole orchestrator of execution. Called once per session. Reads `project_status.md` and `execution_plan.md` (finds the first row with Status = `Planned`), then delegates to the right agent. There is no tracking board to consult.
 - **Never implements.** Only directs.
 - **Calls:** `execution_agent` (Strategy A) or `architect_agent` (Strategy B)
 - **Called by:** Human, once per session
 
 #### execution_agent (Strategy A)
-- **Role:** Single-agent implementor. Receives task from commander, generates prompt, saves to `implementation_prompts/`, executes, validates, updates tracking board.
-- **Updates:** `execution_plan.md` Status column after every subtask (source of truth); then updates `tracking_board.md` session dashboard (current task + last 5 history)
+- **Role:** Single-agent implementor. Receives task from commander, generates prompt, saves to `implementation_prompts/`, executes, validates, updates `execution_plan.md`.
+- **Updates:** `execution_plan.md` Status column after every subtask — the only status record
 - **Called by:** Commander Agent
 
 #### For Strategy B — the validator_agent responsibility
-The validator_agent (final step of the 4-agent pipeline) is the only one that updates both `execution_plan.md` Status → `Done` (source of truth) and `tracking_board.md` session dashboard. The commander reads `execution_plan.md` to find the next `Planned` task — not `tracking_board.md`.
+The validator_agent (final step of the 4-agent pipeline) is the only one that updates `execution_plan.md` Status → `Done`. The commander reads `execution_plan.md` to find the next `Planned` task — there is no other file to check.
 
 ### Agents That Require Manual Invocation
 
@@ -708,7 +712,7 @@ Human calls captain_agent
   → captain_agent writes execution_plan.md  (Status column = source of truth)
   → captain_agent writes 07_Milestones/M*/milestone.md
   → captain_agent validates FRD coverage
-  → captain_agent writes tracking_board.md skeleton  (current task empty, history empty)
+  → captain_agent writes 08_Tracking_System/decisions_log.md if absent  (decisions log only)
   → captain_agent sets project_status.md = READY (or PLANNING if gaps remain)
 
 [Now commander_agent can begin]
@@ -724,8 +728,7 @@ Human calls Commander Agent
   → Execution Agent generates prompt → saves to implementation_prompts/
   → Human approves prompt (one gate)
   → Execution Agent implements → validates
-  → Execution Agent updates execution_plan.md Status: Done  ← source of truth
-  → Execution Agent updates tracking_board.md: move to history (last 5 kept)
+  → Execution Agent updates execution_plan.md Status: Done  ← the only status record
   → Execution Agent reports back to Commander
   → Commander finds next task
 ```
@@ -744,8 +747,7 @@ Reviewer Agent → reviews prompt for security + scale violations
   → if rejected: returns to Architect with redline comments
 Implementor → executes approved prompt
 Validator Agent → runs tests → if pass:
-    → updates execution_plan.md Status: Done  ← source of truth
-    → updates tracking_board.md: move to history (last 5 kept)
+    → updates execution_plan.md Status: Done  ← the only status record
     → notifies Commander
   → if fail: returns to Implementor with failure details
 ```
@@ -830,8 +832,8 @@ In tables that span multiple milestones, phases, or sections, add a blank row be
 ### Rule 5 — This standard applies to every agent output
 
 Every agent that writes a file containing a table must follow Rules 1–4. This includes:
-- `captain_agent` → `execution_plan.md`, `milestone.md` files, `tracking_board.md` skeleton
-- `execution_agent` / `validator_agent` → `execution_plan.md` Status updates; `tracking_board.md` dashboard updates
+- `captain_agent` → `execution_plan.md`, `milestone.md` files, `08_Tracking_System/decisions_log.md`
+- `execution_agent` / `validator_agent` → `execution_plan.md` Status updates (the only status record)
 - `research_and_refine_agent` → `research_results.md`
 - Any agent writing `identified_gaps.md`, `12_Manual_Actions/actions.md`, or ADR files
 
@@ -865,7 +867,7 @@ After any of these agent actions, the human must sync the wiki:
 
 | Agent Action                             | Files Changed                                                           | Wiki Command                                   |
 | ---------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------- |
-| captain_agent re-run                     | execution_plan.md, tracking_board.md (skeleton), project_status.md, identified_gaps.md | `Wiki: full-sync`              |
+| captain_agent re-run                     | execution_plan.md, decisions_log.md (if absent), project_status.md, identified_gaps.md | `Wiki: full-sync`              |
 | New ADR created                          | ADR file + system_architecture.md                                       | `Wiki: re-ingest <adr-file>`                   |
 | research_and_refine_agent run            | research_results.md                                                     | `Wiki: re-ingest research_results.md`          |
 | Milestone completed                      | execution_plan.md, project_status.md                                    | `Wiki: re-ingest <each file>`                  |

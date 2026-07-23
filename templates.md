@@ -80,7 +80,8 @@
 │   │       └── milestone.md
 │   │
 │   ├── 08_Tracking_System/
-│   │   └── tracking_board.md
+│   │   └── decisions_log.md               [v2.2] ← lightweight decisions log only, not a task board;
+│   │                                          execution_plan.md's Status column is the only status record
 │   │
 │   ├── 09_Testing_Validation/
 │   │   ├── test_plan.md
@@ -124,7 +125,7 @@ Entry point: call `commander_agent` to begin execution.
 
 ## 3. Execution Strategy
 Strategy A (single-agent) / Strategy B (multi-agent pipeline)
-First call: `commander_agent` → reads project_status.md + tracking_board.md
+First call: `commander_agent` → reads project_status.md + execution_plan.md [v2.2]
 
 ## 4. Architecture (Non-Negotiable Rules)
 <core architectural principle — e.g., event sourcing rule, adapter pattern rule>
@@ -348,9 +349,10 @@ State Transitions: | From | To | Condition |
 # AOSDF v2.2
 
 > Every row = one independently executable subtask.
-> **Status column is the source of truth.** Commander reads this file to find the next Planned task.
+> **Status column is the only task-status record.** Commander reads this file to find the next Planned task.
 > Agents update the Status column directly: Planned → In Progress → Done.
-> tracking_board.md is a session dashboard only — it does not own status.
+> There is no separate tracking board — 08_Tracking_System/decisions_log.md is a lightweight
+> decisions log only and has no status authority.
 > Blank rows separate milestones for human readability.
 
 ## Execution Strategy: Strategy A / B
@@ -412,31 +414,24 @@ State Transitions: | From | To | Condition |
 
 ---
 
-### 08_Tracking_System/tracking_board.md
+### 08_Tracking_System/decisions_log.md
 
 ```markdown
-# Tracking Board
+# Decisions Log
 # <Project> — AOSDF v2.2
 
-> Session dashboard only. Status source of truth is execution_plan.md (Status column).
-> Commander reads execution_plan.md to find the next Planned task — not this file.
-> Updated by: Execution Agent (Strategy A) or Validator Agent (Strategy B) only.
-> Keep exactly: one current task row + last 5 completed rows. Remove older history.
+> Lightweight decisions log only — NOT a task board. There is no tracking_board.md in AOSDF v2.2+.
+> execution_plan.md's Status column is the only task-status record; commander reads it — and only
+> it — to find the next Planned task.
+> Created by captain_agent if absent. Appended to by any agent that makes a cross-cutting call
+> during execution worth recording (e.g. "used adapter X over Y because...").
 
 ---
 
-## Current Task
+## Log
 
-| Task ID | Task Name             | Subtask               | Owner   | Started    | Prompt File                          |
-| ------- | --------------------- | --------------------- | ------- | ---------- | ------------------------------------ |
-| —       | —                     | —                     | —       | —          | —                                    |
-
----
-
-## Recent History (last 5 completed)
-
-| Task ID | Subtask               | Owner   | Completed  | Output                               |
-| ------- | --------------------- | ------- | ---------- | ------------------------------------ |
+| Date | Agent | Decision | Why |
+| ---- | ----- | -------- | --- |
 ```
 
 ---
@@ -600,9 +595,9 @@ Write `06_Execution_Plan/execution_plan.md` as flat table:
 | Phase | Milestone | Task | Subtask | Owner | Input | Output | Validation | Status |
 Blank separator rows between milestones for readability.
 
-### Step 7 — Write Tracking Board Skeleton
-Write `08_Tracking_System/tracking_board.md` M0–M3 sections with all tasks as Planned.
-Note: only task IDs and names — do not fill Output or Prompt File columns (those are for execution_agent).
+### Step 7 — Write Decisions Log (if absent)
+Write `08_Tracking_System/decisions_log.md` if it does not already exist — an empty log table only.
+This is not a task board: task status lives exclusively in `execution_plan.md`'s Status column.
 
 ### Step 8 — Validate Coverage
 For every FRD service specification: confirm ≥1 task exists in execution_plan.md.
@@ -619,7 +614,7 @@ Log unmapped items to identified_gaps.md as severity: Critical.
 - `07_Milestones/M1_Foundation/milestone.md` (generated)
 - `07_Milestones/M2_Core_Features/milestone.md` (generated)
 - `07_Milestones/M3_Hardening/milestone.md` (generated)
-- `08_Tracking_System/tracking_board.md` (skeleton generated)
+- `08_Tracking_System/decisions_log.md` (created if absent)
 - `project_status.md` (updated)
 - `identified_gaps.md` (appended if coverage gaps found)
 
@@ -627,8 +622,8 @@ Log unmapped items to identified_gaps.md as severity: Critical.
 - Never invents tasks not traceable to a source document (cite FRD section in Notes column)
 - Every task must have exactly one Owner
 - Every task must have a Validation criterion that can be verified by an agent
-- If scope has changed since last run, re-generate everything and diff against tracking_board.md
-- If tasks are already In Progress in tracking_board.md: do NOT overwrite them — append new tasks only
+- If scope has changed since last run, re-generate everything and diff against execution_plan.md's Status column
+- If tasks are already In Progress in execution_plan.md: do NOT overwrite them — append new tasks only
 
 ## Permissions
 - READ: 00–05 docs, project_status.md, identified_gaps.md

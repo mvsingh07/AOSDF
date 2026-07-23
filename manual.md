@@ -36,7 +36,7 @@ Think of the project folder as a filing cabinet. Each drawer has a specific purp
 | `05_AI_Agent_System` | The "who builds it" — AI agent definitions and their task templates |
 | `06_Execution_Plan` | The "in what order" — every task, subtask, owner, and pass/fail condition |
 | `07_Milestones` | The "checkpoints" — per-sprint deliverables and exit criteria |
-| `08_Tracking_System` | The "scoreboard" — what's done, in progress, blocked |
+| `08_Tracking_System` | [v2.2] Lightweight decisions log only (`decisions_log.md`) — **not** a task board; all task status lives in `06_Execution_Plan/execution_plan.md`'s Status column |
 | `09_Testing_Validation` | The "proof it works" — test plans, test cases, load tests |
 | `10_Deployment_Runbook` | The "how to ship it" — deploy steps, rollback, incident response |
 | `11_Future_Extensibility` | The "what comes next" — deferred features and how the architecture enables them |
@@ -150,7 +150,7 @@ From step 7 onward, human effort = approval gates only.
 ## How to Resume a Project
 
 1. Call the **Workflow Initiator** agent again
-2. It re-scans the structure, checks `tracking_board.md` for current state
+2. It re-scans the structure, checks `execution_plan.md`'s Status column for current state [v2.2] — the only place task status lives
 3. Identifies the next incomplete task
 4. Resumes from there
 
@@ -211,7 +211,7 @@ With AOSDF:
 - `CLAUDE.md` gives every agent full context in one read
 - Security is a gate, not a suggestion
 - Every task has a validation condition — the agent doesn't declare done until it passes
-- The tracking board is the ground truth of project state
+- `execution_plan.md`'s Status column is the ground truth of project state [v2.2] — there is no separate tracking board; `08_Tracking_System/decisions_log.md` holds only a lightweight decisions log
 - Any agent, any session, can pick up exactly where the last one left off
 
 ---
@@ -274,9 +274,9 @@ Here is the exact order in which agents are called, from project start to first 
     captain_agent reads security_requirements.md → extracts all controls
     captain_agent reads infra_architecture.md → extracts all components
     captain_agent maps: services → tasks → milestones
-    captain_agent writes execution_plan.md (flat table, all milestones)
+    captain_agent writes execution_plan.md (flat table, all milestones, Status = the only status record) [v2.2]
     captain_agent writes 07_Milestones/M0/milestone.md through M3/milestone.md
-    captain_agent writes 08_Tracking_System/tracking_board.md (skeleton)
+    captain_agent writes 08_Tracking_System/decisions_log.md if absent (decisions log only — not a task board)
     captain_agent validates FRD coverage → every service has ≥1 task
     captain_agent sets project_status.md → READY
     HUMAN reviews milestones → confirms plan before execution begins
@@ -284,7 +284,7 @@ Here is the exact order in which agents are called, from project start to first 
 3. HUMAN → commander_agent (once per session, from M0 onward)
    ↓
    commander reads project_status.md → status = READY
-   commander reads tracking_board.md → finds first Planned task
+   commander reads execution_plan.md → finds first row with Status = Planned [v2.2]
    commander reads milestone.md → checks pre-conditions
 
    --- Strategy A ---
@@ -294,9 +294,9 @@ Here is the exact order in which agents are called, from project start to first 
    execution_agent presents prompt to HUMAN: "Approve?"
    HUMAN approves
    execution_agent implements → validates
-   execution_agent updates tracking_board.md: Done
+   execution_agent updates execution_plan.md Status: Done (the only status record)
    execution_agent reports to commander
-   commander finds next Planned task → calls execution_agent again
+   commander finds next Planned task in execution_plan.md → calls execution_agent again
    ... (repeats until milestone complete)
 
    --- Strategy B ---
@@ -307,7 +307,7 @@ Here is the exact order in which agents are called, from project start to first 
    reviewer_agent → implementor (approved prompt)
    implementor builds and tests
    implementor → validator_agent
-   validator_agent runs tests → updates tracking_board.md: Done
+   validator_agent runs tests → updates execution_plan.md Status: Done (the only status record)
    validator_agent → (back to commander for next task)
 
 4. MILESTONE COMPLETE
@@ -369,14 +369,14 @@ AOSDF docs root: Microservices/Comms-Engine/
 Execution strategy: Strategy A
 
 Please:
-1. Read project_status.md and tracking_board.md
-2. Identify the next Planned task
+1. Read project_status.md and execution_plan.md
+2. Identify the next Planned task (Status column — the only status record)
 3. Verify no blocking manual actions for this milestone
 4. Delegate to execution_agent with full context
 ```
 
 **To resume after a break:**
-The Commander will read the tracking board and find exactly where you left off. No context from the previous session is needed — the state is in the files.
+The Commander will read `execution_plan.md`'s Status column and find exactly where you left off. No context from the previous session is needed — the state is in the files.
 
 ---
 
@@ -396,7 +396,7 @@ Before starting any task, the agent must assess how much context has already bee
 
 ### Rule 2 — Do not start a task you cannot finish
 
-Before delegating any task, the Commander Agent MUST estimate whether enough context window remains to complete it. If it is not confident the task can run to completion (including validation and tracking board update), it MUST NOT start the task.
+Before delegating any task, the Commander Agent MUST estimate whether enough context window remains to complete it. If it is not confident the task can run to completion (including validation and the execution_plan.md Status update), it MUST NOT start the task.
 
 **Instead, the Commander must:**
 1. Say: "Insufficient context remaining to start [task name] safely. Please compact the session and re-invoke the Commander."
@@ -458,7 +458,7 @@ Please:
 3. Map them to tasks grouped into milestones M0–M3
 4. Write execution_plan.md (flat Phase→Milestone→Task→Subtask table)
 5. Write each milestone.md with task table, exit criteria, and dependencies
-6. Write tracking_board.md skeleton (all tasks as Planned)
+6. Write 08_Tracking_System/decisions_log.md if absent (decisions log only — not a task board)
 7. Validate FRD coverage — every service must have ≥1 task
 8. Log unmapped requirements to identified_gaps.md
 9. Set project_status.md → READY if coverage is complete
@@ -467,7 +467,7 @@ Please:
 **What captain_agent will produce:**
 - `06_Execution_Plan/execution_plan.md` — complete flat task table
 - `07_Milestones/M0_Project_Setup/milestone.md` through `M3_Hardening/milestone.md`
-- `08_Tracking_System/tracking_board.md` — skeleton with all tasks as Planned
+- `08_Tracking_System/decisions_log.md` — created if absent (decisions log only, not a task board)
 - Coverage validation report — every FRD service → task ID mapping
 - `project_status.md` updated to READY
 
@@ -481,7 +481,7 @@ Reason for re-run: <new service added / feature removed / architecture changed>
 
 Please:
 1. Re-read FRD and architecture docs
-2. Diff new requirements against current tracking_board.md
+2. Diff new requirements against current execution_plan.md (Status column is the record)
 3. Append new tasks, mark removed tasks as Cancelled
 4. Re-validate FRD coverage
 5. Update project_status.md

@@ -1,10 +1,10 @@
 # AOSDF Rules
-# v2.2 — Quick Reference
+# v2.3 — Quick Reference
 # Non-negotiable. Every agent and human must follow these.
 
 ---
 
-## The 21 Principles (Condensed)
+## The 23 Principles (Condensed)
 
 | # | Rule | Version |
 |---|------|---------|
@@ -29,6 +29,8 @@
 | 19 | **Legal requirements are binding constraints** — `13_Legal_Requirements/` files must map to execution plan tasks | v1.9 |
 | 20 | **Every infrastructure client behind an abstraction** — provider SDK never imported in business logic | v2.0 |
 | 21 | **Post-baseline changes via Addendums only** — no ad-hoc edits to tracking_board or milestones after plan is locked | v2.1 |
+| 22 | **execution_plan.md is the only task-status record — no separate tracking board** — the Status column is the canonical Planned/In Progress/Done record; `08_Tracking_System/` holds only `decisions_log.md` (a lightweight decisions log, not a task board) | v2.2 |
+| 23 | **System design is per-module** — `03_System_Design/` splits into cross-cutting root docs + one `NNN_<name>_module/` folder (seven-document set, cloned from `_template/`) per core module; module numbers are permanent | v2.3 |
 
 ---
 
@@ -56,8 +58,8 @@ identified_gaps.md: log immediately, never defer
 | `identified_gaps.md` | Any agent (append) | Every gap, immediately logged |
 | `12_Manual_Actions/actions.md` | Any agent (append) | Every human step, immediately logged |
 | `12_Manual_Actions/guides.md` | Any agent (append) | Step-by-step instructions per action ID |
-| `execution_plan.md` | `captain_agent` | Flat table: Phase → Milestone → Task → Subtask |
-| `tracking_board.md` | `execution_agent` / `validator_agent` | Live status of every task |
+| `execution_plan.md` | `captain_agent` (creates); `execution_agent` / `validator_agent` (Status column) | **[v2.2] The only task-status record.** Flat table: Phase → Milestone → Task → Subtask → Status. Commander reads this to find the next `Planned` row — no other file is ever consulted for status |
+| `08_Tracking_System/decisions_log.md` | `captain_agent` (creates if absent) | **[v2.2]** Lightweight decisions log only — **not** a task board, never holds Status. There is no `tracking_board.md` in AOSDF v2.2+ |
 | `implementation_prompts/<TASK-ID>_*.md` | `execution_agent` / `architect_agent` | Every prompt saved before execution |
 | `research_results.md` | `research_and_refine_agent` | Research output — human decides what to act on |
 | `15_Addendums/tracking_addendums.md` | `addendum_agent` (initial), then execution/human | Post-baseline task tracking |

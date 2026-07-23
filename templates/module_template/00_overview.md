@@ -1,6 +1,6 @@
 # {{ID}} {{TITLE}} — Overview
 
-> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}` · **Milestone:** {{MILESTONE}}
+> **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}_module` · **Milestone:** {{MILESTONE}}
 
 ## 1. Purpose
 

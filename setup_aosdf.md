@@ -619,7 +619,7 @@ Please:
 5. Map them to tasks grouped into milestones M0–M3 (or M0–M4 if needed)
 6. Write execution_plan.md (flat Phase→Milestone→Task→Subtask table)
 7. Write each milestone.md with task table, exit criteria, and dependencies
-8. Write tracking_board.md skeleton (all tasks as Planned)
+8. Write 08_Tracking_System/decisions_log.md if absent (decisions log only — not a task board)
 9. Validate FRD coverage — every service must have ≥1 task
 10. Log unmapped requirements to identified_gaps.md as Critical gaps
 11. Set project_status.md → READY if coverage is complete
@@ -639,8 +639,8 @@ AOSDF docs root: {ProjectName}-Documents/
 Execution strategy: Strategy A [or B]
 
 Please:
-1. Read project_status.md and tracking_board.md
-2. Identify the next Planned task
+1. Read project_status.md and execution_plan.md
+2. Identify the next Planned task (Status column — the only status record)
 3. Verify no blocking manual actions for this milestone
 4. Run Gap Validation Gate (Step 2.5)
 5. Delegate to execution_agent with full context

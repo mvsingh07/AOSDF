@@ -3,7 +3,7 @@
 | Field | Value |
 | ----- | ----- |
 | Module ID | `{{ID}}` |
-| Folder | `documents/03_System_Design/{{ID}}_{{SLUG}}/` |
+| Folder | `documents/03_System_Design/{{ID}}_{{SLUG}}_module/` |
 | Status | Not Started |
 | Owning milestone | {{MILESTONE}} |
 | Depends on | _TBD_ |
