@@ -329,6 +329,10 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 │   ├── renderer_core/                          [v2.5 D0] ← Track L only — see Track L Renderer Core
 │   │   ├── core.js                             ← markdown→HTML, diagram panel, tables, nav, search
 │   │   └── core.css                            ← shared design tokens + styles, light/dark aware
+│   ├── aosdf-mcp/                              [v2.5 E2-T1] ← MCP server, six read/write tools (Principle 26);
+│   │   │                                            bundled inside AOSDF/, not a standalone package (OD-3)
+│   │   ├── package.json                        ← zero runtime dependencies, hand-rolled stdio JSON-RPC
+│   │   └── src/                                ← config.js, markdown-table.js, tools/*.js — see its own README.md
 │   └── designing_aosfd/                        ← AOSDF/ has no mkdocs.yml or site of its own — Track D
 │                                                  (a docs site for the framework itself) was built, then
 │                                                  cancelled 2026-08-19; see MkDocs-Based Project Docs Site
@@ -1016,6 +1020,37 @@ Two independent layers, deliberately redundant, never allowed to disagree in sub
 `render/index.html` inlines `core.js` and `core.css`'s full text verbatim into its single-file HTML output — never a `<script src="…">` reference to a shared external file, which would reintroduce the exact `file://` CORS failure the inlining approach (Principle 30) exists to avoid.
 
 Only the diagram panel and shared design tokens are actually exercised today — `render/index.html` renders structured JSON as cards, not raw markdown pages, so `markdownToHtml`, `buildNav`, and the search index builder sit unused. That's fine; they're not being removed on the chance a future Track L feature needs them, but they're not scope for anything beyond Track L either.
+
+---
+
+## [v2.5, E2-T1] `aosdf-mcp` Server
+
+### What This Is
+
+`AOSDF/aosdf-mcp/` is the MCP server `aosdf_expansion_scope.md` §4.2 scoped: exactly six read/write tools over a project's own markdown files, so the editor extension (Pillar A) and every Claude Code agent (Pillar B) go through one audited interface instead of ad hoc file edits (Principle 26). Bundled inside `AOSDF/` rather than a standalone package, per OD-3 (resolved 2026-08-27). It holds no state of its own — every call re-reads the file it needs and re-derives its answer, so restarting the process loses nothing and two tool calls in a row never see stale data relative to a file changed in between.
+
+Built with zero runtime dependencies — the stdio JSON-RPC framing MCP's transport uses is a handful of lines of newline-delimited JSON, so hand-rolling it keeps this package consistent with the zero-dependency discipline Principle 30 already holds the Learning Roadmap renderer to, and means it never blocks on an `npm install` reaching a registry from an offline or sandboxed agent session.
+
+### The Six Tools
+
+| Tool | Reads / Writes | Notes |
+| --- | --- | --- |
+| `aosdf_read_status` | `project_status.md` | Extracts `Current State` and the `## Next Action` section only — not the whole file's prose |
+| `aosdf_next_planned_task` | `execution_plan.md` | First row, in document order, whose ID matches a task pattern (`*-T<n>`) and whose `Status` is exactly `Planned` — a phase-level Master Sequence row (e.g. `E2`) is never returned by this tool, only an actual task (e.g. `E2-T1`) |
+| `aosdf_update_task_status` | `execution_plan.md` | The only tool allowed to write this file. Locates the row by matching a given ID against whichever column is actually named an ID column (`Task ID`, `Phase ID`, or `ID` — not always column 0, e.g. the Master Sequence table's ID column is its *second* column), then rewrites just that row's `Status` cell and re-pads the whole table per the Document Formatting Standard |
+| `aosdf_log_gap` | `identified_gaps.md` | Appends a row; auto-generates the next `GAP-NNN` ID and today's `Identified` date |
+| `aosdf_log_manual_action` | `12_Manual_Actions/actions.md` (or a documented single-file deviation, via `AOSDF_MANUAL_ACTIONS_PATH`) | Appends to the *Pending* table specifically, never *Completed*; auto-generates the next `MA-N` ID |
+| `aosdf_read_module_index` | `03_System_Design/README.md` | Returns the module registry as structured rows |
+
+Every writer goes through the same `markdown-table.js` helper, so a write is never a hand-edited single cell — it recomputes column widths across the whole table and re-renders every row, which is what keeps a written file automatically compliant with the Document Formatting Standard (manual.md §Document Formatting Standard) rather than relying on the caller to have padded correctly.
+
+### Configuration
+
+One required environment variable, `AOSDF_DOCS_ROOT`, pointing at a project's `{project_name}-Documents/docs/` folder. Each of the six files above resolves to a sane default path under that root, and each can be overridden individually (`AOSDF_PROJECT_STATUS_PATH`, `AOSDF_EXECUTION_PLAN_PATH`, `AOSDF_IDENTIFIED_GAPS_PATH`, `AOSDF_MANUAL_ACTIONS_PATH`, `AOSDF_MODULE_INDEX_PATH`) — this is how a project that documents a layout deviation (e.g. this meta-project's own `manual_actions.md` living at its docs root instead of under `documents/12_Manual_Actions/`) stays servable without forking the tool.
+
+### Known Scope Limits
+
+Column matching is by header name, not a fixed schema, so a project's exact column set doesn't need to match `templates.md`'s example verbatim — but a table with no recognizable ID or Status column is silently skipped by the tools that need one. `aosdf_log_gap` and `aosdf_log_manual_action` each operate on one table (the first table found, or — for manual actions — the one under a heading matching "Pending"); a file with more than one candidate table beyond that convention needs its own path override or isn't yet handled generically. `E2-T3` (the Principle 26 compliance audit) is the follow-up task that checks this package doesn't drift from these constraints as it's used.
 
 ---
 
