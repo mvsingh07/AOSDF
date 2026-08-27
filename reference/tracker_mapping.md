@@ -110,8 +110,9 @@ Rules:
   kept as its own file rather than folded into `tracker_config.md` specifically so the secret stays out
   of every other agent's read path, not just out of git.
 - This is a local-file convention, not a new mechanism — it's the same pattern AOSDF already uses for any
-  gitignored, human-managed local file. No VSCode `SecretStorage` or OS keychain dependency is introduced;
-  those remain options a project can layer on later (e.g. inside a Pillar A VSCode extension), but are not
+  gitignored, human-managed local file. No editor-specific secret store (e.g. VSCode's `SecretStorage` API)
+  or OS keychain dependency is introduced; those remain options a project can layer on later (e.g. inside a
+  Pillar A editor extension), but are not
   required for `tracker_sync_agent` to work today.
 
 ---
