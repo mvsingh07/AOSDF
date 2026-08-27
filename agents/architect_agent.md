@@ -61,6 +61,8 @@ Core-module design lives in `03_System_Design/NNN_<name>_module/`. You own its l
 - API interface definition (contract for backend agent)
 - Validation response: approved / rejected with reason
 
+**[v2.5]** Every ADR and every module `02_domain_model.md`/`03_architecture.md` you write or update must carry the Concept Frontmatter block (framework.md → Concept Frontmatter Standard) — fill it in as part of writing the document, the same way you already set its title and status. If the document includes a diagram worth surfacing, set `diagram: true` and wrap it in an `aosdf-diagram` fence.
+
 ## Validation Criteria
 - Output references specific section of FRD or system_architecture.md
 - No service boundaries are violated

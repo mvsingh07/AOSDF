@@ -136,6 +136,32 @@ If any item is missing: log to identified_gaps.md:
 - Description: "llm-wiki not initialized"
 - Resolution: "Run the LLM Wiki setup prompt for this project"
 
+### [v2.5] Concept Frontmatter Coverage Checklist
+
+This is the check `concept_indexer_agent` delegates to on `Learn: check coverage` (framework.md §
+Learning Roadmap) — running it here means there is one coverage-check implementation, not two.
+
+For every document in framework.md's Concept Frontmatter Standard "Required on" list that exists in the
+project, check whether it opens with a `---`-fenced YAML block containing at least a `concepts:` field:
+
+| Document type | Required? |
+| -------------- | --------- |
+| Every ADR (`03_System_Design/ADR/*.md`, `03_System_Design/NNN_<name>_module/decisions/*.md`) | Yes, if the ADR exists |
+| Every module `02_domain_model.md` / `03_architecture.md` | Yes, if the module folder exists |
+| `02_Security_Framework/threat_model.md` | Yes |
+| `04_Infrastructure_Design/*.md` | Yes, for every file present |
+| `13_Legal_Requirements/concern_*.md` | Yes, if `13_Legal_Requirements/` exists |
+
+If a required document is missing the block: log to `identified_gaps.md`:
+- Category: Learning
+- Severity: Low
+- Description: "`<path>` missing Concept Frontmatter"
+- Resolution: "Add the frontmatter block per framework.md § Concept Frontmatter Standard"
+
+Never escalate above Low, and never treat this as blocking `project_status.md` reaching `READY` —
+Principle 29 is explicit that this is a nice-to-have, not a gate. Do not duplicate a gap row that's
+already logged for the same path.
+
 ---
 
 ## Output Format

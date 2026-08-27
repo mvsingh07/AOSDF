@@ -1,0 +1,160 @@
+/*
+ * AOSDF Track L Renderer Core — stylesheet, companion to core.js.
+ * v2.5 [D0, revised 2026-08-18] — Learning Roadmap only, see core.js's header for why. Same
+ * inlining rule: render/index.html copies this file's full text into its own <style> block at
+ * generation time, never <link rel="stylesheet">. Defines the design tokens (light/dark aware)
+ * and the elements core.js emits (aosdf-diagram panel, tables, nav) plus a few page-shell
+ * classes. Page-specific layout (the Learning Roadmap's filter controls, view tabs, etc.) stays
+ * in the page's own <style> block, layered on top of this one.
+ */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --text: #1c1c1a;
+  --muted: #6b6b64;
+  --border: #d9d8d2;
+  --accent: #8a5a2b;
+  --accent-bg: #f1e6d8;
+  --mono-bg: #1c1c1a;
+  --mono-text: #e8e6df;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161615;
+    --panel: #1f1f1d;
+    --text: #eeece5;
+    --muted: #9c9a93;
+    --border: #38372f;
+    --accent: #d9a86c;
+    --accent-bg: #332a1c;
+    --mono-bg: #0e0e0d;
+    --mono-text: #e8e6df;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+a { color: var(--accent); }
+header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
+header h1 { margin: 0 0 .15rem; font-size: 1.15rem; }
+header p { margin: 0; color: var(--muted); font-size: .85rem; }
+footer {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2rem;
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+/* aosdf-diagram panel — emitted by core.js renderDiagramPanel() */
+pre.aosdf-diagram {
+  background: var(--mono-bg);
+  color: var(--mono-text);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: .8rem;
+  line-height: 1.35;
+  margin: 0 0 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+pre code {
+  background: var(--mono-bg);
+  color: var(--mono-text);
+  display: block;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: .8rem;
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--accent-bg);
+  border-radius: 4px;
+  padding: .1rem .3rem;
+  font-size: .85em;
+}
+
+/* Tables — emitted by core.js renderTable() via markdownToHtml() */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 1rem;
+  font-size: .85rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: .4rem .6rem;
+  text-align: left;
+}
+th { background: var(--accent-bg); font-weight: 600; }
+tr.group-break td { border: none; padding: .25rem 0; }
+
+/* Nav — emitted by core.js buildNav() */
+nav.aosdf-nav { font-size: .85rem; }
+.nav-section { margin-bottom: 1rem; }
+.nav-section-title {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: .35rem;
+}
+.nav-section ul { list-style: none; margin: 0; padding: 0; }
+.nav-section > ul > li { margin-bottom: .15rem; }
+ul.nav-subheadings { list-style: none; margin: .15rem 0 .35rem .75rem; padding: 0; }
+li.nav-h { font-size: .8rem; color: var(--muted); }
+li.nav-h a { color: inherit; text-decoration: none; }
+li.nav-h a:hover { color: var(--accent); }
+
+/* Search box + results — consumers wire this to core.js search() */
+.search-box {
+  width: 100%;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .4rem .6rem;
+  font-size: .85rem;
+  margin-bottom: .75rem;
+}
+.search-results { list-style: none; margin: 0; padding: 0; }
+.search-results li { padding: .5rem 0; border-bottom: 1px solid var(--border); }
+.search-results .snippet { color: var(--muted); font-size: .8rem; }
+
+/* Shared page-shell primitives reused across all three outputs */
+.controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-bottom: 1.25rem; }
+.controls label { font-size: .8rem; color: var(--muted); display: flex; align-items: center; gap: .35rem; }
+select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .3rem .5rem;
+  font-size: .85rem;
+}
+button.nav {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .4rem .9rem;
+  font-size: .85rem;
+  cursor: pointer;
+}
+button.nav:disabled { opacity: .4; cursor: default; }
+button.nav:not(:disabled):hover { border-color: var(--accent); }
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}

@@ -38,6 +38,8 @@ Provision and manage all cloud infrastructure for `{project_name}` using infrast
 - Secrets management configuration (secret names only — no values)
 - Environment variable mapping document (secret ref → env var name)
 
+**[v2.5]** If any output of this task is one of the Concept Frontmatter Standard's required document types (framework.md → Concept Frontmatter Standard — currently: ADRs, module `02_domain_model.md`/`03_architecture.md`, `threat_model.md`, `04_Infrastructure_Design/*.md`, `13_Legal_Requirements/concern_*.md`), include the frontmatter block. `04_Infrastructure_Design/*.md` is human-authored in Phase 0, not written by this agent day-to-day — this instruction applies if that ever changes, or if this agent is asked to draft/update one of those files directly.
+
 ## Validation Criteria
 - IaC plan / synth produces no errors
 - Databases are not publicly accessible — verified post-deploy

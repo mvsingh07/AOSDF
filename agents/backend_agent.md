@@ -33,6 +33,8 @@ Implement all server-side services for `{project_name}`: APIs, business logic, q
 - Integration tests
 - Updated API spec if any contract change was required (must be reviewed by Architect Agent first)
 
+**[v2.5]** If any output of this task is one of the Concept Frontmatter Standard's required document types (framework.md → Concept Frontmatter Standard — currently: ADRs, module `02_domain_model.md`/`03_architecture.md`, `threat_model.md`, `04_Infrastructure_Design/*.md`, `13_Legal_Requirements/concern_*.md`), include the frontmatter block. Today this agent's normal output does not include those types — `architect_agent` owns them — so this instruction only applies if that scope changes.
+
 ## Validation Criteria
 - All unit tests pass
 - Integration tests pass against a real DB (no mocks for DB layer)

@@ -1,7 +1,7 @@
 # AI Development Model — AOSDF
 # AI-Orchestrated Software Development Framework
 
-> **Current Version:** v2.2
+> **Current Version:** v2.5
 > **Plain-language guide:** [manual.md](manual.md)
 > **Full specification:** [framework.md](framework.md)
 
@@ -103,3 +103,9 @@ addendum_agent       →  when a cross-cutting requirement arrives after plan is
 ```
 
 For invocation details, examples, and the new project setup guide, see [setup_aosdf.md](setup_aosdf.md) and [manual.md](manual.md).
+
+---
+
+## Author
+
+**Manvir Singh** ([mvsingh07](https://www.linkedin.com/in/mvsingh07)) — [www.mvsingh.in](https://www.mvsingh.in)

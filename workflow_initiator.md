@@ -66,6 +66,35 @@ Ask the following questions (or detect answers from provided context):
 7. **Are there any compliance requirements?**
    - DLT (India SMS), GDPR, HIPAA, PCI → informs security and compliance docs
 
+8. **[v2.5] Opt in to tracker board sync?**
+   - Default: **No.** This is a one-time decision — asked only here, at setup. It is not revisited
+     automatically later; a human must deliberately re-run this step to change it.
+   - If **yes**, also ask, all in this same step:
+     - **Provider** — `Jira` or `Notion`. Neither is pre-selected; the human picks. A project configures
+       exactly one provider at a time (Principle 25) — see `AOSDF/reference/tracker_mapping.md`.
+     - If **Jira**: **Jira project key** (e.g., `BID`, `CE`, `SD`, `WEP`, `PWB`) — see
+       `AOSDF/reference/jira_mapping.md` for the naming convention and required Jira-side setup (issue
+       types, custom fields, workflow statuses) before the first sync. **In the same prompt**, also ask
+       for the Jira API token, the account email, and the base URL — these are never written to
+       `tracker_config.md`; they go straight into `tracker_config.env` (Step 5c).
+     - If **Notion**: **Notion database IDs** for Milestones and Tasks (and Modules, if the project wants
+       that tier) — see `AOSDF/reference/notion_mapping.md` for the required database/property setup
+       before the first sync. **In the same prompt**, also ask for the Notion integration token — written
+       to `tracker_config.env`, never to `tracker_config.md`.
+     - **Recommended sync cadence** — human-triggered only, never automatic (Principle 24). Pick one to
+       record as the team's convention: end of each work session, at milestone boundaries, or before
+       stakeholder reviews. This is a *recommendation* written into `tracker_config.md`, not an enforced
+       schedule — the actual sync only ever happens when a human runs `Tracker: sync`.
+     - Credential storage is `tracker_config.env` — a gitignored, per-project local file, never inline in
+       `tracker_config.md` — resolved as OD-2; see `AOSDF/reference/tracker_mapping.md` §2a for why a
+       separate file (kept out of every other agent's read path, not just out of git).
+   - If **no**: skip Step 5c below entirely. No tracker-related file is created, and `tracker_sync_agent`
+     is never invoked for this project.
+   - **[v2.4 compatibility]** If this project already has a `jira_config.md` from before v2.5, it keeps
+     working unchanged via `jira_sync_agent` — do not ask this question again or create a duplicate
+     `tracker_config.md` unless the human explicitly asks to migrate (see framework.md § Tracker Board
+     Integration → "Migrating from v2.4 Jira-Only Sync").
+
 ---
 
 ### Step 2 — Detect Project Structure
@@ -200,6 +229,73 @@ The Commander Agent reads this file every session. It will not start execution u
 
 ---
 
+## [v2.5] Step 5c — Create tracker_config.md + tracker_config.env (only if Step 1 Q8 = yes)
+
+If the human opted in to tracker sync in Step 1, create **two** files together —
+`{project_name}-Documents/tracker_config.md` never holds the credential itself (OD-2, resolved
+2026-08-27; see `AOSDF/reference/tracker_mapping.md` §2a):
+
+```markdown
+# Tracker Sync Configuration
+# {project_name}
+# AOSDF v2.5 — OPTIONAL
+
+**Enabled:** Yes
+**Provider:** jira | notion
+**Recommended sync cadence:** {end of session | milestone boundaries | before stakeholder reviews}
+
+<!-- Jira-only fields (see jira_mapping.md) — fill in only if Provider: jira -->
+**Jira project key:** {key}
+
+<!-- Notion-only fields (see notion_mapping.md) — fill in only if Provider: notion -->
+**Notion Modules database ID:** {id}
+**Notion Milestones database ID:** {id}
+**Notion Tasks database ID:** {id}
+
+**Credentials:** see `tracker_config.env` (same directory) — never stored inline in this file.
+
+> Sync is always human-triggered — `Tracker: sync` (export) or `Tracker: import <ref>` (import).
+> `Jira: sync` / `Notion: sync` and `Jira: import` / `Notion: import` remain accepted aliases.
+> No agent calls the tracker on its own initiative (framework.md Principle 24).
+> See AOSDF/reference/tracker_mapping.md for the full TrackerAdapter interface and issue-type mapping,
+> plus jira_mapping.md or notion_mapping.md for the chosen provider's required setup.
+
+## Sync History
+| Date | Direction | Trigger | Notes |
+| ---- | --------- | ------- | ----- |
+|      |           |         |       |
+```
+
+And, populated from the credential(s) already collected in Step 1 Q8:
+
+```
+# tracker_config.env — gitignored, never committed, never read except by tracker_sync_agent
+# Fill in only the fields for the Provider chosen in tracker_config.md
+
+# Jira (only if Provider: jira)
+JIRA_API_TOKEN={value collected in Step 1}
+JIRA_EMAIL={value collected in Step 1}
+JIRA_BASE_URL={value collected in Step 1}
+
+# Notion (only if Provider: notion)
+NOTION_API_TOKEN={value collected in Step 1}
+```
+
+Add `tracker_config.env` to `.gitignore` explicitly in Step 7, as a second, explicit layer on top of the
+whole `{project_name}-Documents/` folder already being gitignored — belt-and-suspenders in case that
+broader rule is ever narrowed for a specific project.
+
+If the human declined, create neither file — their absence is what tells every other agent (and the
+human, next session) that tracker sync is off for this project.
+
+**[v2.4 compatibility]** If `jira_config.md` already exists from a pre-v2.5 setup, do not create
+`tracker_config.md` automatically — that project keeps running on `jira_config.md` / `jira_sync_agent`
+unchanged. Only create `tracker_config.md` here for a project running this step for the first time, or if
+the human explicitly asks to migrate (framework.md § Tracker Board Integration → "Migrating from v2.4
+Jira-Only Sync").
+
+---
+
 ## [v1.5] Step 7 — Create .gitignore
 
 Verify or create a `.gitignore` at the **workspace root** (`{project_name}-Orchestrum/`) containing:
@@ -210,6 +306,9 @@ AOSDF/
 
 # Project documentation — planning docs, agent definitions, gap trackers, never committed
 {project_name}-Documents/
+
+# Tracker credentials — explicit second layer even though the folder above already covers it [v2.5]
+{project_name}-Documents/tracker_config.env
 ```
 
 This ensures AI planning artifacts never enter source control. The `.gitignore` lives at the workspace root, not inside the application code directory.
@@ -219,7 +318,7 @@ This ensures AI planning artifacts never enter source control. The `.gitignore` 
 ## Permissions
 
 - READ: all project files, CLAUDE.md, framework.md
-- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `CLAUDE.md`, `.gitignore`
+- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `CLAUDE.md`, `.gitignore`, `tracker_config.md` + `tracker_config.env` [v2.5] (only if Step 1 Q8 = yes; `jira_config.md` [v2.4] only for pre-v2.5 projects mid-transition)
 - WRITE_INFRA: none
 - WRITE_DATA: none
 
