@@ -138,6 +138,11 @@ If any item is missing: log to identified_gaps.md:
 
 ### [v2.5] Concept Frontmatter Coverage Checklist
 
+**[v2.5, E0] Skip this entire check if `project_status.md` § Project Configuration records
+`Learning Roadmap: Disabled`** — the project opted out at `workflow_initiator` Step 1 Q10. This does
+not disable the Concept Frontmatter Standard itself (documents may still carry frontmatter for other
+reasons), only the nagging check that a project explicitly said it doesn't want.
+
 This is the check `concept_indexer_agent` delegates to on `Learn: check coverage` (framework.md §
 Learning Roadmap) — running it here means there is one coverage-check implementation, not two.
 

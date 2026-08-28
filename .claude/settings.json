@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "deny": ["Bash(git push:*)"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-context-gate.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

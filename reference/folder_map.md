@@ -57,9 +57,30 @@
 │   ├── renderer_core/                             [v2.5 D0] Track L only — custom app renderer
 │   │   ├── core.js                                markdown→HTML, diagram panel, tables, nav, search
 │   │   └── core.css                                shared design tokens + styles, light/dark aware
-│   └── designing_aosfd/                           Framework design history
+│   ├── designing_aosfd/                           Framework design history
+│   ├── .claude/                                   [v2.5 E3-T1] Master template — Claude Code subagents/
+│   │   │                                            commands/hooks. `workflow_initiator` Step 8 copies this
+│   │   │                                            whole tree into `{ProjectName}/.claude/`, never left here
+│   │   │                                            in place (it's the only real git repo — see below).
+│   │   ├── agents/                                 One `<role>.md` per `AOSDF/agents/*.md` (+ workflow-initiator),
+│   │   │                                            translating each `## Permissions` block into a `tools:` allowlist
+│   │   ├── commands/                                /aosdf-init, -plan, -next, -addendum, -research, -sync, -import
+│   │   ├── settings.json                            `permissions.deny` for `git push` (WRITE_REMOTE, technical
+│   │   │                                            control not just documented rule) + the session-context hook
+│   │   └── hooks/session-context-gate.js            [E3-T2] Principle 27 — PreToolUse gate on Task/Agent
+│   └── .mcp.json                                  [v2.5 E3-T1] Master template — registers `aosdf-mcp` (E2-T1) as
+│                                                     an MCP server. Also copied to `{ProjectName}/`, not left here;
+│                                                     paths inside are already written relative to that destination.
 │
-├── {ProjectName}/                                 ← Application Code only (git repo)
+├── {ProjectName}/                                 ← Application Code only (git repo — the ONLY git repo in this
+│   │                                                 workspace; see `.claude/`/`.mcp.json` note above)
+│   ├── .claude/                                   [v2.5 E3-T1] Copied from `AOSDF/.claude/` at setup (Step 8) —
+│   │   │                                            this is what actually ships to every teammate's `git clone`
+│   │   ├── agents/
+│   │   ├── commands/
+│   │   ├── settings.json
+│   │   └── hooks/session-context-gate.js
+│   ├── .mcp.json                                  [v2.5 E3-T1] Copied from `AOSDF/.mcp.json` at setup (Step 8)
 │   └── [backend/, frontend/, etc.]
 │
 └── {ProjectName}-Documents/                       ← Project Documentation (gitignored). The ONE project docs

@@ -331,6 +331,12 @@ Here is the exact order in which agents are called, from project start to first 
 
 ## How to Call the Workflow Initiator — Example
 
+**[v2.5]** If this project has adopted Claude Code tooling (`workflow_initiator` Step 1 Q9), `/aosdf-init`
+does this same thing as a slash command instead of a hand-typed prompt — see `framework.md` § Claude
+Code Native Integration. The prompt form below always keeps working regardless, and Step 1 itself is
+now a fixed 14-question sequence (`framework.md` § Project Setup — Sequenced Initial Questions) — this
+example still shows the shape of the context to provide, just not every question it now asks.
+
 When starting a new project, paste this (or similar) as your first message:
 
 ```
@@ -366,6 +372,8 @@ Please:
 ---
 
 ## How to Call the Commander Agent — Example
+
+**[v2.5]** `/aosdf-next` does this as a slash command, if this project adopted Claude Code tooling.
 
 Once `project_status.md` = `READY`, start every execution session like this:
 
@@ -452,6 +460,10 @@ The agent will produce `research_notes.md` and add any architectural gaps to `id
 
 ## How to Call the Captain Agent — Example [v1.3]
 
+**[v2.5]** `/aosdf-plan` does this as a slash command, if this project adopted Claude Code tooling. It
+also now honors `project_status.md`'s Milestone Generation Mode (`workflow_initiator` Step 1 Q14,
+`E0`) — Auto (below, unassisted draft from the FRD) or Manual (formalizes a human-supplied outline).
+
 Call this after all 00–05 documents are complete and you are ready to lock the plan:
 
 ```
@@ -498,6 +510,9 @@ Please:
 ---
 
 ## How to Call the Research & Refine Agent — Example [v1.4]
+
+**[v2.5]** `/aosdf-research <task.md>` does this as a slash command, if this project adopted Claude
+Code tooling.
 
 Call this any time a decision requires research before you can update the architecture, product, or security documents. Write a `task.md` first, then invoke the agent.
 

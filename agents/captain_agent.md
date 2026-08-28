@@ -108,7 +108,18 @@ For each infra component → assign to M1-T1 (infra provisioning) or the milesto
 
 ### Step 4 — Define Milestone Groupings
 
-Group tasks into milestones by dependency order:
+**[v2.5, E0] Check `project_status.md` § Project Configuration's Milestone Generation Mode first**
+(set at `workflow_initiator` Step 1 Q14):
+- **Auto** (default) — proceed exactly as below: derive milestone boundaries yourself from the
+  mapped tasks' dependency order.
+- **Manual** — the human has (or should) supply a milestone outline first (names, rough scope,
+  ordering) instead of you deriving it. If it hasn't been provided yet, stop and ask for it before
+  continuing. Once given, formalize *that* outline into the same milestone-file format Step 5 below
+  produces, and still run Step 7's FRD-coverage validation against it — Manual mode changes who
+  decides milestone boundaries, not whether coverage gets checked.
+
+Group tasks into milestones by dependency order (Auto mode; Manual mode groups by the human's
+supplied outline instead):
 
 | Milestone | Theme | Rule |
 |----------|-------|------|

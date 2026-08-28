@@ -333,9 +333,18 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 │   │   │                                            bundled inside AOSDF/, not a standalone package (OD-3)
 │   │   ├── package.json                        ← zero runtime dependencies, hand-rolled stdio JSON-RPC
 │   │   └── src/                                ← config.js, markdown-table.js, tools/*.js — see its own README.md
-│   └── designing_aosfd/                        ← AOSDF/ has no mkdocs.yml or site of its own — Track D
-│                                                  (a docs site for the framework itself) was built, then
-│                                                  cancelled 2026-08-19; see MkDocs-Based Project Docs Site
+│   ├── designing_aosfd/                        ← AOSDF/ has no mkdocs.yml or site of its own — Track D
+│   │                                              (a docs site for the framework itself) was built, then
+│   │                                              cancelled 2026-08-19; see MkDocs-Based Project Docs Site
+│   ├── .claude/                                [v2.5 E3-T1] ← Master template, copied into {project_name}/
+│   │   │                                            (the only git repo) at setup — see Claude Code Native
+│   │   │                                            Integration section below and folder_map.md
+│   │   ├── agents/                             ← 20 subagent defs, one per AOSDF agent role
+│   │   ├── commands/                            ← /aosdf-init, -plan, -next, -addendum, -research, -sync, -import
+│   │   ├── settings.json                        ← git-push deny rule + session-context-gate hook wiring
+│   │   └── hooks/session-context-gate.js        [E3-T2] ← Principle 27 PreToolUse gate
+│   └── .mcp.json                               [v2.5 E3-T1] ← registers aosdf-mcp as an MCP server; also
+│                                                    copied to {project_name}/, paths pre-adjusted for there
 │
 ├── {project_name}/                             ← Application Code only
 │   ├── nest-microservice/                      (backend — NestJS / Fastify / etc.)
@@ -1023,6 +1032,31 @@ Only the diagram panel and shared design tokens are actually exercised today —
 
 ---
 
+## [v2.5, E0] Project Setup — Sequenced Initial Questions
+
+`workflow_initiator` Step 1 is now a fixed, ordered, 14-question sequence — asked one at a time, with two explicit branch points — rather than an unordered list with no stated rationale for its order. Full detail lives in `workflow_initiator.md` Step 1 and `aosdf_expansion_scope.md` §4.4; this is the pointer, not a third copy.
+
+**The two branches that can end the sequence early or redirect it:**
+- **Q1 — new vs. existing.** "Expand or improve an existing product/project" stops `workflow_initiator` entirely and points at `expand_existing_products/00_README.md` (Track X) instead — running the full setup sequence on a project that already has structure would re-propose things it doesn't need.
+- **Q4 — reference documents.** If none exist yet, the agent does not proceed to Q5 until a fixed, blocking minimum-context interview is complete (target users, core features, business goal, known constraints), written to a new `reference/founder_interview.md` — a raw input for Phase 1 to start from, not a finished FRD/BRD. `workflow_initiator` explicitly does not attempt to synthesize a full FRD/BRD from this interview itself; that overstates what a setup agent should own.
+
+**Four setup-time toggles, each recorded once in `project_status.md` § Project Configuration and never re-asked automatically** (the same one-time-decision discipline Principle 24 already applies to the tracker sync cadence):
+
+| Question | Default | What it gates |
+| --- | --- | --- |
+| Q9 — Adopt IDE tooling? | No | `workflow_initiator` Step 8 (copies `.claude/` + `.mcp.json` into `{project_name}/`, `E3-T1`) |
+| Q10 — Enable Learning Roadmap (Track L)? | Yes | `identify_missing_documents`'s Concept Frontmatter Coverage Checklist — disabling skips the check, not the standard itself |
+| Q11 — Enable Project Docs Site (Track P)? | Depends on stakeholder count | Whether `PJ1-T1` (`mkdocs.yml` authoring) is ever run — `docs_site_agent`'s existing precondition already refuses to act without it, so disabling needs no other enforcement |
+| Q14 — Milestone generation mode? | Auto | Whether `captain_agent` derives milestone boundaries itself from the FRD (Auto, today's existing behavior, now named) or formalizes a human-supplied outline (Manual) |
+
+Q9 is worth calling out specifically: `aosdf_expansion_scope.md` Sec 6 item 4 committed to this exact question years before it was implemented — this section closes that gap rather than introducing a new one. Its default stays **No** even though `E3-T1` shows the feature itself carries no real risk (no credentials, nothing runs until a subagent or slash command is actually invoked) — the honest move was to implement the commitment as originally scoped, not to quietly change the default while finally building it.
+
+**One cosmetic-only toggle:** Q12 lets a human rename the *display* label of the main agents (Commander, Captain, Architect, etc.) shown in the copied `{project_name}-Documents/documents/05_AI_Agent_System/agents/*.md` files. It never touches the technical identifier `.claude/agents/<role>.md` (`E3-T1`) uses — those stay e.g. `execution-agent` regardless, because slash commands and `Agent(...)` delegation restrictions reference those exact names. Stated plainly rather than implied otherwise, matching how every other scope limit in this framework is documented.
+
+**`Step 1 Q8` (tracker sync opt-in, `E1`) keeps its exact position** — six files already cite it by that name (`jira_sync_agent.md`, `tracker_sync_agent.md`, `.claude/commands/aosdf-sync.md`, plus this meta-project's own tracking docs). The four new/reframed questions before it (Q1, Q2, Q4, and the Q1/Q2 merge) were sized so they net to zero position change; the new questions after tracker sync (Q9-Q14) don't affect it at all.
+
+---
+
 ## [v2.5, E2-T1] `aosdf-mcp` Server
 
 ### What This Is
@@ -1057,6 +1091,59 @@ Column matching is by header name, not a fixed schema, so a project's exact colu
 `validator_agent` read every file in `src/`: no tool caches, holds, or duplicates file content across calls — each reads its source file fresh per call and, for a write, writes straight back immediately (`index.js`'s `paths` object is just resolved file *locations* from env vars at startup, not cached content). Recorded in `{project_name}-Documents/docs/documents/02_Security_Framework/compliance_checklist.md` row 5, superseding a prior "by design" claim made before this package existed.
 
 Auditing against this meta-project's own real files — not just the checked-in test fixtures, which had all used the canonical `"Gap ID"`/`"Action ID"` headers — surfaced two real, unrelated defects, both fixed same-day: `aosdf_log_gap`/`aosdf_log_manual_action`'s ID-column regex didn't recognize this project's own bare `"ID"` header in `identified_gaps.md`, so a real call would have silently written a row with a blank ID cell; and the package's own `npm test` script (`node --test test/`) threw `MODULE_NOT_FOUND` on Node 24 — fixed to `node --test` (default discovery). Both logged and resolved as `identified_gaps.md` GAP-001/GAP-002, written by the newly-fixed tool itself as the first two rows ever added to that file. A regression test (bare-`"ID"`-header fixture) now covers the fix; suite is 14/14.
+
+---
+
+## [v2.5, E3-T1/E3-T2] Claude Code Native Integration
+
+### What This Is
+
+`aosdf_expansion_scope.md` §4.2 (Pillar B) scoped four artifacts so an AOSDF agent stops being "a prompt template a human hand-copies into chat" and becomes a real Claude Code feature. Item 4 (`aosdf-mcp`) shipped as `E2-T1`. This section covers the other three: subagent definitions + slash commands (`E3-T1`) and the session-context hook (`E3-T2`).
+
+All of it lives as a master template at `AOSDF/.claude/` and `AOSDF/.mcp.json` — `workflow_initiator` Step 8 copies the whole thing into **`{project_name}/`**, not the workspace root and not `{project_name}-Documents/`. This isn't a style choice: `folder_map.md` marks `{project_name}/` as the only real git repo in the workspace. Placing `.claude/` anywhere else would mean it never reaches a teammate's `git clone`, silently breaking the "ships automatically to anyone using Claude Code in that repo" goal `aosdf_expansion_scope.md` §4.2 item 1 states directly. `AOSDF/.mcp.json`'s paths (`../AOSDF/...`, `../{project_name}-Documents/...`) are pre-written relative to that destination, one level below the workspace root — they're not meant to resolve correctly left in place inside `AOSDF/` itself.
+
+### Subagent Definitions (`E3-T1`) — 20 Files, One Per Agent Role
+
+Every AOSDF agent role — the 19 files under `AOSDF/agents/` plus `workflow_initiator` — gets a `.claude/agents/<role>.md` Claude Code subagent definition. Each one is deliberately thin: its `tools:` frontmatter translates that agent's `## Permissions` section into Claude Code's tool-allowlist, and its body is a pointer ("your complete operating instructions live in `AOSDF/agents/<file>.md` — read it and follow it exactly"), never a restatement. This mirrors the same pointer-not-copy discipline `reference/README.md` already applies to raw product-knowledge inputs (Principle 26/28's shared spirit): one file stays the source of truth, everything else references it.
+
+Five agent roles (`architect_agent`, `backend_agent`, `frontend_agent`, `infra_agent`, `qa_agent`) have no formal `## Permissions` block in their source file — only prose Constraints/Output sections. Their `tools:` lists were derived from that prose plus `reference/agent_index.md`'s authoritative Permission Summary table, not guessed independently.
+
+Where an agent's Permissions already name one of `aosdf-mcp`'s six files (`execution_plan.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`), its subagent definition is granted the matching `mcp__aosdf-mcp__*` tool and told to use it instead of `Edit`-ing that file directly — `aosdf_update_task_status`'s own description already states it's "the only tool allowed to write execution_plan.md." **This is a prompt instruction, not a technical wall**: Claude Code's `tools:` frontmatter is coarse (whole-tool grants only), with no documented way to deny `Edit` on one specific path while allowing it on every other file. Stated plainly rather than implied otherwise — the honest scope limit here is the same kind already called out for `aosdf-mcp` itself.
+
+`commander_agent` and `architect_agent` are the only two subagents that delegate to others (to `execution-agent`/`architect-agent`, and to `reviewer-agent`, respectively) — both use the `Agent(name1, name2)` restriction syntax so they can't spawn anything outside the pipeline stage they're actually in.
+
+### `git push` — WRITE_REMOTE Becomes a Technical Control (`E3-T1`)
+
+Every AOSDF agent's Permissions already say "WRITE_REMOTE: none — git push is always a human action." Claude Code's subagent frontmatter has no per-command restriction (confirmed against current docs: `tools: Bash` is all-or-nothing at the whole-tool level), so this can't be enforced per-agent in the `tools:` list. Instead, `.claude/settings.json` (copied to every project alongside the subagents) carries a project-wide `permissions.deny: ["Bash(git push:*)"]` rule — this is exactly where `aosdf_expansion_scope.md` §4.2 item 1 said "this is where the human-only git-push rule becomes a technical control instead of just a documented one," achieved at the project level rather than per-subagent, which is the only level Claude Code actually exposes for this.
+
+### Slash Commands (`E3-T1`)
+
+Seven thin `.claude/commands/*.md` wrappers around the exact invocation shapes `manual.md` and each agent's own "When to Invoke" section already document — no new decision logic, per §4.2 item 2:
+
+| Command | Wraps |
+| --- | --- |
+| `/aosdf-init` | `workflow-initiator` |
+| `/aosdf-plan` | `captain-agent` |
+| `/aosdf-next` | `commander-agent` (session start) |
+| `/aosdf-addendum <path>` | `addendum-agent` |
+| `/aosdf-research <task.md>` | `research-and-refine-agent` |
+| `/aosdf-sync` | `tracker-sync-agent`, Export Mode ("Tracker: sync") |
+| `/aosdf-import <ref>` | `tracker-sync-agent`, Import Mode ("Tracker: import \<ref\>") |
+
+Current Claude Code docs confirm `.claude/commands/<name>.md` still works exactly as before ("custom commands have been merged into skills... your existing `.claude/commands/` files keep working") — this package uses that format rather than migrating to `.claude/skills/<name>/SKILL.md`, since the simpler single-file form is sufficient here and matches the naming `aosdf_expansion_scope.md` already used.
+
+### Session-Context Hook (`E3-T2`) — Principle 27
+
+`manual.md`'s Session Context Management Rule 2 ("do not start a task you cannot finish," target "never exceed 60% context usage before starting a new task") was, until now, an honor-system instruction the Commander was trusted to self-police. `AOSDF/.claude/hooks/session-context-gate.js` turns it into a real `PreToolUse` gate, wired in `.claude/settings.json` against the `Task|Agent` matcher — the closest real approximation to "before a task is delegated" that Claude Code's hook events actually expose (there is no documented "before delegation decision is made" event; `PreToolUse` on the tool that spawns a subagent is the nearest honest equivalent).
+
+**Stated plainly, the same way `aosdf-mcp`'s scope limits are stated:** Claude Code's hook input carries no direct token-count or context-percentage field (confirmed against current hook docs). The hook estimates usage itself by reading the transcript JSONL at `transcript_path` and taking the most recent turn's `usage.{input_tokens, cache_creation_input_tokens, cache_read_input_tokens}` — the same numbers the Anthropic API returns for that turn. It compares the sum against `AOSDF_CONTEXT_WINDOW` (default 200,000 — a placeholder, not a claim about any specific model's real window; set it per-project) at a threshold of `AOSDF_CONTEXT_THRESHOLD` (default 0.6, matching Rule 1's stated target exactly). On any parse failure, missing transcript, or absent usage data, it **fails open** — allows the call — rather than blocking on a guess. 12/12 tests pass (`AOSDF/.claude/hooks/test/`), covering the parsing, threshold math, env-var overrides, and the real hook process's stdin/stdout contract end to end.
+
+### Known Scope Limits
+
+- No fine-grained per-path tool restriction exists in Claude Code's subagent frontmatter — the `mcp__aosdf-mcp__*`-instead-of-`Edit` guidance above is enforced by instruction, not by the platform.
+- `git push` denial is project-wide (`.claude/settings.json`), not per-subagent — Claude Code has no subagent-scoped equivalent today.
+- The context-usage estimate depends on `transcript_path`, which the docs state is written asynchronously and "may lag" the current turn, and on an assumed context-window size that varies by model and isn't reliably present in the hook's own input.
+- `tracker-sync-agent`/`jira-sync-agent`'s subagent definitions don't list a specific Jira/Notion MCP tool name — those are registered per-project, per whichever provider `tracker_config.md` names, not something this template can hardcode generically.
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aosdf-mcp": {
+      "command": "node",
+      "args": ["../AOSDF/aosdf-mcp/src/index.js"],
+      "env": {
+        "AOSDF_DOCS_ROOT": "../{project_name}-Documents/docs"
+      }
+    }
+  }
+}

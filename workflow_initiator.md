@@ -40,31 +40,72 @@ Include wiki status in your project readiness report:
 
 ## What It Does (In Order)
 
-### Step 1 — Gather Project Context
+### Step 1 — Gather Project Context [v2.5, E0 — sequenced, blocking]
 
-Ask the following questions (or detect answers from provided context):
+Ask the following questions **in order, one at a time** (or detect answers from context already
+given) — do not skip ahead to Step 2 until every question below is answered or explicitly deferred
+where a branch says so. This ordering is fixed (`aosdf_expansion_scope.md` § "Project Setup —
+Sequenced Initial Questions") specifically so `Step 1 Q8` (tracker opt-in) keeps its number across
+every file that already cites it (`jira_sync_agent.md`, `tracker_sync_agent.md`, `.claude/commands/
+aosdf-sync.md`, and this meta-project's own `manual_actions.md`/`execution_plan.md`) — inserting or
+removing a question anywhere in this list requires re-checking those citations, not just this file.
 
-1. **What is the project root directory?**
-   - e.g., `Microservices/Comms-Engine/`
+1. **What are we doing?**
+   - **Create a new product/project from scratch** → continue to Q2 below.
+   - **Expand or improve an existing product/project** → **stop here.** Do not run the rest of this
+     agent. Instead point the human at `expand_existing_products/00_README.md` (Track X) — that
+     prompt set is self-contained and targets an existing `{project_name}-Documents/` tree directly.
+     Running `workflow_initiator` on an existing project would re-scan and potentially re-propose
+     structure it doesn't need; Track X's prompts are additive-only by design.
 
-2. **What is the product in one sentence?**
-   - Used to calibrate what documents are expected
+2. **Project identity.**
+   - **Project name** — the literal `{project_name}` token substituted into every template this
+     agent and every agent template copy touches. Get this right first; it's the one string that
+     appears everywhere.
+   - **Project root directory** — e.g., `Microservices/Comms-Engine/`.
+   - **What is the product in one sentence?** — used to calibrate what documents are expected.
+   - **Scope classifier** — `Personal` / `Enterprise` / `Government`. This does not change folder
+     structure or any file this agent creates — it only changes how Q7 (compliance) below is
+     *asked*: `Government` prompts explicitly for accessibility/FedRAMP-style obligations,
+     `Enterprise` prompts for SOC 2/GDPR-style obligations, `Personal` skips straight to "none"
+     unless the human volunteers something. Record the answer in `project_status.md` § Project
+     Configuration (Step 5b) for later reference — it's context, not a gate.
 
 3. **Does the product have a UI?**
    - Yes → `frontend_agent.md` is active, design system doc required
    - No → frontend agent inactive in Phase 1
 
-4. **What is the primary cloud provider?**
+4. **Does this product/project already have reference documents?**
+   (raw specs, brand guidelines, prior architecture notes, an existing pitch deck — anything that
+   captures product knowledge that isn't yet in AOSDF's 00–05 format)
+   - **Yes** → ask for the path(s). Point them at `reference/README.md`'s convention (Step 2 below
+     creates `reference/` if it doesn't exist yet) — these are read-only inputs for agents, never
+     copied or rewritten.
+   - **No** → **do not proceed to Q5 until the following minimum context is captured**, asked
+     sequence-wise, one item at a time, confirming each before moving to the next:
+     1. Target users / audience — who is this for?
+     2. Core features / capabilities — what must it do, at minimum, to be useful?
+     3. Business goal or success metric — why does this exist, and how would you know it worked?
+     4. Any already-known security or compliance constraint (may overlap with Q7 — that's fine,
+        confirm it here too so it isn't lost if Q7 is answered briefly).
+     5. Cloud provider preference, if already known (may overlap with Q5 — same reasoning).
+
+     Write the raw answers to `reference/founder_interview.md` (create `reference/` now if it
+     doesn't exist — don't wait for Step 2) — this is a **raw input**, not a finished 00–05
+     document. It exists so `01_Product_Definition/` (human-authored or `research_and_refine_agent`-
+     assisted) has something concrete to start from instead of a blank page. Do not attempt to
+     synthesize a full FRD/BRD from this interview yourself — that's still Phase 1's job.
+
+5. **What is the primary cloud provider?**
    - AWS / GCP / Azure / none → informs infrastructure checklist
 
-5. **What is the team size?**
-   - Solo / small team / large team → informs execution strategy choice
-
-6. **Which execution strategy is preferred?**
-   - Strategy A (single-agent, sequential) or Strategy B (multi-agent pipeline)
+6. **What is the team size?**
+   - Solo / small team / large team → informs execution strategy choice (Q13 below)
 
 7. **Are there any compliance requirements?**
    - DLT (India SMS), GDPR, HIPAA, PCI → informs security and compliance docs
+   - Phrase this using Q2's scope classifier as a starting prompt (see Q2), but always accept
+     whatever the human actually says over the suggested default.
 
 8. **[v2.5] Opt in to tracker board sync?**
    - Default: **No.** This is a one-time decision — asked only here, at setup. It is not revisited
@@ -94,6 +135,94 @@ Ask the following questions (or detect answers from provided context):
      working unchanged via `jira_sync_agent` — do not ask this question again or create a duplicate
      `tracker_config.md` unless the human explicitly asks to migrate (see framework.md § Tracker Board
      Integration → "Migrating from v2.4 Jira-Only Sync").
+
+9. **[v2.5] Adopt IDE tooling for this project?** *(originally scoped in `aosdf_expansion_scope.md`
+   Sec 6 item 4 as "Step 1 Q9" — implemented here at `E0`, same numbering the scope doc always used)*
+   - Default: **No** — same opt-in-once pattern as tracker sync (Q8), never revisited automatically.
+   - If **Yes**: after `{project_name}/` exists, run Step 8 below (copy `AOSDF/.claude/` and
+     `AOSDF/.mcp.json` into `{project_name}/`) — the 20 Claude Code subagents, 7 slash commands, the
+     project-wide `git push` deny rule, the session-context hook (`E3-T2`), and the `aosdf-mcp`
+     MCP registration (`E2-T1`) all become available the next time the human opens Claude Code from
+     `{project_name}/`.
+   - If **No**: skip Step 8 entirely. The project still works exactly as before — every agent remains
+     invocable by hand-typed prompt exactly as `manual.md` documents; adopting the Claude Code layer
+     is a pure addition, never a requirement (`aosdf_expansion_scope.md` Sec 6 item 3).
+   - This is genuinely low-risk relative to the tracker-sync opt-in it mirrors — no credentials, no
+     external service calls, nothing runs until the human invokes a subagent or slash command — but it
+     still defaults to No, honoring the original scope commitment rather than silently flipping the
+     default now that the feature is built. Revisit the default in a future version if real usage shows
+     No is just extra friction for no benefit.
+
+10. **[v2.5, E0] Enable the Learning Roadmap (Track L)?**
+   - Default: **Yes.** Concept Frontmatter costs nothing extra when it's added at the moment a
+     qualifying document is written anyway (Principle 29) — most projects should leave this on.
+   - If **No**: record `Learning Roadmap: Disabled` in `project_status.md` § Project Configuration
+     (Step 5b). `identify_missing_documents`'s Concept Frontmatter Coverage Checklist skips entirely
+     for this project — it will not nag about missing `concepts:` blocks, and `concept_indexer_agent`
+     is not expected to ever be run. This does not delete or block the Concept Frontmatter Standard
+     itself, it just turns off the *coverage* nagging for a project that has decided the roadmap isn't
+     worth building.
+
+11. **[v2.5, E0] Enable the Project Docs Site (Track P)?**
+    - Default: **Yes** for any project with more than one stakeholder reading `{project_name}-
+      Documents/`; **No** is a reasonable choice for a solo/personal project.
+    - If **No**: record `Project Docs Site: Disabled` in `project_status.md` § Project Configuration.
+      Do not scaffold `mkdocs.yml` or `.venv` — `PJ1-T1` (mkdocs.yml authoring) simply never runs for
+      this project. `docs_site_agent`'s own pre-flight already refuses to do anything without
+      `mkdocs.yml`, so this flag needs no further enforcement anywhere else.
+    - If **Yes**: note it for whoever runs `PJ1-T1` later (frontend_agent or a human) — this question
+      does not itself author `mkdocs.yml`; that remains a one-time task done when Track P's phase is
+      actually reached, per `framework.md` § MkDocs-Based Project Docs Site.
+
+12. **[v2.5, E0] Name the main agents? (optional, cosmetic only)**
+    - Default: **keep the standard names** (Commander, Captain, Architect, Backend Engineer, etc.).
+    - If the human wants custom labels, show the list of **main agents only** — `workflow_initiator`,
+      `captain_agent`, `commander_agent`, and either `execution_agent` (Strategy A) or
+      `architect_agent`/`reviewer_agent`/`validator_agent` (Strategy B), plus `addendum_agent` — each
+      with its default name and one-line function, and let the human rename any of them.
+    - **This renames the display label only** — the Role heading and prose inside the copied
+      `{project_name}-Documents/documents/05_AI_Agent_System/agents/<file>.md` template (same
+      mechanism as the existing `{project_name}` substitution). It never renames the underlying file,
+      the agent's technical identifier, or the corresponding Claude Code subagent's `name:` field in
+      `.claude/agents/<role>.md` (`E3-T1`) — those stay e.g. `execution-agent` no matter what display
+      name is chosen, because slash commands and `Agent(...)` delegation restrictions reference those
+      exact identifiers. State this limitation to the human plainly if they ask for more than a
+      cosmetic rename — don't imply a deeper rename is happening when it isn't.
+
+13. **Which execution strategy is preferred?**
+    - **Strategy A** (single-agent, sequential — `execution_agent` implements, validates, and marks
+      Done in one pass, task by task)
+    - **Strategy B** (multi-agent pipeline — `architect_agent` → `reviewer_agent` → implementor →
+      `validator_agent`, one review gate per task)
+    - **Superman** (`superman_agent` — combined A+B in one agent, but operates a whole milestone at a
+      time rather than task-by-task; see its own "When to Invoke" — not for projects that want
+      per-task review)
+    - Team size (Q6) is a hint, not a rule: solo → Strategy A or Superman; larger teams that want a
+      review gate → Strategy B. Record the choice in `CLAUDE.md` § 3 (Execution Strategy) — this
+      remains changeable later, same as before.
+
+14. **[v2.5, E0] Phase/milestone generation mode?**
+    - **Auto** (default) — once 00–05 docs are complete, `captain_agent` reads them and drafts the
+      full `execution_plan.md` + milestone set unassisted, per its existing "How to Call the Captain
+      Agent" flow (`manual.md`). The human reviews the generated files afterward — this is today's
+      existing behavior, now given an explicit name.
+    - **Manual** — the human provides a milestone outline/brief first (names, rough scope, ordering)
+      and `captain_agent` formalizes *that* into the standard `execution_plan.md`/`milestone.md`
+      format and FRD-coverage-validates it, rather than deriving milestone boundaries on its own from
+      the FRD alone. Useful when the team already has a release plan in mind and wants AOSDF to track
+      it, not redesign it.
+    - Record the choice in `project_status.md` § Project Configuration — `captain_agent` reads it
+      when it runs (Step 5, or `/aosdf-plan`) and follows whichever mode is recorded.
+
+---
+
+**Step 1 recap.** Before moving to Step 2, restate every answer captured above in one short block —
+project name, root, one-sentence description, scope, UI, reference docs (or the founder-interview
+minimum-context checklist completed instead), cloud provider, team size, compliance, tracker opt-in,
+IDE tooling adoption, Learning Roadmap, Project Docs Site, agent names (if changed), execution
+strategy, and milestone generation mode — and let the human correct anything before Step 2 starts.
+This mirrors `identify_missing_documents`' own "state findings before acting" discipline, applied to
+setup input instead of setup output.
 
 ---
 
@@ -201,29 +330,51 @@ When all checks pass, output:
 ✅ AOSDF Setup Complete
 
 Project: <name>
-Execution Strategy: A (Single-Agent) | B (Multi-Agent)
+Execution Strategy: A (Single-Agent) | B (Multi-Agent) | Superman
+Milestone Generation: Auto | Manual
+IDE Tooling: Enabled | Disabled            Learning Roadmap: Enabled | Disabled
+Project Docs Site: Enabled | Disabled
 First milestone: M1 — <name>
 First task: <task ID and name>
 
 To begin execution:
 - Strategy A: Call Backend/Infra agent with task_prompt.md for <M1-T1>
 - Strategy B: Call Architect Agent with execution_plan.md, start M1
+- Superman: Call superman_agent with execution_plan.md, start M1
 
 Manual actions required before execution:
 - See manual_action.md — <count> pending items
 
 Open gaps:
 - See identified_gaps.md — <count> open items
+
+Documents still incomplete or human-input-required:
+- <list, or "None — all 00–05 sections filled">
 ```
+
+**[v2.5, E0]** Then ask, explicitly, rather than assuming: **what next?**
+- **Continue with further documentation** — if any 00–05 document above is still incomplete or
+  flagged human-input-required, stay in this session and keep working through them (or hand off to
+  `research_and_review_agent`/`research_and_refine_agent` if a research question is blocking one).
+- **Start execution** — if 06–08 are complete (`project_status.md = READY`), tell the human to run
+  `/aosdf-next` (or call `commander_agent` directly) to begin. Do not start execution yourself here —
+  that is `commander_agent`'s job, not `workflow_initiator`'s (see Role, above: "it does not
+  implement features").
 
 ---
 
-## [v1.2] Step 5b — Set project_status.md
+## [v1.2, extended v2.5 E0] Step 5b — Set project_status.md
 
 After the execution readiness check (Step 5), create or update `project_status.md`:
 
 - If all checks pass: set status to `READY`
 - If gaps remain: set status to `PLANNING` with a list of what must be resolved
+
+Also write (or update) a **§ Project Configuration** section recording every Step 1 setup-time
+choice that isn't already tracked elsewhere: Scope classifier (Q2), IDE Tooling adoption (Q9),
+Learning Roadmap (Q10), Project Docs Site (Q11), Milestone Generation mode (Q14). Execution Strategy
+(Q13) is recorded in `CLAUDE.md` § 3, not duplicated here. See `templates.md` § project_status.md
+for the exact block format.
 
 The Commander Agent reads this file every session. It will not start execution unless status = `READY`.
 
@@ -315,10 +466,43 @@ This ensures AI planning artifacts never enter source control. The `.gitignore` 
 
 ---
 
+## [v2.5, E3-T1] Step 8 — Copy Claude Code Subagents, Slash Commands, and MCP Registration (only if Step 1 Q9 = yes)
+
+**Skip this step entirely if Step 1 Q9 ("Adopt IDE tooling for this project?") was answered No** — the
+default. Nothing below runs, and nothing about Strategy A/B/Superman execution changes: every agent
+stays invocable exactly as `manual.md` documents, by hand-typed prompt.
+
+If Q9 = yes, copy `AOSDF/.claude/` (the whole tree: `agents/*.md`, `commands/*.md`, `settings.json`, `hooks/`) and
+`AOSDF/.mcp.json` into **`{project_name}/`** — the one real git repo in the workspace (`folder_map.md`),
+**not** the workspace root and **not** `{project_name}-Documents/`. This is what makes `aosdf_expansion_scope.md`
+§4.2 item 1's "ships automatically to anyone using Claude Code in that repo" literally true: `{project_name}/`
+is the only directory here that any teammate's `git clone` actually picks up.
+
+**Path adjustment required** — `AOSDF/.mcp.json`'s paths are written relative to `{project_name}/`
+(one level below the workspace root, sibling to `AOSDF/` and `{project_name}-Documents/`), since that's
+where this step places the copy. Substitute `{project_name}` throughout, same as every other template
+this agent copies — the `../AOSDF/...` and `../{project_name}-Documents/...` relative paths need no
+further adjustment, only the literal `{project_name}` token does. `.claude/settings.json`'s hook command
+(`$CLAUDE_PROJECT_DIR/.claude/hooks/session-context-gate.js`) needs no path adjustment at all — the whole
+`.claude/` tree, hook script included, moves together, so it's self-contained at its destination.
+
+Do not copy `AOSDF/.claude/` or `AOSDF/.mcp.json` anywhere else "for convenience" — a second copy is
+exactly the kind of drift Principle 26 exists to prevent. If `{project_name}/` doesn't exist yet (Phase 1
+hasn't started), stop and tell the human this step is deferred until it does — do not create a
+`{project_name}/` placeholder just to hold `.claude/`.
+
+**After copying**, tell the human: the subagents (`/aosdf-init` through `/aosdf-import` are already wired
+as slash commands) and the `git push` deny rule are live the next time they open Claude Code from
+`{project_name}/`. The `session-context-gate` hook (Principle 27, `E3-T2`) assumes a 200,000-token context
+window by default — if the project's actual model has a different window, set `AOSDF_CONTEXT_WINDOW` in
+that shell's environment (see `AOSDF/.claude/hooks/session-context-gate.js`'s own header comment).
+
+---
+
 ## Permissions
 
 - READ: all project files, CLAUDE.md, framework.md
-- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `CLAUDE.md`, `.gitignore`, `tracker_config.md` + `tracker_config.env` [v2.5] (only if Step 1 Q8 = yes; `jira_config.md` [v2.4] only for pre-v2.5 projects mid-transition)
+- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `reference/founder_interview.md` [v2.5, E0] (only if Step 1 Q4 = no reference docs yet), `CLAUDE.md`, `.gitignore`, `tracker_config.md` + `tracker_config.env` [v2.5] (only if Step 1 Q8 = yes; `jira_config.md` [v2.4] only for pre-v2.5 projects mid-transition), `{project_name}/.claude/` + `{project_name}/.mcp.json` [v2.5, E3-T1] (copied from `AOSDF/.claude/` and `AOSDF/.mcp.json`, Step 8 — only if Step 1 Q9 = yes, and only once `{project_name}/` exists)
 - WRITE_INFRA: none
 - WRITE_DATA: none
 

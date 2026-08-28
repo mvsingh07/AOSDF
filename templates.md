@@ -124,8 +124,8 @@ AOSDF v1.2. Docs in `aosdf-<project-name>/`.
 Entry point: call `commander_agent` to begin execution.
 
 ## 3. Execution Strategy
-Strategy A (single-agent) / Strategy B (multi-agent pipeline)
-First call: `commander_agent` → reads project_status.md + execution_plan.md [v2.2]
+Strategy A (single-agent) / Strategy B (multi-agent pipeline) / Superman (combined A+B, per-milestone) [v2.5]
+First call: `commander_agent` (Strategy A/B) or `superman_agent` (Superman) → reads project_status.md + execution_plan.md [v2.2]
 
 ## 4. Architecture (Non-Negotiable Rules)
 <core architectural principle — e.g., event sourcing rule, adapter pattern rule>
@@ -160,12 +160,20 @@ First call: `commander_agent` → reads project_status.md + execution_plan.md [v
 
 ```markdown
 # Project Status
-# <Project Name> — AOSDF v1.2
+# <Project Name> — AOSDF v2.5
 
 ## Current Status
 STATUS: SETUP  (→ PLANNING → READY → IN_PROGRESS → BLOCKED → COMPLETE)
 
 **Last updated:** <date>
+
+## Project Configuration [v2.5, E0 — set at workflow_initiator Step 1, recorded at Step 5b]
+- **Scope:** Personal | Enterprise | Government  (Q2 — informs how compliance was asked, not a gate)
+- **IDE Tooling (Claude Code subagents/commands):** Enabled | Disabled  (Q9)
+- **Learning Roadmap (Track L):** Enabled | Disabled  (Q10)
+- **Project Docs Site (Track P):** Enabled | Disabled  (Q11)
+- **Milestone Generation Mode:** Auto | Manual  (Q14 — `captain_agent` reads this)
+- *(Execution Strategy is recorded in `CLAUDE.md` § 3, not here — Q13)*
 
 ## Readiness Checklist
 - [ ] All 12 document sections present
