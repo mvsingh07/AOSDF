@@ -54,7 +54,7 @@ function run(args, paths) {
   const table = pickTargetTable(tables, lines);
   const colIdx = (pattern) => table.header.findIndex((h) => pattern.test(h.trim()));
 
-  const idIdx = colIdx(/^action\s*id$/i);
+  const idIdx = colIdx(/^(action\s*id|id)$/i);
   const descIdx = colIdx(/^description$/i);
   const catIdx = colIdx(/^category$/i);
   const priorityIdx = colIdx(/^priority$/i);

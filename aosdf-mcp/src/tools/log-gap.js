@@ -43,7 +43,7 @@ function run(args, paths) {
   const table = tables[0];
   const colIdx = (pattern) => table.header.findIndex((h) => pattern.test(h.trim()));
 
-  const idIdx = colIdx(/^gap\s*id$/i);
+  const idIdx = colIdx(/^(gap\s*id|id)$/i);
   const catIdx = colIdx(/^category$/i);
   const descIdx = colIdx(/^description$/i);
   const sevIdx = colIdx(/^severity$/i);

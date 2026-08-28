@@ -93,6 +93,23 @@ test('aosdf_log_gap appends a row with an auto-generated sequential ID', () => {
   assert.ok(content.includes('| Open '));
 });
 
+test('aosdf_log_gap works against a bare "ID" header (no "Gap ID"/Owner/Identified/Resolution columns)', () => {
+  // Regression test for a real drift found auditing this tool against this meta-project's own
+  // identified_gaps.md (E2-T3): the ID column there is named "ID", not "Gap ID", and the file has
+  // no Owner/Identified/Resolution columns at all. The original idIdx regex only matched "Gap ID",
+  // so a real call against that real file silently wrote a row with a blank ID cell.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aosdf-mcp-test-'));
+  fs.cpSync(FIXTURES, dir, { recursive: true });
+  const identifiedGaps = path.join(dir, 'identified_gaps_bare_id.md');
+
+  const result = logGap.run({ category: 'Compliance', description: 'bare-ID header case' }, { identifiedGaps });
+  assert.equal(result.gapId, 'GAP-001');
+
+  const content = fs.readFileSync(identifiedGaps, 'utf8');
+  assert.ok(content.includes('| GAP-001'), 'the written row must carry its ID, not a blank cell');
+  assert.ok(content.includes('bare-ID header case'));
+});
+
 test('aosdf_log_manual_action appends to the Pending table, not Completed', () => {
   const paths = freshPaths();
   const result = logManualAction.run({ description: 'Do the new thing', priority: 'P2' }, paths);

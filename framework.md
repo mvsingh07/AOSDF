@@ -1050,7 +1050,13 @@ One required environment variable, `AOSDF_DOCS_ROOT`, pointing at a project's `{
 
 ### Known Scope Limits
 
-Column matching is by header name, not a fixed schema, so a project's exact column set doesn't need to match `templates.md`'s example verbatim — but a table with no recognizable ID or Status column is silently skipped by the tools that need one. `aosdf_log_gap` and `aosdf_log_manual_action` each operate on one table (the first table found, or — for manual actions — the one under a heading matching "Pending"); a file with more than one candidate table beyond that convention needs its own path override or isn't yet handled generically. `E2-T3` (the Principle 26 compliance audit) is the follow-up task that checks this package doesn't drift from these constraints as it's used.
+Column matching is by header name, not a fixed schema, so a project's exact column set doesn't need to match `templates.md`'s example verbatim — but a table with no recognizable ID or Status column is silently skipped by the tools that need one. `aosdf_log_gap` and `aosdf_log_manual_action` each operate on one table (the first table found, or — for manual actions — the one under a heading matching "Pending"); a file with more than one candidate table beyond that convention needs its own path override or isn't yet handled generically. `id`/`status` column-name matching accepts a bare `"ID"`/`"Status"` header as well as the templated `"Gap ID"`/`"Action ID"`/`"Task ID"`/`"Phase ID"` forms, across all six tools.
+
+### `E2-T3` Principle 26 Compliance Audit — Passed 2026-08-28
+
+`validator_agent` read every file in `src/`: no tool caches, holds, or duplicates file content across calls — each reads its source file fresh per call and, for a write, writes straight back immediately (`index.js`'s `paths` object is just resolved file *locations* from env vars at startup, not cached content). Recorded in `{project_name}-Documents/docs/documents/02_Security_Framework/compliance_checklist.md` row 5, superseding a prior "by design" claim made before this package existed.
+
+Auditing against this meta-project's own real files — not just the checked-in test fixtures, which had all used the canonical `"Gap ID"`/`"Action ID"` headers — surfaced two real, unrelated defects, both fixed same-day: `aosdf_log_gap`/`aosdf_log_manual_action`'s ID-column regex didn't recognize this project's own bare `"ID"` header in `identified_gaps.md`, so a real call would have silently written a row with a blank ID cell; and the package's own `npm test` script (`node --test test/`) threw `MODULE_NOT_FOUND` on Node 24 — fixed to `node --test` (default discovery). Both logged and resolved as `identified_gaps.md` GAP-001/GAP-002, written by the newly-fixed tool itself as the first two rows ever added to that file. A regression test (bare-`"ID"`-header fixture) now covers the fix; suite is 14/14.
 
 ---
 
