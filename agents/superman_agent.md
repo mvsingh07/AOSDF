@@ -203,6 +203,12 @@ Resume command: Call superman_agent with tasks: <remaining task IDs>
 In `06_Execution_Plan/execution_plan.md`:
 - Find this task's row(s) and set Status → `Done`
 
+**[v2.5, E5-T1]** Append a row to `implementation_prompts/README.md`'s Log table for this task's
+prompt: `| <filename> | <TASK-ID> | <date> | <date> | Executed (Superman — no approval gate) |` —
+`Created` and `Executed` share the same date since Step 1.4/1.6 run back to back with no pause.
+Labeling the Status this way keeps the log an honest record that this prompt skipped the human
+gate Strategy A/B require, rather than looking indistinguishable from an approved one.
+
 When producing an implementation plan, read BOTH the milestone scope file AND execution_plan.md.
 
 **Update project_status.md:**

@@ -78,6 +78,7 @@ Agents are AI workers. Each one has a defined role, specific inputs it reads, sp
 | **Tracker Sync** | [v2.5] Human-triggered only, via `Tracker: sync` / `Tracker: import`. Mirrors `execution_plan.md`'s Status column to Jira or Notion (whichever `tracker_config.md` names) one-directionally — the execution plan always wins except through explicit Import Mode. Generalizes the older `jira_sync_agent`, which stays working as-is for projects that haven't adopted `tracker_config.md`. |
 | **Concept Indexer** | [v2.5] Human-triggered only, via `Learn: rebuild` / `Learn: open` / `Learn: check coverage`. Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/`. Builds a personal, zero-setup interview-prep roadmap purely from Concept Frontmatter — never invents content of its own. |
 | **Docs Site** | [v2.5] Human-triggered only, via `Project Docs: build` / `Project Docs: open`. Thin wrapper around `mkdocs build` — never authors config, never installs dependencies on the fly. Renders your project's own `{ProjectName}-Documents/`, nested inside that same folder — there is no separate site for `AOSDF/` itself. |
+| **Editor Extension** | [v2.5, E4/E5; v3.0, E6-T2/T3, L4-T1] VSCode first, if this project adopted IDE tooling (`workflow_initiator` Step 1 Q9). Status bar chip, an Inbox (Gaps, Manual Actions, pending Implementation Prompts), `AOSDF: Open Project Docs`, and `AOSDF: Open Learning Roadmap` (thin wrapper around `Learn: open` — ships only if Track E has shipped, per `L4`) — all read-only, thin clients of `aosdf-mcp` or direct file reads, never a second source of truth. Plus three write actions (`AOSDF: Run Agent Command...`, `Trigger Tracker Sync`, `Approve & Send`) that type into a terminal running Claude Code — never a direct file write from the extension itself. Supports multiple open project folders in one window (each with its own settings); a folder picker only appears once a second folder is open. Internal-only distribution (`OD-1`) — run from source (`AOSDF/aosdf-vscode/`, F5) or install a `.vsix` built via `npm run package`; never published to the VS Code Marketplace. |
 
 ---
 
@@ -200,6 +201,26 @@ Every cell in a column is padded with trailing spaces to match the column width.
 ```
 
 This is defined in `framework.md` [v1.4] § Document Formatting Standard and applies to every agent — captain, execution, research, validator, and any future agent.
+
+## Checking Compliance — `aosdf-lint` [v3.0, E6-T1]
+
+Every write tool in `aosdf-mcp` already re-renders a table through the same code that defines
+"compliant" (`markdown-table.js`'s `renderTable()`), so a file it writes can't drift. But a table
+a human or an agent typed by hand, outside those tools, can — and until `E6-T1` nothing ever
+checked. Run it from `AOSDF/aosdf-mcp/`:
+
+```
+npm run lint -- <path-to-scan>       # report violations, exit 1 if any
+npm run lint -- <path-to-scan> --fix # rewrite every table to canonical form
+```
+
+It only checks Rules 1–2 (the two mechanically-checkable ones) — Rule 3 (consistent widths for
+the same schema across files) and Rule 4 (blank rows between logical groups) both require a
+judgment call about what counts as "the same schema" or "a logical group," so they're out of
+scope by design, not by oversight. Running it over this project's own documents at `E6-T1` found
+182 pre-existing violations across 72 files — logged as `identified_gaps.md` GAP-004 rather than
+mass-reformatted, since fixing all of them is a large, separate, mostly-cosmetic decision, not
+something to do unilaterally while building the linter itself.
 
 ---
 

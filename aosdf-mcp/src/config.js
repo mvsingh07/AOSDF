@@ -34,6 +34,9 @@ function resolvePaths(root) {
     moduleIndex:
       process.env.AOSDF_MODULE_INDEX_PATH ||
       path.join(root, 'documents', '03_System_Design', 'README.md'),
+    implementationPromptsIndex:
+      process.env.AOSDF_IMPLEMENTATION_PROMPTS_PATH ||
+      path.join(root, 'documents', '05_AI_Agent_System', 'implementation_prompts', 'README.md'),
   };
 }
 

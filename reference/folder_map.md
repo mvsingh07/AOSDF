@@ -58,6 +58,16 @@
 │   │   ├── core.js                                markdown→HTML, diagram panel, tables, nav, search
 │   │   └── core.css                                shared design tokens + styles, light/dark aware
 │   ├── designing_aosfd/                           Framework design history
+│   ├── aosdf-mcp/                                 [v2.5 E2-T1] Six read/write MCP tools over a project's markdown
+│   │   │                                            state (Principle 26) — stdio JSON-RPC, zero dependencies.
+│   │   │                                            Registered by `.mcp.json` below; also spoken to directly by
+│   │   │                                            `aosdf-vscode/`'s status bar chip.
+│   ├── aosdf-vscode/                              [v2.5 E4-T1/T2] Editor extension MVP (read-only), VSCode first.
+│   │   │                                            Status bar chip + Gaps/Manual Actions inbox, both thin clients
+│   │   │                                            of `aosdf-mcp/` or direct markdown reads — never a second
+│   │   │                                            source of truth. Not copied into `{ProjectName}/` — not yet
+│   │   │                                            packaged for the Marketplace (`E4-T3`/OD-1 open); run via F5
+│   │   │                                            from here against a `{ProjectName}/` workspace in the interim.
 │   ├── .claude/                                   [v2.5 E3-T1] Master template — Claude Code subagents/
 │   │   │                                            commands/hooks. `workflow_initiator` Step 8 copies this
 │   │   │                                            whole tree into `{ProjectName}/.claude/`, never left here
@@ -81,6 +91,9 @@
 │   │   ├── settings.json
 │   │   └── hooks/session-context-gate.js
 │   ├── .mcp.json                                  [v2.5 E3-T1] Copied from `AOSDF/.mcp.json` at setup (Step 8)
+│   ├── .vscode/settings.json                      [v2.5 E4-T1/T2] Written (not copied) at setup (Step 8) —
+│   │                                                points `aosdf-vscode/` at this workspace's docs root, MCP
+│   │                                                server, and Project Docs Site
 │   └── [backend/, frontend/, etc.]
 │
 └── {ProjectName}-Documents/                       ← Project Documentation (gitignored). The ONE project docs

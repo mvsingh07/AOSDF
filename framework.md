@@ -1,5 +1,5 @@
 # AI-Orchestrated Software Development Framework (AOSDF)
-# Version 2.5
+# Version 2.6
 
 ---
 
@@ -275,6 +275,49 @@ tracked in `15_Addendums/tracking_addendums.md`, not in the main tracking board.
 
 **[v2.5] 30. The learning renderer is a read-only, zero-dependency artifact**
 `16_Learning_Roadmap/render/index.html` has no build step, no external network calls, no accounts, and no server requirement — it reads only from data inlined at generation time, the same "tooling is a client of the files, never a second source of truth" discipline this framework already applies to the Wiki (Principle 18) and Jira sync (Principle 24). `{project_name}-Documents/{project_name}-Documents-site/` (MkDocs-based, see **MkDocs-Based Project Docs Site** below) is read-only, self-contained static HTML once built — a real build step exists there (`mkdocs build`), but the *output* is still an artifact anyone can open with no server, no accounts, and no runtime dependency, and stays local-only by default the same way (never publishes by default — see **Learning Roadmap** and `evolution.md` Sec 14).
+
+**[v2.6] 31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
+`07_Milestones/*/milestone.md`'s own Status column is a human-readable display copy of `execution_plan.md`'s Status column (Principle 22) — it is not a second source of truth, but nothing keeps it automatically in sync either. Similarly, `12_Manual_Actions/actions.md` Action IDs (MA-xxx) can be reassigned or repurposed as the tracker evolves; any citation of a specific MA-xxx ID in a milestone.md, execution_plan.md, or implementation prompt is a point-in-time reference, not a permanent binding. **Discovered concretely in a live project:** a milestone.md showed every subtask as `Planned` while `execution_plan.md` showed nearly all of them `Done`, and the same file cited `MA-024`/`MA-025` for a task whose actions had since been renumbered to `MA-021`/`MA-022` after `actions.md` reassigned the ID `MA-024` to unrelated work. **Rule:** whenever any agent reads a milestone.md file for any reason, it MUST cross-check its Status column against `execution_plan.md` and its MA-xxx citations against `actions.md`'s current numbering, and correct any mismatch found in the same session — logged as a Documentation gap in `identified_gaps.md` if the fix is non-trivial. This is a targeted reconciliation triggered by the read, never a standing background sync job.
+
+---
+
+## Reusable Architecture Patterns (Reference)
+
+Patterns below are not framework principles (they are not mandatory for every project) — they are documented,
+named precedents any `architect_agent` or human should consider and either apply or explicitly decline (with a
+one-line reason) when a project matches the "Applies to" criterion. Declining without a stated reason is a
+Documentation gap.
+
+### Tenant Reputation Gating (Shared Outbound Dispatch Infrastructure)
+
+**Applies to:** any product where multiple tenants dispatch outbound communications (email, SMS, push,
+webhooks) through infrastructure the platform itself operates and is accountable for — a shared IP pool, a
+shared sending domain, a shared provider account. The risk this pattern addresses: one tenant's bad list or
+bad behavior degrades or suspends sending reputation for every other tenant sharing that infrastructure.
+
+**Pattern:**
+- A **gatekeeper** sits in the dispatch path and can block or throttle a send before it reaches the provider,
+  independent of the provider's own reputation logic.
+- A **per-tenant reputation score**, maintained as an exponentially-weighted moving average (EMA) over the
+  tenant's own complaint/bounce rate (a smoothing factor of α≈0.05 dampens single-incident noise while still
+  reacting within a handful of sends) — not a raw rolling-window rate, which a short burst can distort.
+- A **graduated enforcement ladder**, never a binary allow/block — e.g. `HEALTHY → WATCHLIST → THROTTLED →
+  SUSPENDED → BANNED`, with each transition automatic on score thresholds.
+- **Calibration check (a specific, recurring miscalibration to test for):** the platform's own account-level
+  provider alarms (e.g. a cloud provider's bounce/complaint CloudWatch-equivalent alarms) must be set *tighter*
+  than any individual tenant's per-tenant gatekeeper threshold. If the account-level alarm is looser than the
+  per-tenant threshold, the gatekeeper can never actually protect the shared account — by the time the
+  account-level alarm fires, the gatekeeper's per-tenant threshold has already been breached and it is too
+  late to prevent the shared-account consequence.
+- This is a **`02_Security_Framework`/`03_System_Design` concern from M0** for any product matching the
+  "Applies to" criterion — do not defer it to a later phase as a placeholder "basic rules" implementation, and
+  do not let a fully-built engine go undocumented: log a Documentation gap in `identified_gaps.md` immediately
+  if the engine is built before its own architecture doc exists — this pattern is named from exactly that
+  failure mode occurring in a live project.
+
+**Origin:** Comms-Service's Send Gatekeeper Service + Tenant Reputation Engine. See
+`Comms-Engine-Documents/identified_gaps.md` GAP-061–063 for the concrete miscalibration and documentation-gap
+instances this pattern was extracted from.
 
 ---
 
@@ -565,6 +608,11 @@ M0 = Project Setup. Contains:
 
 No code is written in M1+ until M0 is complete.
 
+**[v2.6]** Every `milestone.md`'s Status column is a denormalized display copy of `execution_plan.md` (Principle
+22) — it can drift and is not auto-synced. Any agent reading a milestone.md must reconcile it against
+`execution_plan.md` and against `12_Manual_Actions/actions.md`'s current MA-xxx numbering before relying on it.
+See Principle 31.
+
 ### 08_Tracking_System — `decisions_log.md`
 **[v2.2] No separate tracking board.** `execution_plan.md`'s Status column is the only task-status record — there is no `tracking_board.md`. `08_Tracking_System/` holds only `decisions_log.md`, a lightweight log of cross-cutting decisions made during execution; it has no status authority and agents never read it to find work. Created by `captain_agent` if absent. Commander reads `execution_plan.md` to find the next `Planned` task.
 
@@ -649,6 +697,7 @@ without disrupting the in-progress milestone workflow.
 - When a guide exists or can be written, add it to `guides.md` in the same session
 - When a human completes an action: move the row to the **Completed** table in `actions.md` and add the date; update env status columns accordingly
 - `manual_action.md` at the project root is the legacy file — `12_Manual_Actions/actions.md` is authoritative for v1.7+ projects
+- **[v2.6]** When an Action ID's meaning changes — e.g. a placeholder or completed ID gets reassigned to unrelated work — audit `07_Milestones/*/milestone.md` for any stale citation of that ID's old meaning and correct it in the same session. See Principle 31.
 
 ---
 
@@ -1144,6 +1193,89 @@ Current Claude Code docs confirm `.claude/commands/<name>.md` still works exactl
 - `git push` denial is project-wide (`.claude/settings.json`), not per-subagent — Claude Code has no subagent-scoped equivalent today.
 - The context-usage estimate depends on `transcript_path`, which the docs state is written asynchronously and "may lag" the current turn, and on an assumed context-window size that varies by model and isn't reliably present in the hook's own input.
 - `tracker-sync-agent`/`jira-sync-agent`'s subagent definitions don't list a specific Jira/Notion MCP tool name — those are registered per-project, per whichever provider `tracker_config.md` names, not something this template can hardcode generically.
+
+---
+
+## [v2.5, E4-T1/E4-T2] Editor Integration MVP (Read-Only, VSCode First)
+
+### What This Is
+
+`aosdf_expansion_scope.md` §4.1 (Pillar A) scoped an editor extension as a thin shell over `aosdf-mcp` (`E2-T1`) — the extension holds no logic or state of its own, only chrome. `execution_plan.md`'s `E4` phase narrowed the original draft scope: the Documentation Tree, Execution Plan Table, Milestone Board, and Module Index views moved to Track P's rendered site (`PJ1`) instead of being built twice. What remains for `E4` is the two genuinely editor-native affordances plus a link-out command:
+
+- **Status bar chip** (`E4-T1`) — current project state and next `Planned` task, sourced from `aosdf_read_status`/`aosdf_next_planned_task` over `aosdf-mcp`'s stdio JSON-RPC protocol, not a re-implementation of either tool's parsing.
+- **Gaps & Manual Actions inbox** (`E4-T1`) — a tree view listing every open row in `identified_gaps.md` and `manual_actions.md`. `aosdf-mcp` exposes only *append* tools for these two files (`aosdf_log_gap`, `aosdf_log_manual_action`) — no list tool — so the extension reads and parses both files directly, reusing `aosdf-mcp`'s own `markdown-table.js`/`config.js` modules rather than a second parser. This is still Principle-26-safe: nothing is cached across refreshes, and every refresh re-reads from disk.
+- **`AOSDF: Open Project Docs`** command (`E4-T2`) — a thin wrapper opening Track P's built site (`docs_site_agent.md`'s `Project Docs: build` output). Unblocked once `PJ1` shipped.
+
+Built at `AOSDF/aosdf-vscode/`, plain JS (no build step), zero runtime dependencies — the extension talks to `aosdf-mcp` by spawning it as a child process and speaking the same newline-delimited JSON-RPC 2.0 protocol `AOSDF/aosdf-mcp/src/index.js` implements (`src/mcpClient.js`), consistent with Principle 30's zero-dependency discipline already holding the Learning Roadmap renderer and `aosdf-mcp` itself.
+
+### Where It Lives — Not Copied Into `{project_name}/`
+
+Unlike `.claude/`/`.mcp.json` (`E3-T1`), `aosdf-vscode/` stays at `AOSDF/aosdf-vscode/` and is **not** copied anywhere: it isn't packaged for the VS Code Marketplace yet (`E4-T3`, tracked as `OD-1` in `execution_plan.md` Sec 4, remains an open human decision — public vs. internal distribution). Packaging is `E6`'s job, not `E4`'s. In the interim, `workflow_initiator` Step 8 (gated the same as `E3-T1`, on Step 1 Q9) writes `{project_name}/.vscode/settings.json` with the extension's three settings (`aosdf.documentsRoot`, `aosdf.mcpServerPath`, `aosdf.projectDocsSitePath`), so a developer only has to press F5 in `AOSDF/aosdf-vscode/` and open `{project_name}/` in the resulting Extension Development Host window — the settings take effect automatically, no manual configuration required.
+
+### Known Scope Limits
+
+- No list tool exists in `aosdf-mcp` for gaps/manual actions, so the inbox view reads those two files directly rather than exclusively through the MCP surface — stated here rather than left implicit, matching how `aosdf-mcp`'s own scope limits are documented.
+- Not packaged for any marketplace or extension gallery — `E4-T3`/`OD-1` is open, and `E6` is where that gets resolved.
+- Read-only by design (`E4`'s explicit scope): no command in this MVP writes to any AOSDF file. Write actions (invoking agents, approving prompts, triggering tracker sync from the command surface) are `E5` — see § Editor Integration Write Actions below.
+- VSCode only for now — the underlying logic (`aosdf-mcp`, Claude Code subagents/commands) is already editor-independent, so a later port to another IDE is additive, not a rearchitecture.
+
+---
+
+## [v2.5, E5-T1] Editor Integration Write Actions
+
+### What This Is
+
+`execution_plan.md`'s `E5` phase adds the three write-capable affordances `aosdf_expansion_scope.md` §4.1/§4.2 scoped: invoking an agent from the command surface, approving an implementation prompt inline, and triggering tracker sync — all from inside `AOSDF/aosdf-vscode/` (`E4`), without ever letting the extension become a second writer of any AOSDF file.
+
+**The mechanism is a terminal, not an MCP tool call.** Every one of these three actions is, mechanically, the same primitive: reveal a named integrated terminal ("AOSDF") and type text into it (`src/terminalRunner.js`). `AOSDF: Run Agent Command...` offers a `QuickPick` over the 7 slash commands `.claude/commands/*.md` (`E3-T1`) already wires, prompting for an argument where the command needs one (`/aosdf-addendum`, `/aosdf-research`, `/aosdf-import`); `AOSDF: Trigger Tracker Sync` is a one-click shortcut for `/aosdf-sync`; `AOSDF: Approve & Send` opens the pending prompt file for review, then sends the literal text `Approve to execute`. In every case, whatever actually changes on disk happens inside the Claude Code session already running in that terminal, through that session's own agents and their own Permissions — exactly as if the human had typed the same text by hand. This is deliberately not a second, extension-side execution path: the extension performs **zero** direct file writes for any of the three actions, which is what the task's Principle 26 audit confirmed rather than assumed.
+
+This mechanism was chosen over trying to call a hypothetical Claude Code extension API from `aosdf-vscode` (unverified, and would couple a generic VS Code extension to Anthropic's own extension internals) and over inventing a new MCP tool that "invokes an agent" (aosdf-mcp's whole design is narrow, auditable file read/write tools per Principle 26 — spawning an agent session isn't a file operation, so it doesn't belong there either).
+
+### Implementation Prompts Inbox — Closing a Real, Pre-Existing Gap
+
+`templates.md` has specified `implementation_prompts/README.md`'s Log table (`Prompt File | Task | Created | Executed | Status`) since v1.2, but no agent's operating steps ever actually wrote to it — the table existed only as an unfulfilled template promise, the same category of gap `E0` found in `aosdf_expansion_scope.md`'s Q9 commitment. `E5-T1` closes it for the two paths that could be fixed without redesigning Strategy B's pipeline:
+
+- `execution_agent.md` (Strategy A) — Step 2 now appends a `Pending Approval` row when the prompt is saved; Step 6 flips it to `Executed` once validation passes and `execution_plan.md` is updated.
+- `superman_agent.md` — Step 1.7 appends the row directly as `Executed (Superman — no approval gate)`, since Superman's whole design removes the pause between generating and executing a prompt (Step 1.4's own text: "Do NOT pause for human approval — this is the gate Superman removes"). Labeling it this way keeps the log honest about which prompts skipped the human gate, rather than making them look indistinguishable from an approved one.
+- Strategy B (`architect_agent` → `reviewer_agent` → implementor) is **not** wired — neither file currently specifies the mechanics of saving/logging a prompt concretely enough to extend safely without a larger pass over that pipeline. Logged as `identified_gaps.md` GAP-003 rather than silently left unfixed.
+
+`aosdf-mcp/src/config.js` gained an `implementationPromptsIndex` path (`documents/05_AI_Agent_System/implementation_prompts/README.md`, env-overridable like every other path) so `aosdf-vscode`'s `src/promptsData.js` resolves it the same canonical way as every other tracked file — no aosdf-mcp tool reads or writes it; there was no read need until this extension existed, and the two agents above write it directly as part of their own existing WRITE_LOCAL permissions.
+
+### Known Scope Limits
+
+- Depends on the human already running (or being willing to run) `claude` in the same "AOSDF" integrated terminal the extension sends text into — the extension does not start a Claude Code session itself.
+- Strategy B's implementation-prompt lifecycle isn't logged to `implementation_prompts/README.md` yet (`identified_gaps.md` GAP-003) — the Implementation Prompts inbox will under-report for Strategy B projects until that's addressed.
+- `AOSDF: Approve & Send` sends a fixed approval string; it has no way to know whether the terminal it's typing into is actually the one running the session awaiting that specific prompt's approval — the human is trusted to have the right terminal focused, same as if they'd typed it themselves.
+
+---
+
+## [v3.0, E6] GA Hardening
+
+`OD-1` (editor extension distribution model) resolved internal-only on 2026-08-29 — no public VS Code Marketplace listing, scoped to the VSCode release specifically. That unblocked `E6`'s three build tasks (`E6-T4`, the `manual.md` walkthrough update, lives in `manual.md` itself rather than being duplicated here).
+
+### E6-T1 — Formatting Linter (`aosdf-lint`)
+
+`AOSDF/aosdf-mcp/src/lint.js` + `src/lint-cli.js` (`npm run lint -- <path> [--fix]`, or `aosdf-mcp`'s `bin.aosdf-lint`). Deliberately reuses `markdown-table.js`'s own `renderTable()` as the sole definition of "compliant" — a table passes if and only if re-rendering it reproduces its current lines verbatim. This is not a second, parallel implementation of the Document Formatting Standard that could drift from what the write tools already enforce (Principle 26): it's the exact same function every write tool already goes through, run in the other direction (check instead of write).
+
+Scope is deliberately Rules 1–2 only (separator-dash width, cell padding) — the two rules a table can be mechanically judged against in isolation. Rules 3 (consistent widths for the same schema *across files*) and 4 (blank rows between logical groups) both require recognizing "the same schema" or "a logical group," a semantic judgment the tool doesn't attempt. `--fix` uses the same `replaceManyTables` primitive every write tool already uses, so a fixed file is indistinguishable from one an agent wrote correctly the first time.
+
+**Dogfooding finding:** running `aosdf-lint` over this entire workspace turned up 182 Rule 1/2 violations across 72 files — almost entirely hand-authored prose/reference tables (BRD.md, FRD.md, `execution_plan.md`'s own Sec 1 reference table, `evolution.md`, `aosdf_expansion_scope.md`, `expand_existing_products/`) that were never run through the write tools and so were never actually held to the standard, despite `manual.md` Rule 5 stating "no exceptions for quick or small tables." Not auto-fixed: a workspace-wide `--fix` pass is a large, mostly-cosmetic diff across many files and products, well outside the scope of "build the linter" — that's a separate human decision, tracked as `identified_gaps.md` GAP-004 rather than either silently ignored or unilaterally executed. The three tables this session's own `E6` edits touched (`execution_plan.md`'s Open Decisions Log, `E4` phase table, Decision & Sign-Off Record) were re-canonicalized as part of making those specific edits, since that's normal write-tool hygiene, not a workspace sweep.
+
+### E6-T2 — Multi-Workspace Support
+
+Resolves `OD-4`'s deferral (`execution_plan.md` Sec 6): `aosdf-vscode` now manages every open workspace folder, not just `folders[0]`. The three `aosdf.*` settings are now `"scope": "resource"` (`package.json`), so a multi-root workspace can point each folder at a different `{project_name}-Documents/docs`. One `McpClient` per folder (`Map` keyed by `folder.uri.toString()` in `extension.js`), restarted individually on that folder's own config change or removal (`onDidChangeConfiguration`'s per-resource `affectsConfiguration(section, uri)` check; `onDidChangeWorkspaceFolders`). The status bar chip stays a single item — it shows whichever folder contains the active editor's document (falling back to the first folder), prefixed `[folderName]` only when more than one folder is open. `InboxProvider` (`inboxProvider.js`) iterates every folder and prefixes each folder's three sections the same way — still a flat list, not a new tree level, consistent with `E4-T1`'s original design. Every write action (`E5-T1`) now takes a `folder` argument end to end: `terminalRunner.js` names/`cwd`s a terminal per folder (`AOSDF: <folderName>`) instead of the single fixed `AOSDF` terminal, and `runAgentCommand`/`triggerTrackerSync` prompt with a folder-picking `QuickPick` first; `approvePromptItem` already knows its folder from the Inbox item that triggered it (`item.aosdfFolder`, stamped by `InboxProvider`).
+
+**With exactly one workspace folder open — the common case — every one of these reduces to `E4`/`E5`'s original behavior exactly:** no `[folderName]` prefix anywhere, no folder-picker prompt, the one plain `AOSDF` terminal with no explicit `cwd`. Verified with a hand-rolled `vscode` API stub (this environment can't launch a real Extension Development Host) exercising both the single- and two-folder paths end to end — confirmed terminal naming/`cwd`, Inbox prefixing, and folder-scoped dispatch all behave as designed, and confirmed the single-folder path is byte-for-byte unchanged.
+
+### E6-T3 — Internal Packaging
+
+`OD-1` resolved internal-only, so this is `.vsix` packaging, never a Marketplace submission — no `vsce publish` step, no publisher-account signup. `aosdf-vscode/package.json` gained a `package` script (`npx --yes @vscode/vsce package --allow-missing-repository --no-dependencies -o aosdf-vscode.vsix`) — `@vscode/vsce` is fetched on demand via `npx`, never added as a project dependency, so the zero-runtime-dependency discipline (Principle 30) this extension otherwise holds to is unaffected; nothing about running or testing the extension requires an `npm install` to pull in anything. `--allow-missing-repository` is passed because `aosdf-vscode` isn't a standalone repo (`OD-3`: bundled inside `AOSDF/`), so a `repository` field would be fictitious. Verified end to end this session: `npm run package` produces a working 11-file, ~14KB `.vsix` containing exactly the runtime `src/*.js` files plus `package.json`/`readme.md` (`.vscodeignore` already excluded `test/**`). The output is gitignored (`aosdf-vscode/.gitignore`) — a regenerable build artifact, not source, the same treatment Track D's `AOSDF-site/` got before its cancellation.
+
+### Known Scope Limits
+
+- The linter checks Rules 1–2 only; Rules 3–4 remain unaudited by tooling (see E6-T1 above).
+- Multi-workspace's "active folder" heuristic (whichever folder owns the active editor) has no meaning with zero open editors — it falls back to the first folder, same as the original single-workspace assumption.
+- The `.vsix` was verified to package and install-list correctly; it was not verified to *run* correctly once installed from a `.vsix` inside a real Extension Development Host, since this environment can't launch VS Code's GUI — human verification (opening `aosdf-vscode.vsix` via "Install from VSIX...") is the recommended final check before relying on it.
 
 ---
 

@@ -466,7 +466,7 @@ This ensures AI planning artifacts never enter source control. The `.gitignore` 
 
 ---
 
-## [v2.5, E3-T1] Step 8 — Copy Claude Code Subagents, Slash Commands, and MCP Registration (only if Step 1 Q9 = yes)
+## [v2.5, E3-T1, E4-T1/T2] Step 8 — Copy Claude Code Subagents, Slash Commands, MCP Registration, and Editor Extension Settings (only if Step 1 Q9 = yes)
 
 **Skip this step entirely if Step 1 Q9 ("Adopt IDE tooling for this project?") was answered No** — the
 default. Nothing below runs, and nothing about Strategy A/B/Superman execution changes: every agent
@@ -477,6 +477,22 @@ If Q9 = yes, copy `AOSDF/.claude/` (the whole tree: `agents/*.md`, `commands/*.m
 **not** the workspace root and **not** `{project_name}-Documents/`. This is what makes `aosdf_expansion_scope.md`
 §4.2 item 1's "ships automatically to anyone using Claude Code in that repo" literally true: `{project_name}/`
 is the only directory here that any teammate's `git clone` actually picks up.
+
+**Also write `{project_name}/.vscode/settings.json`** (merge if it already exists) with the three
+`AOSDF/aosdf-vscode/` (`E4-T1`/`E4-T2`) settings, substituting the real project name:
+
+```json
+{
+  "aosdf.documentsRoot": "../{project_name}-Documents/docs",
+  "aosdf.mcpServerPath": "../AOSDF/aosdf-mcp/src/index.js",
+  "aosdf.projectDocsSitePath": "../{project_name}-Documents/{project_name}-Documents-site/index.html"
+}
+```
+
+Unlike `.claude/`/`.mcp.json`, `aosdf-vscode/` itself is **not** copied — it isn't packaged for the
+Marketplace yet (`E4-T3`/`OD-1` is still open), so a developer runs it from `AOSDF/aosdf-vscode/` via
+VS Code's F5 (Extension Development Host), then opens `{project_name}/` inside that host window, where
+these settings take effect automatically.
 
 **Path adjustment required** — `AOSDF/.mcp.json`'s paths are written relative to `{project_name}/`
 (one level below the workspace root, sibling to `AOSDF/` and `{project_name}-Documents/`), since that's
@@ -495,14 +511,16 @@ hasn't started), stop and tell the human this step is deferred until it does —
 as slash commands) and the `git push` deny rule are live the next time they open Claude Code from
 `{project_name}/`. The `session-context-gate` hook (Principle 27, `E3-T2`) assumes a 200,000-token context
 window by default — if the project's actual model has a different window, set `AOSDF_CONTEXT_WINDOW` in
-that shell's environment (see `AOSDF/.claude/hooks/session-context-gate.js`'s own header comment).
+that shell's environment (see `AOSDF/.claude/hooks/session-context-gate.js`'s own header comment). For the
+editor extension: press F5 in `AOSDF/aosdf-vscode/` to try the status bar chip and the Gaps & Manual
+Actions view against this project right away.
 
 ---
 
 ## Permissions
 
 - READ: all project files, CLAUDE.md, framework.md
-- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `reference/founder_interview.md` [v2.5, E0] (only if Step 1 Q4 = no reference docs yet), `CLAUDE.md`, `.gitignore`, `tracker_config.md` + `tracker_config.env` [v2.5] (only if Step 1 Q8 = yes; `jira_config.md` [v2.4] only for pre-v2.5 projects mid-transition), `{project_name}/.claude/` + `{project_name}/.mcp.json` [v2.5, E3-T1] (copied from `AOSDF/.claude/` and `AOSDF/.mcp.json`, Step 8 — only if Step 1 Q9 = yes, and only once `{project_name}/` exists)
+- WRITE_LOCAL: `project_status.md`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `12_Manual_Actions/guides.md`, `reference/README.md`, `reference/founder_interview.md` [v2.5, E0] (only if Step 1 Q4 = no reference docs yet), `CLAUDE.md`, `.gitignore`, `tracker_config.md` + `tracker_config.env` [v2.5] (only if Step 1 Q8 = yes; `jira_config.md` [v2.4] only for pre-v2.5 projects mid-transition), `{project_name}/.claude/` + `{project_name}/.mcp.json` [v2.5, E3-T1] (copied from `AOSDF/.claude/` and `AOSDF/.mcp.json`, Step 8 — only if Step 1 Q9 = yes, and only once `{project_name}/` exists), `{project_name}/.vscode/settings.json` [v2.5, E4-T1/T2] (written, not copied — only if Step 1 Q9 = yes, and only once `{project_name}/` exists)
 - WRITE_INFRA: none
 - WRITE_DATA: none
 

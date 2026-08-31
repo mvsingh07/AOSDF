@@ -6,14 +6,16 @@
   "type": "commonjs",
   "main": "src/index.js",
   "bin": {
-    "aosdf-mcp": "src/index.js"
+    "aosdf-mcp": "src/index.js",
+    "aosdf-lint": "src/lint-cli.js"
   },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "node src/lint-cli.js"
   },
   "dependencies": {},
   "devDependencies": {}

@@ -60,6 +60,11 @@ Using `05_AI_Agent_System/prompt_templates/task_prompt.md` as the base, generate
 ```
 Example: `M1-T3-rate-limiting-middleware_prompt.md`
 
+**[v2.5, E5-T1]** Append a row to `implementation_prompts/README.md`'s Log table for this prompt:
+`| <filename> | <TASK-ID> | <today's date> | | Pending Approval |` — this is what lets the editor
+extension's Implementation Prompts inbox (`aosdf-vscode`) show it as awaiting review. Never skip
+this append even if no editor extension is in use; the log is the tracked-artifact record either way.
+
 The prompt must include:
 - Context (from CLAUDE.md summary)
 - Precise task definition
@@ -95,6 +100,11 @@ If validation fails: fix the specific failure. Do not declare done until all cri
 In `06_Execution_Plan/execution_plan.md`:
 - Find the row(s) for this task/subtask and change Status: `Planned` → `Done`
 - This is the authoritative status record.
+
+**[v2.5, E5-T1]** Also update this prompt's row in `implementation_prompts/README.md`'s Log
+table: set `Executed` to today's date and `Status` to `Executed`. This table stays a secondary,
+derived record of the same event `execution_plan.md` already captures — never a second source of
+truth for task status, only for the prompt file's own lifecycle.
 
 When producing an implementation plan, read BOTH the milestone scope file AND execution_plan.md.
 

@@ -1,0 +1,110 @@
+{
+  "name": "aosdf-vscode",
+  "displayName": "AOSDF",
+  "description": "AOSDF project status in the editor: status bar chip, gaps/manual-actions/prompt inbox, a link out to the Project Docs Site and the Learning Roadmap, command-surface write actions routed through a terminal into Claude Code, and multi-workspace support. VSCode ships first (evolution.md Pillar A). Internal distribution only (OD-1) — not published to the VS Code Marketplace.",
+  "version": "0.3.0",
+  "private": true,
+  "publisher": "aosdf",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=18"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aosdf.refresh",
+        "title": "AOSDF: Refresh Status"
+      },
+      {
+        "command": "aosdf.openProjectStatus",
+        "title": "AOSDF: Open Project Status"
+      },
+      {
+        "command": "aosdf.openProjectDocs",
+        "title": "AOSDF: Open Project Docs"
+      },
+      {
+        "command": "aosdf.openLearningRoadmap",
+        "title": "AOSDF: Open Learning Roadmap"
+      },
+      {
+        "command": "aosdf.runAgentCommand",
+        "title": "AOSDF: Run Agent Command..."
+      },
+      {
+        "command": "aosdf.triggerTrackerSync",
+        "title": "AOSDF: Trigger Tracker Sync"
+      },
+      {
+        "command": "aosdf.approvePromptItem",
+        "title": "AOSDF: Approve & Send",
+        "icon": "$(check)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "aosdf.approvePromptItem",
+          "when": "view == aosdf.inbox && viewItem == aosdf.prompt",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "aosdf.approvePromptItem",
+          "when": "false"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aosdf",
+          "title": "AOSDF",
+          "icon": "$(checklist)"
+        }
+      ]
+    },
+    "views": {
+      "aosdf": [
+        {
+          "id": "aosdf.inbox",
+          "name": "Inbox",
+          "contextualTitle": "AOSDF Inbox — Gaps, Manual Actions & Pending Prompts"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AOSDF",
+      "properties": {
+        "aosdf.documentsRoot": {
+          "type": "string",
+          "scope": "resource",
+          "default": "../{project_name}-Documents/docs",
+          "description": "Path to this product's '{project_name}-Documents/docs/' folder, relative to the workspace root ('{project_name}/', per folder_map.md). Set this to the real folder name before use. Resource-scoped [v3.0, E6-T2] so a multi-root workspace can point each folder at its own project."
+        },
+        "aosdf.mcpServerPath": {
+          "type": "string",
+          "scope": "resource",
+          "default": "../AOSDF/aosdf-mcp/src/index.js",
+          "description": "Path to aosdf-mcp's src/index.js, relative to the workspace root. Matches the path already registered in .mcp.json. Resource-scoped [v3.0, E6-T2]."
+        },
+        "aosdf.projectDocsSitePath": {
+          "type": "string",
+          "scope": "resource",
+          "default": "../{project_name}-Documents/{project_name}-Documents-site/index.html",
+          "description": "Path to the built Project Docs Site's index.html (docs_site_agent.md's 'Project Docs: build' output), relative to the workspace root. Used by 'AOSDF: Open Project Docs'. Resource-scoped [v3.0, E6-T2]."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test",
+    "package": "npx --yes @vscode/vsce package --allow-missing-repository --no-dependencies -o aosdf-vscode.vsix"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
