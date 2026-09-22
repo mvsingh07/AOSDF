@@ -1,0 +1,145 @@
+/* AOSDF Project Docs Site — default theme override (Track P, PJ1-T1).
+   Copied verbatim into every project's docs/docs_overrides/aosdf.css;
+   framework.md's "MkDocs-Based Project Docs Site" section is the design
+   record this implements. Two independent pieces: */
+
+/* 1. Renders `aosdf-diagram` fenced blocks (Concept Frontmatter Standard /
+      Document Formatting Standard) as a first-class monospace panel,
+      distinct from an ordinary code block, in both light and dark Material
+      themes. MkDocs' default `fenced_code` extension already tags the block
+      `language-aosdf-diagram` in its output HTML class — no plugin needed,
+      only this styling. */
+.highlight pre code[class*="language-aosdf-diagram"],
+pre code.language-aosdf-diagram {
+  background-color: var(--md-code-bg-color);
+  border-left: 4px solid var(--md-primary-fg-color);
+  padding-left: 1em;
+  white-space: pre;
+  overflow-x: auto;
+  font-family: var(--md-code-font-family, "Roboto Mono", monospace);
+  line-height: 1.35;
+}
+
+.highlight:has(> pre code.language-aosdf-diagram) {
+  border-left: 4px solid var(--md-primary-fg-color);
+  border-radius: 0.2rem;
+}
+
+/* 2. Sizing for the back-to-home link and the header-level wide-view toggle
+      added by aosdf.js (see that file for behavior). The nav/TOC collapse
+      buttons live *inside* their own sidebar now (see part 3 below), not in
+      the header, so they aren't sized by this rule. */
+.aosdf-panel-toggle {
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aosdf-panel-toggle.is-active {
+  color: var(--md-accent-fg-color);
+}
+
+/* 3. Nav/TOC collapse rail (Track P, PJ1-T2). Each sidebar gets a small
+   always-visible strip at its own top, containing just the toggle button —
+   deliberately *inside* `.md-sidebar` itself (a sibling of, not a descendant
+   of, `.md-sidebar__scrollwrap`) so the control never disappears along with
+   the content it hides: collapsing shrinks the sidebar to a slim rail rather
+   than removing it outright. See aosdf.js for the insertion logic. */
+.md-sidebar {
+  transition: width 0.15s ease;
+}
+
+.md-sidebar[data-aosdf-collapsed] {
+  width: 2.2rem;
+  overflow: hidden;
+}
+
+.md-sidebar[data-aosdf-collapsed] > .md-sidebar__scrollwrap {
+  display: none;
+}
+
+.aosdf-panel-rail {
+  display: flex;
+  height: 2.2rem;
+}
+
+.aosdf-panel-rail--nav {
+  justify-content: flex-end;
+  padding-right: 0.4rem;
+}
+
+.aosdf-panel-rail--toc {
+  justify-content: flex-start;
+  padding-left: 0.4rem;
+}
+
+.md-sidebar[data-aosdf-collapsed] .aosdf-panel-rail {
+  justify-content: center;
+  padding: 0;
+}
+
+.aosdf-panel-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+  border-radius: 0.2rem;
+  background: transparent;
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+}
+
+.aosdf-panel-toggle-btn:hover {
+  background: var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color);
+}
+
+/* 4. Wide view (Track P, PJ1-T2). Material centers `.md-grid` at a fixed
+   `max-width`; removing that cap is the entire mechanism — `.md-content` is
+   already `flex-grow:1` (Material default) so it absorbs the freed width on
+   its own, and the two sidebars (already the first/last flex children of
+   `.md-main__inner`) land at the true left/right viewport edges with no
+   further layout change. Toggled via aosdf.js on <html data-aosdf-wide>. */
+html[data-aosdf-wide] .md-grid {
+  max-width: 100%;
+  padding: 0 1.2rem;
+}
+
+/* 5. Fixed footer (Track P, PJ1-T2 follow-up). Material's default footer is
+   an ordinary flow element after `.md-main` — it only reaches the viewport
+   bottom once you scroll to the true end of the page, and scrolls away like
+   any other content before that. Pinning it here means it never moves.
+   `--aosdf-footer-height` is measured live by aosdf.js (not hardcoded) and
+   reserved as bottom padding on `.md-main` so no content ends up hidden
+   underneath the now-fixed bar. */
+:root {
+  --aosdf-footer-height: 2.8rem;
+}
+
+.md-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.md-main {
+  padding-bottom: var(--aosdf-footer-height);
+}
+
+/* The nav/TOC sidebars are `position:fixed;height:100%` below Material's
+   desktop breakpoint (off-canvas drawer on mobile, always-fixed on tablet),
+   so they never see `.md-main`'s padding-bottom above — that padding only
+   affects elements actually inside `.md-main`'s own flow. Without this, the
+   last `--aosdf-footer-height` worth of a long nav tree (e.g. the final
+   items of an expanded, deeply-nested section) renders underneath the fixed
+   footer bar and can't be scrolled into view. */
+.md-sidebar__scrollwrap {
+  padding-bottom: var(--aosdf-footer-height);
+}

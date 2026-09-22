@@ -1,7 +1,9 @@
 # Agent: Concept Indexer
-# AOSDF v2.5 — OPTIONAL
+# AOSDF v3.0 — OPTIONAL
 # Part of Track L (Learning). See framework.md § Learning Roadmap, § Track L Renderer Core,
 # and evolution.md Sec 3-6, Sec 13.
+# [v3.0, L5] Learn: rebuild gained a concept-vocabulary collision check (resolves OD-8) — see
+# AOSDF/reference/concept_vocabulary.md and step 3 below. Human-maintained, read-only to this agent.
 # L2/D0/L3 scope: produces roadmap_index.md, roadmap_graph.json, and render/index.html — the last
 # of these built by inlining the shared AOSDF/renderer_core/ module (core.js + core.css), not by
 # hand-rolling rendering logic. render/index.html shows both Build Order and Learn Order
@@ -79,7 +81,17 @@ documents are authoritative — the index is stale, never wrong, and re-running 
 2. **Dedupe by concept ID.** If the same ID (e.g. `caching-strategies`) appears in more than one
    document's `concepts:` list, merge into a single row with multiple entries in the Source column —
    never create two rows for the same ID.
-3. **Resolve `prerequisites`.** For each ID listed as a prerequisite, confirm it also appears as a
+3. **Check `concept_vocabulary.md` (`OD-8`, `L5`).** If `documents/16_Learning_Roadmap/concept_vocabulary.md`
+   exists, load its canonical-ID/alias table (`AOSDF/reference/concept_vocabulary.md` defines the
+   format). For every concept ID from step 2: an exact alias match resolves silently to its canonical ID
+   before continuing; no match but a mechanical near-duplicate signal (normalized word set is a strict
+   subset/superset of an existing canonical ID — e.g. `cache-invalidation` vs
+   `cache-invalidation-strategy`) gets flagged in that row's `Notes`: `possible duplicate of <canonical-id>
+   — see concept_vocabulary.md`, and logged to `identified_gaps.md` (`Category: Learning`, `Severity:
+   Low`, only if not already logged for this pair) — never auto-merged, that's a human call. If the file
+   doesn't exist, skip this step entirely; it is not a gap. This agent never writes
+   `concept_vocabulary.md` — human-maintained only.
+4. **Resolve `prerequisites`.** For each ID listed as a prerequisite, confirm it also appears as a
    `concepts:` entry somewhere in the scan. If it doesn't resolve to anything found, flag that row's
    `Notes` column: `orphaned prerequisite: <id>`. If a prerequisite chain forms a cycle, flag every node
    in the cycle: `cycle: <id> → <id> → …`. Do not drop the node — still include it in the table,
@@ -89,22 +101,22 @@ documents are authoritative — the index is stale, never wrong, and re-running 
    its own independent orphan/cycle check purely for display, as a second, renderer-native guarantee
    that a concept is never silently dropped — the two are allowed to be redundant with each other, never
    allowed to disagree in substance.
-4. **Build `roadmap_index.md`** — one row per unique concept ID, columns: Concept, Category, Difficulty,
+5. **Build `roadmap_index.md`** — one row per unique concept ID, columns: Concept, Category, Difficulty,
    Source Document(s), Built At, Notes. Sort by `built_at` (Build Order — the only ordering available
    until Learn Order's topological sort ships in L3).
    Apply the Document Formatting Standard (framework.md § Document Formatting Standard) to the table.
-5. **Build `roadmap_graph.json`.** One JSON object per unique concept ID (same dedupe/orphan/cycle
-   results as step 3, carried over — never re-derive them differently across the two outputs): `id`,
+6. **Build `roadmap_graph.json`.** One JSON object per unique concept ID (same dedupe/collision/orphan/
+   cycle results as steps 2-4, carried over — never re-derive them differently across the two outputs): `id`,
    `category`, `difficulty`, `prerequisites` (array of IDs, possibly empty), `built_at`, `source`
    (array of document paths), `interview_angle`, and `diagram` — the exact text of that source document's
    `aosdf-diagram` fenced block (evolution.md Sec 5) if its frontmatter has `diagram: true`, else `null`.
    Never paraphrase or reformat the diagram text — copy it verbatim, whitespace included, so it still
    matches the source file exactly.
-6. **Generate `render/index.html`.** A single self-contained file, built by inlining four things
+7. **Generate `render/index.html`.** A single self-contained file, built by inlining four things
    verbatim, in this order: `AOSDF/renderer_core/core.css`, this page's own small layout CSS layered on
    top (only what's genuinely page-specific — never re-declare a rule the core already defines),
    `AOSDF/renderer_core/core.js`, and this page's own glue script (calls `AOSDFRendererCore.escapeHtml`
-   / `.renderDiagramPanel`, never re-implements them). The `roadmap_graph.json` object from step 5 is
+   / `.renderDiagramPanel`, never re-implements them). The `roadmap_graph.json` object from step 6 is
    inlined verbatim as a `<script type="application/json">` block (evolution.md Sec 6 — this is what
    makes `file://` opening work with zero CORS failures; never `fetch()` a sibling `.json` file at
    runtime, and never `<script src="…">` the core files either — copy their text in). Zero network
@@ -118,19 +130,19 @@ documents are authoritative — the index is stale, never wrong, and re-running 
      unsatisfied prerequisite, stable-tie-broken by Build Order position). This sort is never
      precomputed into `roadmap_graph.json` — ordering is a rendering concern, this agent's index-building
      job is only to hand over the raw edges correctly.
-   - **Cycle/orphan handling, independent of step 3's log.** Any node whose prerequisites never fully
+   - **Cycle/orphan handling, independent of step 4's log.** Any node whose prerequisites never fully
      resolve during the topological sort (a cycle) — or that lists a `prerequisites` ID absent from the
      node set entirely (an orphan) — falls back to its Build Order position within the Learn Order view,
      with a visible badge on its card. This is computed fresh from the graph by the renderer itself, not
      read from a flag this agent set — the renderer never silently drops a concept even if this agent's
-     own detection in step 3 were somehow wrong or stale.
+     own detection in step 4 were somehow wrong or stale.
    - **`localStorage` "mark reviewed."** A checkbox on each card, persisted under a page-scoped
      `localStorage` key, purely for the developer's own tracking of what they've re-studied — never
      synced anywhere (Principle 30's "local-only by default"). A "Reviewed: N / total" count in the
      header reads the same store.
    - Category/difficulty filters and Prev/Next navigation apply to whichever view (Build or Learn Order)
      is active, unchanged from L2.
-7. **Log coverage gaps.** Any document in the required-frontmatter list (§ Inputs above) that has none:
+8. **Log coverage gaps.** Any document in the required-frontmatter list (§ Inputs above) that has none:
    append to `identified_gaps.md` — `Category: Learning, Severity: Low` — one row per missing document,
    only if not already logged (check first; never duplicate a gap row).
 
@@ -168,7 +180,8 @@ documents are authoritative — the index is stale, never wrong, and re-running 
 
 - READ: every document in the required-frontmatter list, plus any other project document for the
   optional-tier scan, plus `AOSDF/renderer_core/core.js` and `core.css` (inlined verbatim into
-  `render/index.html` — never modified)
+  `render/index.html` — never modified), plus `documents/16_Learning_Roadmap/concept_vocabulary.md` if
+  present (`OD-8`, `AOSDF/reference/concept_vocabulary.md` — read-only, never written by this agent)
 - WRITE_LOCAL: `documents/16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`,
   `identified_gaps.md` (append only)
 - WRITE_REMOTE: none

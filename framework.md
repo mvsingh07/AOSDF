@@ -1,5 +1,5 @@
 # AI-Orchestrated Software Development Framework (AOSDF)
-# Version 2.6
+# Version 3.1
 
 ---
 
@@ -125,6 +125,8 @@
 > Changes in v2.3 are marked `[v2.3]`
 > Changes in v2.4 are marked `[v2.4]`
 > Changes in v2.5 are marked `[v2.5]`
+> Changes in v3.0 are marked `[v3.0]`
+> Changes in v3.1 are marked `[v3.1]`
 
 ---
 
@@ -159,6 +161,8 @@
 - **[v2.5]** Generalizes Jira-only sync to a provider-agnostic `tracker_sync_agent` — Jira *or* Notion, one provider per project, selected via `tracker_config.md`'s `Provider:` field and implemented against a shared `TrackerAdapter` interface. `jira_config.md` / `jira_sync_agent` keep working unchanged for existing projects. See the **Tracker Board Integration** section below, `AOSDF/reference/tracker_mapping.md`, and Principles 25-26.
 - **[v2.5]** Introduces `concept_indexer_agent` and `16_Learning_Roadmap/` — read-only over the documentation tree, write-only to `16_Learning_Roadmap/`, deriving `roadmap_index.md`, `roadmap_graph.json`, and a self-contained `render/index.html` from every `concepts:` entry in Concept Frontmatter, never duplicating source content (Principle 28). Human-triggered only, via `Learn: rebuild` / `Learn: open` / `Learn: check coverage`. See the **Learning Roadmap** section below.
 - **[v2.5 D0]** Introduces `AOSDF/renderer_core/` for Track L (`render/index.html`'s diagram panel + shared tokens). **[v2.5, restructured 2026-08-19]** Track P (Project Docs Site) renders with MkDocs + Material instead of a hand-rolled renderer — a single `mkdocs.yml` per project, a tiny CSS override for `aosdf-diagram`, and `docs_site_agent` as the thin human-triggered build/open wrapper. Track D (a matching site for `AOSDF/` itself) was built the same way, then cancelled — `AOSDF/` is the product, not project documentation. See **Track L Renderer Core** and **MkDocs-Based Project Docs Site** below.
+- **[v3.0, E6]** GA hardening: `aosdf-lint` formatting linter (Rules 1-2, reusing the write tools' own table renderer as the compliance definition), multi-workspace support in the editor extension, and internal-only packaging (`OD-1`). See **GA Hardening** below.
+- **[v3.1]** Codifies Principle 31 — denormalized status displays (`milestone.md` vs `execution_plan.md`) and MA-xxx cross-references must be reconciled whenever an agent reads a milestone.md, not left to silently drift; adds the **Reusable Architecture Patterns (Reference)** section, starting with Tenant Reputation Gating for shared outbound dispatch infrastructure.
 
 ---
 
@@ -276,7 +280,7 @@ tracked in `15_Addendums/tracking_addendums.md`, not in the main tracking board.
 **[v2.5] 30. The learning renderer is a read-only, zero-dependency artifact**
 `16_Learning_Roadmap/render/index.html` has no build step, no external network calls, no accounts, and no server requirement — it reads only from data inlined at generation time, the same "tooling is a client of the files, never a second source of truth" discipline this framework already applies to the Wiki (Principle 18) and Jira sync (Principle 24). `{project_name}-Documents/{project_name}-Documents-site/` (MkDocs-based, see **MkDocs-Based Project Docs Site** below) is read-only, self-contained static HTML once built — a real build step exists there (`mkdocs build`), but the *output* is still an artifact anyone can open with no server, no accounts, and no runtime dependency, and stays local-only by default the same way (never publishes by default — see **Learning Roadmap** and `evolution.md` Sec 14).
 
-**[v2.6] 31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
+**[v3.1] 31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
 `07_Milestones/*/milestone.md`'s own Status column is a human-readable display copy of `execution_plan.md`'s Status column (Principle 22) — it is not a second source of truth, but nothing keeps it automatically in sync either. Similarly, `12_Manual_Actions/actions.md` Action IDs (MA-xxx) can be reassigned or repurposed as the tracker evolves; any citation of a specific MA-xxx ID in a milestone.md, execution_plan.md, or implementation prompt is a point-in-time reference, not a permanent binding. **Discovered concretely in a live project:** a milestone.md showed every subtask as `Planned` while `execution_plan.md` showed nearly all of them `Done`, and the same file cited `MA-024`/`MA-025` for a task whose actions had since been renumbered to `MA-021`/`MA-022` after `actions.md` reassigned the ID `MA-024` to unrelated work. **Rule:** whenever any agent reads a milestone.md file for any reason, it MUST cross-check its Status column against `execution_plan.md` and its MA-xxx citations against `actions.md`'s current numbering, and correct any mismatch found in the same session — logged as a Documentation gap in `identified_gaps.md` if the fix is non-trivial. This is a targeted reconciliation triggered by the read, never a standing background sync job.
 
 ---
@@ -407,7 +411,7 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
         ├── jira_config.md                      [v2.4] ← OPTIONAL, pre-v2.5 projects only (kept working)
         ├── tracker_config.md                   [v2.5] ← OPTIONAL, created only if tracker sync opted in at setup
         ├── tracker_config.env                  [v2.5] ← OPTIONAL, gitignored, credential-only (OD-2, resolved 2026-08-27)
-        ├── docs_overrides/                     [v2.5] ← Material theme CSS override (aosdf-diagram panel)
+        ├── docs_overrides/                     [v2.5, populated 2026-09-12] ← aosdf.css (aosdf-diagram panel) + aosdf.js (collapsible nav/TOC, home link) — copied from AOSDF/templates/project_docs_site/ at PJ1-T1
         ├── reference/                          [v2.2] ← Raw product knowledge inputs (read by agents, never modified)
         │   ├── README.md                       ← What goes here and how agents use it
         │   └── [human-provided raw docs]       ← briefs, research, vendor docs, stakeholder notes
@@ -608,7 +612,7 @@ M0 = Project Setup. Contains:
 
 No code is written in M1+ until M0 is complete.
 
-**[v2.6]** Every `milestone.md`'s Status column is a denormalized display copy of `execution_plan.md` (Principle
+**[v3.1]** Every `milestone.md`'s Status column is a denormalized display copy of `execution_plan.md` (Principle
 22) — it can drift and is not auto-synced. Any agent reading a milestone.md must reconcile it against
 `execution_plan.md` and against `12_Manual_Actions/actions.md`'s current MA-xxx numbering before relying on it.
 See Principle 31.
@@ -697,7 +701,7 @@ without disrupting the in-progress milestone workflow.
 - When a guide exists or can be written, add it to `guides.md` in the same session
 - When a human completes an action: move the row to the **Completed** table in `actions.md` and add the date; update env status columns accordingly
 - `manual_action.md` at the project root is the legacy file — `12_Manual_Actions/actions.md` is authoritative for v1.7+ projects
-- **[v2.6]** When an Action ID's meaning changes — e.g. a placeholder or completed ID gets reassigned to unrelated work — audit `07_Milestones/*/milestone.md` for any stale citation of that ID's old meaning and correct it in the same session. See Principle 31.
+- **[v3.1]** When an Action ID's meaning changes — e.g. a placeholder or completed ID gets reassigned to unrelated work — audit `07_Milestones/*/milestone.md` for any stale citation of that ID's old meaning and correct it in the same session. See Principle 31.
 
 ---
 
@@ -1290,8 +1294,28 @@ An earlier draft (Track D) pointed this same tooling at `AOSDF/` itself, to give
 ### Why It Fits With Near-Zero Rework
 
 - AOSDF's markdown is already standard: headings, GFM pipe tables (the Document Formatting Standard is a superset, not a conflicting convention), and folder names already numerically prefixed (`00_…` through `16_…`), which MkDocs' nav ordering picks up with zero configuration.
-- The `aosdf-diagram` fence (§ Concept Frontmatter Standard, `aosdf-diagram` convention) needs no custom plugin — any fenced-code renderer, including MkDocs' default Python-Markdown `fenced_code` extension, already tags that block `language-aosdf-diagram` in its output HTML class. A few lines of CSS in the Material theme override turn it into a distinct monospace panel.
+- The `aosdf-diagram` fence (§ Concept Frontmatter Standard, `aosdf-diagram` convention) needs no custom plugin — any fenced-code renderer, including MkDocs' default Python-Markdown `fenced_code` extension, already tags that block `language-aosdf-diagram` in its output HTML class. `AOSDF/templates/project_docs_site/docs_overrides/aosdf.css` (below) is the few lines of CSS that turn it into a distinct monospace panel — copied verbatim, not re-authored per project.
 - Nav, search, and table-of-contents generation are the tool's job, not AOSDF's — "generic by construction, no hardcoded file list" is a property of `mkdocs.yml`'s config, not hand-written JS.
+- The one piece of hand-written JS this site does ship, `docs_overrides/aosdf.js` (below), is additive to the tool's own nav/TOC/search — it doesn't replace or duplicate any of it.
+
+### Richer Diagrams: Archify (optional, `R3`/`OD-H11`)
+
+The `aosdf-diagram` fence (plain box-drawing text) stays the default for every diagram — zero tooling,
+zero setup, opens as plain text if all else fails. For a real architecture/workflow/sequence/dataflow/
+lifecycle diagram where that's not enough, [Archify](https://github.com/tt-a1i/archify) (MIT) is the
+recommended alternative for **Project Docs Site pages only** — never Track L's `render/index.html`
+(see below for why). An agent authors a small typed JSON spec, Archify's CLI validates it and
+compiles it into one self-contained interactive HTML file (pan/zoom, search, theme toggle, PNG/SVG/
+WebM export), which is committed under the module's `diagrams/` subfolder and linked from the relevant
+markdown page — it is never generated as part of `mkdocs build` itself, so it adds nothing to that
+build's dependency surface. See `007_hosting_pipeline_module/03_architecture.md` for a real, delivered
+example (`hosting-pipeline.architecture.json`/`.html`) and `execution_plan.md`'s `R3` phase for the
+pilot record.
+
+**Why not Track L:** a generated Archify diagram links to Google Fonts — confirmed by inspecting a
+delivered artifact directly, not assumed from its docs — which breaks the offline-first, zero-external-
+call guarantee `render/index.html` holds itself to (Principle 30). Track L's diagram panel stays
+`aosdf-diagram`-only; this was a deliberate simplification (`OD-H11`), not an oversight.
 
 ### One Site, Nested Inside `{project_name}-Documents/`
 
@@ -1302,12 +1326,24 @@ An earlier draft (Track D) pointed this same tooling at `AOSDF/` itself, to give
 ├── {project_name}-Documents-site/   → build output, gitignored, sibling of docs/
 └── docs/                            → docs_dir — every renderable file lives under here:
     ├── CLAUDE.md, project_status.md, identified_gaps.md, reference/
+    ├── docs_overrides/aosdf.css, aosdf.js   → PJ1-T1 default theme, see below
     └── documents/00_Project_Context/ … 16_Learning_Roadmap/
 ```
 
-`docs_dir: docs` is MkDocs' own idiomatic default, not an AOSDF invention — narrowing `docs_dir` to a subfolder (rather than the whole project root) is what lets both the config file and the built site live legally inside `{project_name}-Documents/`: MkDocs only forbids `docs_dir` from being the *parent of the config file*, and forbids `site_dir` from being *inside* `docs_dir`. Neither restriction applies once `docs_dir` is a subfolder — `mkdocs.yml`'s own parent isn't `docs_dir`, and `{project_name}-Documents-site/` sits beside `docs/`, not inside it.
+`docs_dir: docs` is MkDocs' own idiomatic default, not an AOSDF invention — narrowing `docs_dir` to a subfolder (rather than the whole project root) is what lets both the config file and the built site live legally inside `{project_name}-Documents/`: MkDocs only forbids `docs_dir` from being the *parent of the config file*, and forbids `site_dir` from being *inside* `docs_dir`. Neither restriction applies once `docs_dir` is a subfolder — `mkdocs.yml`'s own parent isn't `docs_dir`, and `{project_name}-Documents-site/` sits beside `docs/`, not inside it. `docs_overrides/` must live *inside* `docs_dir` for the same reason `extra_css`/`extra_javascript` paths resolve correctly — MkDocs resolves both relative to `docs_dir`, not the repo root (a real bug caught in `AOSDF-Hosting` — see `execution_plan.md`, 2026-09-12 — from a project whose `docs_overrides/` sat at the repo root instead).
 
-`docs_site_agent` (`AOSDF/agents/docs_site_agent.md`) is the thin, human-triggered wrapper that runs `mkdocs build` against `{project_name}-Documents/mkdocs.yml` on a `Project Docs:` command, or opens the already-built static output — it never authors or edits `mkdocs.yml` itself (that's `frontend_agent`'s one-time setup task, PJ1-T1).
+`docs_site_agent` (`AOSDF/agents/docs_site_agent.md`) is the thin, human-triggered wrapper that runs `mkdocs build` against `{project_name}-Documents/mkdocs.yml` on a `Project Docs:` command, or opens the already-built static output — it never authors or edits `mkdocs.yml` itself (that's `frontend_agent`'s one-time setup task, PJ1-T1, below).
+
+### Setup Procedure (PJ1-T1)
+
+The one-time task that actually creates this site, owned by `frontend_agent`, run once Track P is reached (per the `Enabled`/`Disabled` flag `workflow_initiator` recorded at Q11 — that question only records the flag, it does not scaffold anything itself):
+
+1. Copy `AOSDF/templates/project_docs_site/mkdocs.yml.template` to `{project_name}-Documents/mkdocs.yml`, replacing every `{project_name}` placeholder.
+2. Copy `AOSDF/templates/project_docs_site/docs_overrides/` (both `aosdf.css` and `aosdf.js`) to `{project_name}-Documents/docs/docs_overrides/` verbatim — this is the default theme every project starts from: a distinct panel for `aosdf-diagram` blocks, collapsible left-nav and right-TOC sidebars, and a back-to-home link in the header. Customize further from here if a project needs it; don't start from scratch.
+3. Create the project-local `.venv/` and install `mkdocs`/`mkdocs-material` into it (gitignored, per-project — never a framework-level dependency).
+4. Confirm `mkdocs build` runs clean before marking `PJ1-T1` `Done` in `execution_plan.md`.
+
+This is a reviewed, one-time setup task, same as every other `PJ1-T1`-class task — later hand customization of `mkdocs.yml` or `docs_overrides/` is expected and fine; this procedure only fixes the *starting point* so every project's docs site begins from the same baseline instead of being re-invented per project.
 
 ### Command Surface
 

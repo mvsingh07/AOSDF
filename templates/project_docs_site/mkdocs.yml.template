@@ -1,0 +1,54 @@
+# Template for {project_name}-Documents/mkdocs.yml — Track P (Project Docs
+# Site), authored once by frontend_agent at PJ1-T1 (framework.md's
+# "MkDocs-Based Project Docs Site" section owns the full rationale; this file
+# and docs_overrides/ are what PJ1-T1 actually copies and fills in).
+#
+# Setup: copy this file to {project_name}-Documents/mkdocs.yml, replace every
+# {project_name} placeholder, and copy docs_overrides/ to
+# {project_name}-Documents/docs/docs_overrides/ verbatim (paths in extra_css/
+# extra_javascript below are resolved relative to docs_dir, i.e. docs/ — not
+# the repo root, so docs_overrides/ MUST live inside docs_dir, not beside it).
+
+site_name: {project_name}
+docs_dir: docs
+site_dir: {project_name}-Documents-site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - content.code.copy
+
+extra_css:
+  - docs_overrides/aosdf.css
+
+extra_javascript:
+  - docs_overrides/aosdf.js
+
+# Rendered by Material in the footer, next to its own built-in
+# "Made with Material for MkDocs" credit. Required here because Material's
+# own credit names only itself, not vanilla MkDocs or Archify (the optional
+# richer-diagram tool, framework.md → "Richer Diagrams: Archify") — this is
+# this site's only visible attribution for either. Keep both links if this
+# project doesn't use Archify diagrams; drop the Archify clause only if a
+# project deliberately never adopts them.
+copyright: >
+  Built with <a href="https://www.mkdocs.org/" target="_blank" rel="noopener">MkDocs</a>
+  and <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">Material for MkDocs</a>.
+  Architecture diagrams by <a href="https://github.com/tt-a1i/archify" target="_blank" rel="noopener">Archify</a> (MIT).
+
+markdown_extensions:
+  - tables
+  - fenced_code
+  - toc:
+      permalink: true

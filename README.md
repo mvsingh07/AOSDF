@@ -62,6 +62,12 @@ The `designing_aosfd/` folder contains the original design prompts that shaped h
 
 ---
 
+## License & Third-Party Notices
+
+AOSDF is [MIT licensed](LICENSE). It integrates with two open-source projects for Project Docs Sites — [MkDocs](https://www.mkdocs.org/) (BSD-2-Clause) with the [Material](https://squidfunk.github.io/mkdocs-material/) theme (MIT), and optionally [Archify](https://github.com/tt-a1i/archify) (MIT) for richer diagrams. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for full credits.
+
+---
+
 ## Versioned Changes
 
 | Version | What Changed |

@@ -37,6 +37,18 @@ When inactive: Do not assign tasks to this agent. Update this file when activate
 - API integration layer
 - Unit and E2E tests
 
+## Project Docs Site Setup (PJ1-T1) [v2.5, added 2026-09-12]
+
+If Track P (Project Docs Site) is `Enabled` in `project_status.md`, this agent owns the
+one-time setup task `PJ1-T1` when that phase is reached — see `AOSDF/framework.md`'s
+"MkDocs-Based Project Docs Site" → "Setup Procedure (PJ1-T1)" for the full, authoritative
+steps. Summary: copy `AOSDF/templates/project_docs_site/mkdocs.yml.template` and
+`docs_overrides/` (verbatim) into `{project_name}-Documents/`, substitute `{project_name}`,
+create the project-local `.venv/`, confirm `mkdocs build` runs clean. This is a copy-and-
+confirm task, not a from-scratch design — don't re-derive the theme config or override CSS/JS
+per project; start from the template and customize only if this project actually needs
+something different from the default.
+
 ## Module Design Contract [v2.3]
 
 Core-module design lives in `03_System_Design/NNN_<name>_module/`. The module index is `03_System_Design/README.md`.

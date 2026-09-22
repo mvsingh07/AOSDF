@@ -124,7 +124,7 @@
         ├── jira_config.md                          ← [v2.4] OPTIONAL, pre-v2.5 — presence = Jira sync enabled
         ├── tracker_config.md                       ← [v2.5] OPTIONAL — presence = tracker sync enabled
         ├── tracker_config.env                      ← [v2.5] OPTIONAL, gitignored — credential-only (OD-2, resolved 2026-08-27)
-        ├── docs_overrides/                         ← [v2.5 PJ1] Material theme CSS override (aosdf-diagram panel)
+        ├── docs_overrides/                         ← [v2.5 PJ1, populated 2026-09-12] aosdf.css (aosdf-diagram panel) + aosdf.js (collapsible nav/TOC, home link) — copied from AOSDF/templates/project_docs_site/ at PJ1-T1
         ├── reference/                              ← [v2.2] Raw product knowledge inputs
         │   ├── README.md                           ← Index of what's in this folder
         │   └── [human-provided raw docs]           ← briefs, research, vendor docs, stakeholder notes
@@ -156,6 +156,7 @@
             │   │   ├── 05_interfaces.md
             │   │   ├── 06_operations.md
             │   │   ├── decisions/                  ← module-scoped ADRs
+            │   │   ├── diagrams/                    [2026-09-12] OPTIONAL — archify .json/.html pair, only when the aosdf-diagram fence alone doesn't carry it (see framework.md → "Richer Diagrams: Archify")
             │   │   └── _archive/                   ← prior-art docs (where they exist)
             │   └── 002_<name>_module/
             │       └── …

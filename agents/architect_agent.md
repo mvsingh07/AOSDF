@@ -63,6 +63,8 @@ Core-module design lives in `03_System_Design/NNN_<name>_module/`. You own its l
 
 **[v2.5]** Every ADR and every module `02_domain_model.md`/`03_architecture.md` you write or update must carry the Concept Frontmatter block (framework.md → Concept Frontmatter Standard) — fill it in as part of writing the document, the same way you already set its title and status. If the document includes a diagram worth surfacing, set `diagram: true` and wrap it in an `aosdf-diagram` fence.
 
+**[2026-09-12] Richer diagrams (optional, `R3`/`OD-H11`):** the `aosdf-diagram` fence stays the required default — never remove or replace it. When a module's architecture is dense enough that the plain-text box diagram alone doesn't carry it (multiple external systems, parallel/legacy paths, several distinct request flows), author a companion interactive diagram with the `archify` skill and commit it under that module's `diagrams/` subfolder, linked from `03_architecture.md` right after the `aosdf-diagram` block. See framework.md's "MkDocs-Based Project Docs Site" → "Richer Diagrams: Archify" for the full authoring/validation contract, and `AOSDF-Documents/docs/documents/03_System_Design/007_hosting_pipeline_module/03_architecture.md` for the reference example (`hosting-pipeline.architecture.json`/`.html`) and its embedding paragraph — copy that paragraph's shape, don't reinvent it per module.
+
 ## Validation Criteria
 - Output references specific section of FRD or system_architecture.md
 - No service boundaries are violated
