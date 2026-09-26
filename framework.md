@@ -1,5 +1,5 @@
 # AI-Orchestrated Software Development Framework (AOSDF)
-# Version 3.1
+# Version 3.2
 
 ---
 
@@ -163,6 +163,7 @@
 - **[v2.5 D0]** Introduces `AOSDF/renderer_core/` for Track L (`render/index.html`'s diagram panel + shared tokens). **[v2.5, restructured 2026-08-19]** Track P (Project Docs Site) renders with MkDocs + Material instead of a hand-rolled renderer — a single `mkdocs.yml` per project, a tiny CSS override for `aosdf-diagram`, and `docs_site_agent` as the thin human-triggered build/open wrapper. Track D (a matching site for `AOSDF/` itself) was built the same way, then cancelled — `AOSDF/` is the product, not project documentation. See **Track L Renderer Core** and **MkDocs-Based Project Docs Site** below.
 - **[v3.0, E6]** GA hardening: `aosdf-lint` formatting linter (Rules 1-2, reusing the write tools' own table renderer as the compliance definition), multi-workspace support in the editor extension, and internal-only packaging (`OD-1`). See **GA Hardening** below.
 - **[v3.1]** Codifies Principle 31 — denormalized status displays (`milestone.md` vs `execution_plan.md`) and MA-xxx cross-references must be reconciled whenever an agent reads a milestone.md, not left to silently drift; adds the **Reusable Architecture Patterns (Reference)** section, starting with Tenant Reputation Gating for shared outbound dispatch infrastructure.
+- **[v3.2]** Introduces `principal_architect_agent` — a human-invoked, on-demand agent that re-reviews an existing architecture or plan against current external best practice (official docs, established engineering references, recent community discussion) at a milestone or task boundary the human chooses, producing trackable redline findings rather than silent rewrites. Gives `superman_agent` a `mode` input (`discipline` forces the full Strategy B review pipeline for every task; `normal` is its pre-existing behavior). Introduces the Scope Expansion Protocol (`06_Execution_Plan/scope_expansion_log.md`) for work discovered mid-task that is genuinely outside the current plan. Formalizes auto-compaction triggers against context-window percentage, and adds advisory-only model-tier suggestions and a context-caching read-ordering discipline. See Principles 32-37 below.
 
 ---
 
@@ -282,6 +283,24 @@ tracked in `15_Addendums/tracking_addendums.md`, not in the main tracking board.
 
 **[v3.1] 31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
 `07_Milestones/*/milestone.md`'s own Status column is a human-readable display copy of `execution_plan.md`'s Status column (Principle 22) — it is not a second source of truth, but nothing keeps it automatically in sync either. Similarly, `12_Manual_Actions/actions.md` Action IDs (MA-xxx) can be reassigned or repurposed as the tracker evolves; any citation of a specific MA-xxx ID in a milestone.md, execution_plan.md, or implementation prompt is a point-in-time reference, not a permanent binding. **Discovered concretely in a live project:** a milestone.md showed every subtask as `Planned` while `execution_plan.md` showed nearly all of them `Done`, and the same file cited `MA-024`/`MA-025` for a task whose actions had since been renumbered to `MA-021`/`MA-022` after `actions.md` reassigned the ID `MA-024` to unrelated work. **Rule:** whenever any agent reads a milestone.md file for any reason, it MUST cross-check its Status column against `execution_plan.md` and its MA-xxx citations against `actions.md`'s current numbering, and correct any mismatch found in the same session — logged as a Documentation gap in `identified_gaps.md` if the fix is non-trivial. This is a targeted reconciliation triggered by the read, never a standing background sync job.
+
+**[v3.2] 32. Principal Architect review is human-invoked, periodic, and produces trackable redlines — never silent rewrites**
+`principal_architect_agent` re-reviews an existing architecture or plan against current external practice (official docs, established engineering references, recent community discussion) only when a human explicitly invokes it for a milestone or task boundary they choose — never automatically, and never as a substitute for `architect_agent`'s day-to-day design ownership or `reviewer_agent`'s implementation-prompt gate. Findings go into a dated review document under the affected module's directory, separated into must-fix-before-proceeding / worth-tracking / no-change-needed, and any proposed change is written as a redline against the existing design docs — never an in-place rewrite. See **principal_architect_agent** under Agent Architecture below.
+
+**[v3.2] 33. Superman's Discipline Mode forces the reviewed pipeline; Normal Mode is unchanged**
+`superman_agent` accepts a `mode` of `discipline` or `normal` (default `normal`). Normal mode is Superman's pre-existing behavior — Strategy A or B, as read from `execution_plan.md` or an explicit `strategy_override`. Discipline mode forces the full Strategy B pipeline (architect → reviewer → implementor → validator) for every task in the run, regardless of what the execution plan's strategy line says — no implementation prompt reaches execution without `reviewer_agent` approval first. Both modes keep Superman's defining trait: no per-task human approval gate. See **Superman Modes** under Execution Strategies below.
+
+**[v3.2] 34. Out-of-scope work discovered mid-task is logged and stops the loop — never silently absorbed or silently dropped**
+When implementing a task reveals a genuine need for work outside the current milestone/execution-plan scope, the agent logs it to `06_Execution_Plan/scope_expansion_log.md` (discovering task, proposed task, why it's required, suggested milestone) and stops — the same shape as a Manual Action Required stop. A human resolves it by re-running `captain_agent` to fold the proposed task into the plan, or by recording an explicit deferral in the log. No agent adds an unplanned task to `execution_plan.md` on its own initiative. See **Scope Expansion Protocol** below.
+
+**[v3.2] 35. Every agent loads only what the current task needs — never a whole reference directory speculatively**
+Each agent's Token Efficiency Rules section already names the specific files it reads per task; this principle makes explicit and binding what those sections individually imply: reading an entire folder (`llm-wiki/`, `03_System_Design/`, `reference/`) "just in case" is a violation, not a convenience. If a task's scope is ambiguous enough that an agent cannot tell which file it needs, that ambiguity itself is reported as a blocker (per each agent's existing stopping conditions) rather than resolved by reading broadly.
+
+**[v3.2] 36. Auto-compaction is triggered by context-window percentage, not just task count**
+Every agent with a Compact Protocol section treats visible context usage at roughly **70% of the active model's context window as COMPACT RECOMMENDED and roughly 85% as COMPACT REQUIRED**. Where exact usage isn't visible to the agent, the pre-existing qualitative heuristics (task count completed this session, size of outputs already generated) remain the fallback signal — they are secondary, not the primary trigger, wherever a percentage estimate is available.
+
+**[v3.2] 37. Model-tier and context-cache discipline are advisory, not runtime automation**
+AOSDF agents are instructions consumed by whatever LLM/harness executes them — they cannot themselves switch models or control an API-level prompt cache. Two advisory disciplines apply instead: (a) the session-orchestrating agents (`commander_agent`, `superman_agent`) print a `Suggested model tier` line inferred from the task's shape (mechanical/single-file/Strategy A → fast/low-cost tier; architecture/ADR/Strategy B/principal-review work → frontier tier) for a human or supervising harness to act on — no agent switches models itself; (b) every agent reads stable, rarely-changing documents (`CLAUDE.md`, `framework.md`, architecture docs) first, in the same order, without re-reading them verbatim mid-session, so the underlying LLM API's prompt cache is actually reused — task-specific/volatile reads (execution-plan rows, FRD sections) come after that stable prefix, never interleaved before it.
 
 ---
 
@@ -789,6 +808,16 @@ No execution agent may begin implementation until status = `READY`.
 - **Called by:** implementor (Strategy B only)
 - **Updates:** `execution_plan.md` Status column (the only agent in Strategy B that does so)
 
+### [v3.2] principal_architect_agent — On-Demand External Architecture Review
+
+- **Role:** Re-reviews an existing architecture, module design, or plan against current external best practice — official documentation, established engineering references, recent community discussion — at a milestone or task boundary a human chooses. Not a periodic automatic gate: it runs only when invoked.
+- **Called by:** Human only, never by `captain_agent`, `commander_agent`, or `superman_agent`.
+- **Calls:** Nothing — it is a terminal, findings-producing agent. Uses web search/fetch to gather external comparison material.
+- **Reads:** the design set in scope (`03_System_Design/`, relevant ADRs), `CLAUDE.md`, and whatever milestone/task the human names.
+- **Writes:** a dated findings document under the affected module's directory (`principal_architect_review_<date>.md`), separating must-fix-before-proceeding / worth-tracking / no-change-needed. Any proposed design change is a redline against the existing docs — it never rewrites `03_architecture.md` or an ADR in place.
+- **Relationship to existing agents:** distinct from `architect_agent` (owns day-to-day design, never does broad external research) and `reviewer_agent` (reviews implementation prompts against static internal docs, no external research). Closest in spirit to `research_and_review_agent` but scoped to re-reviewing the project's *own* already-built architecture rather than studying named external systems pre-lock.
+- A human acts on its findings by tasking `architect_agent` with the accepted changes, or by re-running `captain_agent` if a finding implies new execution-plan tasks.
+
 ### New Agents in v1.2
 
 #### commander_agent
@@ -821,6 +850,7 @@ These agents are NOT called by the commander. They are called by a human at spec
 | `jira_sync_agent` | **[v2.5] Superseded** — kept working unchanged for projects mid-transition; new projects get `tracker_config.md` (`Provider: jira`) and use `tracker_sync_agent` instead | See **Tracker Board Integration** below |
 | `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, or `Learn: check coverage` | **[v2.5]** Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/`; never runs on its own initiative (Principle 24 discipline extended a third time). Generates `render/index.html` by inlining `AOSDF/renderer_core/` (see **Track L Renderer Core** below). See **Learning Roadmap** below |
 | `docs_site_agent` | On `Project Docs: build`/`Project Docs: open` | **[v2.5, restructured 2026-08-19]** Thin wrapper — runs `mkdocs build` against `{project_name}-Documents/mkdocs.yml`, or opens the already-built site; never authors config, never runs on its own initiative. Renders your project's own docs only — `AOSDF/` has no site of its own. See **MkDocs-Based Project Docs Site** below |
+| `principal_architect_agent` | At a milestone or task boundary the human chooses, for a deep external-informed re-review | **[v3.2]** Never auto-called; produces a dated findings doc, never a silent rewrite. See **principal_architect_agent** above and Principle 32 |
 
 ---
 
@@ -887,6 +917,49 @@ Validator Agent → runs tests → if pass:
 ```
 
 **[v1.2] Notification hook (optional):** For steps requiring human approval (e.g., production deploy), agents post to a Slack/Discord webhook and poll for a reaction before proceeding.
+
+### [v3.2] Superman Modes: Discipline vs Normal
+
+`superman_agent` combines Commander's orchestration with an implementor's execution, running a whole milestone without per-task human approval. It now takes a `mode` input:
+
+```
+mode: normal (default)
+  → Superman's pre-existing behavior: reads execution_plan.md's strategy line
+    (or an explicit strategy_override) and runs Strategy A or Strategy B per task,
+    exactly as before this version.
+
+mode: discipline
+  → Every task in the queue runs the full Strategy B pipeline regardless of what
+    execution_plan.md's strategy line says:
+      architect_agent → reviewer_agent → implementor → validator_agent
+  → No task's implementation prompt reaches execution without reviewer_agent's
+    sign-off first — this is what "discipline" adds over normal mode.
+  → The no-per-task-human-approval gate Superman removes stays removed in both
+    modes; discipline mode adds an automated review gate, not a human one.
+```
+
+Superman's session header (see `agents/superman_agent.md`) prints the active mode, and every stop/resume message carries it forward so a resumed run doesn't silently fall back to `normal`.
+
+### [v3.2] Scope Expansion Protocol — Out-of-Scope Work Discovered Mid-Task
+
+Applies inside `commander_agent`'s per-task delegation, `execution_agent`'s implementation step, and `superman_agent`'s per-task loop (both modes). If completing the current task genuinely requires a task that does not exist in `execution_plan.md` or the current milestone's scope:
+
+1. **Log it** to `06_Execution_Plan/scope_expansion_log.md`: discovering task ID, a clear description of the proposed new task, why it's required (blocking vs. merely improving), and a suggested milestone placement.
+2. **Stop the loop** — do not implement the out-of-scope work, and do not skip past it to a later task in the queue:
+   ```
+   === SCOPE EXPANSION DISCOVERED ===
+   Stopped after/before: <TASK-ID>
+   Discovered need: <proposed task description>
+   Why required: <blocking | improves current task, not strictly required>
+   Logged to: 06_Execution_Plan/scope_expansion_log.md
+
+   Resolve by: re-running captain_agent to fold this into the plan, or recording
+   an explicit deferral in the log.
+   Resume command: <same form as a Manual Action Required stop>
+   ```
+3. A human resolves it — via `captain_agent` (adds the task to `execution_plan.md`/a milestone) or by writing an explicit deferral into the log — before the paused agent resumes.
+
+No agent ever adds an unplanned task to `execution_plan.md` on its own initiative; this mirrors Principle 2 (contract-first) and the existing "no scope additions" rule each Strategy A/B implementor already follows for the *current* task.
 
 ---
 

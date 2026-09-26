@@ -3,6 +3,18 @@
 const { readLines, writeLines } = require('../fileio');
 const { findTables, replaceManyTables } = require('../markdown-table');
 
+// The framework's canonical task-status vocabulary (framework.md / templates.md). A value is
+// accepted if it starts with one of these words, optionally followed by free text — e.g.
+// "Done (2026-08-27)" or "Cancelled — scope cut" are both valid, but an arbitrary string like
+// "Banana" is not. Without this, nothing stopped a bad status from being written and silently
+// treated as neither Planned, In Progress, Done, Blocked nor Cancelled by every other tool.
+const VALID_STATUS_WORDS = ['Planned', 'In Progress', 'Done', 'Blocked', 'Cancelled'];
+const VALID_STATUS_PATTERN = new RegExp(`^(${VALID_STATUS_WORDS.join('|')})\\b`, 'i');
+
+function isValidStatus(status) {
+  return VALID_STATUS_PATTERN.test(status.trim());
+}
+
 const schema = {
   name: 'aosdf_update_task_status',
   description:
@@ -27,6 +39,11 @@ const schema = {
 function run(args, paths) {
   const { id, status } = args;
   if (!id || !status) throw new Error("Both 'id' and 'status' are required.");
+  if (!isValidStatus(status)) {
+    throw new Error(
+      `'${status}' is not a valid status. It must start with one of: ${VALID_STATUS_WORDS.join(', ')}.`
+    );
+  }
 
   const { lines, trailingNewline } = readLines(paths.executionPlan);
   const tables = findTables(lines);

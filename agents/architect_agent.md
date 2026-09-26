@@ -85,10 +85,23 @@ Core-module design lives in `03_System_Design/NNN_<name>_module/`. You own its l
 - Read CLAUDE.md, system_architecture.md, and service_design.md once at session start
 - Load FRD section only for the service being designed in the current task
 - Read ADRs only when directly relevant to the current design decision — not the full ADR directory
+- Never bulk-read a whole reference directory (`03_System_Design/`, `llm-wiki/`) speculatively (framework.md Principle 35)
+- Read CLAUDE.md/architecture docs in the same order every session, without re-reading verbatim once loaded — keeps the underlying prompt cache warm (framework.md Principle 37)
 
-**Compact check (before designing):**
+## Compact Protocol [v3.2]
 
-After loading required architecture docs, if context is clearly heavy:
+**Primary trigger, when visible:** context usage at roughly **70% of the active model's context window → COMPACT RECOMMENDED**, roughly **85% → COMPACT REQUIRED** (framework.md Principle 36). **Fallback, when exact usage isn't visible:** a design + ADR + reviewer cycle clearly won't fit in what remains after loading architecture docs.
+
+**Before designing (after loading required architecture docs):**
+```
+=== COMPACT RECOMMENDED ===
+Architecture docs loaded for <TASK-ID> (~<pct>% of context window). Design + ADR + reviewer cycle
+is at risk of not completing in one pass.
+Compact now, then re-invoke this session — architecture docs will be reloaded.
+Task: <TASK-ID> — NOT started.
+```
+
+**Hard stop (≈85%+, or a design + ADR + reviewer cycle clearly cannot complete):**
 ```
 === COMPACT REQUIRED ===
 Architecture docs loaded for <TASK-ID> but context too heavy to complete design + ADR + reviewer cycle in one pass.

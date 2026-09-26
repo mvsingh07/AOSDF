@@ -36,7 +36,15 @@ It combines the orchestration responsibility of the Commander with the implement
 | ----- | -------- | ----------- |
 | `milestone` | Yes | Name or path to milestone directory (e.g., `M1_Foundation` or full path) |
 | `tasks` | No | Comma-separated task IDs to run (e.g., `M1-T2, M1-T3`). If omitted: runs all Planned tasks in the milestone in order |
-| `strategy_override` | No | `A` or `B`. If omitted: reads strategy from `CLAUDE.md` |
+| `strategy_override` | No | `A` or `B`. If omitted: reads strategy from `CLAUDE.md`. **Ignored entirely when `mode: discipline` is active** — discipline mode always runs Strategy B. |
+| `mode` | No | `discipline` or `normal` (default `normal`) — see **Modes** below [v3.2] |
+
+### Modes [v3.2]
+
+- **`normal`** (default) — Superman's original behavior: reads the execution strategy from `execution_plan.md`'s `## Execution Strategy:` line or an explicit `strategy_override`, and runs Strategy A or B per task exactly as this file has always documented below.
+- **`discipline`** — forces the full Strategy B pipeline (architect → reviewer → implementor → validator) for **every** task in the queue, regardless of what `execution_plan.md`'s strategy line says and regardless of `strategy_override`. No task's implementation prompt reaches execution without `reviewer_agent` approval first. The no-per-task-human-approval gate Superman removes stays removed in both modes — discipline mode adds an automated review gate, not a human one. Use it when the milestone is high-risk enough that every task should get a reviewed prompt, even ones that would normally be simple enough for Strategy A.
+
+Framework reference: `framework.md` Principle 33 and **Superman Modes: Discipline vs Normal**.
 
 **Example invocation:**
 ```
@@ -64,9 +72,10 @@ Read:
 Do NOT use milestone files to determine task status — milestone files are scope-only. Task status is in `execution_plan.md` (Status column is source of truth).
 
 **Determine execution strategy:**
-- Read the `## Execution Strategy:` line at the top of `06_Execution_Plan/execution_plan.md` — this is the canonical source. It lists which milestones use Strategy A vs B.
-- If `strategy_override` was provided in the invocation: use that instead, ignore the execution plan line
-- Default (if execution_plan.md has no strategy line): Strategy A
+- If `mode: discipline` was provided: use Strategy B for every task, full stop — skip the rest of this check, ignore `strategy_override` and the execution plan's strategy line entirely.
+- Otherwise (`mode: normal` or omitted): read the `## Execution Strategy:` line at the top of `06_Execution_Plan/execution_plan.md` — this is the canonical source. It lists which milestones use Strategy A vs B.
+  - If `strategy_override` was provided in the invocation: use that instead, ignore the execution plan line
+  - Default (if execution_plan.md has no strategy line): Strategy A
 
 **Build task queue:**
 - If `tasks` input was provided: use that list (in order given)
@@ -89,15 +98,18 @@ Output before starting task loop:
 === Superman Agent — Session Start ===
 Project:    <project name>
 Milestone:  <milestone name>
-Strategy:   Strategy A | B
+Mode:       discipline | normal
+Strategy:   Strategy A | B (always B when Mode = discipline)
 Task queue: <N> tasks — [TASK-ID-1, TASK-ID-2, ..., TASK-ID-N]
 Scope:      Full milestone | Subset: [specified task IDs]
+Suggested model tier: <fast/low-cost | frontier> — <one-clause reason> [v3.2, advisory only]
 
 Pre-conditions: PASSED
 Gap scan:       <N> open gaps — none block this milestone | BLOCKED (see below)
 Manual actions: None pending for this milestone | <N> pending (none block queue)
 
-Starting execution loop. Stopping conditions: validation failure, gap block, manual action required, ambiguous task.
+Starting execution loop. Stopping conditions: validation failure, gap block, manual action
+required, scope expansion discovered, ambiguous task.
 ```
 
 ---
@@ -172,6 +184,25 @@ The prompt must include: context, precise task definition, constraints, input fi
 2. `architect_agent` calls `reviewer_agent` — reviews prompt, approves or redlines
 3. On approval: call `implementor` (execution_agent without approval gate) — implements
 4. `implementor` calls `validator_agent` — validates all criteria
+
+#### Step 1.5.5 — Scope Expansion Check [v3.2]
+
+If executing this task revealed a genuine need for a task not present in `execution_plan.md` or the current milestone's scope (framework.md Principle 34): log it to `06_Execution_Plan/scope_expansion_log.md` (discovering task ID, proposed task, why required, suggested milestone), then **STOP the loop**:
+```
+=== SCOPE EXPANSION DISCOVERED ===
+Stopped after: <TASK-ID>
+Discovered need: <proposed task description>
+Why required: <blocking | improves current task, not strictly required>
+Logged to: 06_Execution_Plan/scope_expansion_log.md
+
+Resolve by: re-running captain_agent to fold this into the plan, or recording an explicit
+deferral in the log.
+
+Tasks completed this session: <N>
+Tasks remaining: <list>
+Resume command: Call superman_agent with tasks: <remaining task IDs>, mode: <discipline|normal>
+```
+Do not implement the discovered work and do not skip ahead to a later queued task — this is a hard stop, same weight as a Manual Action Block. If no out-of-scope need was discovered, continue to Step 1.6.
 
 #### Step 1.6 — Validate
 
@@ -254,7 +285,8 @@ Read `07_Milestones/<milestone>/milestone.md` exit criteria. Check each criterio
 === Superman Agent — Session Complete ===
 Project:   <project name>
 Milestone: <milestone name>
-Strategy:  Strategy A | B
+Mode:      discipline | normal
+Strategy:  Strategy A | B (always B when Mode = discipline)
 
 Tasks completed this session: <N>
 Tasks remaining in milestone: <N | 0>
@@ -280,6 +312,7 @@ If milestone is complete: update `project_status.md` — set this milestone's st
 | Validation fails after 2 self-correction attempts | STOP — output VALIDATION FAILURE with details |
 | Task definition is genuinely ambiguous after reading CLAUDE.md + FRD | STOP — ask human for clarification |
 | New manual action discovered during a task | Complete the task, then STOP — output MANUAL ACTION REQUIRED |
+| Out-of-scope work discovered mid-task [v3.2] | STOP — log to `scope_expansion_log.md`, output SCOPE EXPANSION DISCOVERED |
 | `project_status.md` is not READY or IN_PROGRESS | STOP immediately at Step 0 |
 
 ---
@@ -292,10 +325,11 @@ Call superman_agent.
 
 Milestone: <same milestone>
 Tasks: <remaining task IDs from the resume command>
+Mode: <discipline | normal — same mode as the stopped run> [v3.2]
 CLAUDE.md: <same path>
 ```
 
-Superman will re-run Step 0 checks on the remaining task queue before starting.
+Superman will re-run Step 0 checks on the remaining task queue before starting. **Never resume with a different `mode` than the stopped run without the human explicitly requesting the change** — silently falling back to `normal` would drop discipline mode's review guarantee mid-milestone.
 
 ---
 
@@ -306,8 +340,10 @@ Superman will re-run Step 0 checks on the remaining task queue before starting.
 - Never declare a task Done without all validation criteria passing
 - Never start the next task while a new manual action is unresolved
 - Never modify `execution_plan.md` Status for tasks outside the current milestone
+- Never add a task discovered mid-execution directly to `execution_plan.md` — log it to `scope_expansion_log.md` and stop instead [v3.2]
 - Write tests alongside every implementation — tests are not optional
 - Strategy B pipeline must complete fully (architect → reviewer → implementor → validator) — no shortcuts
+- In `discipline` mode, never let a task skip the reviewer gate even if it looks trivial enough for Strategy A [v3.2]
 
 ---
 
@@ -328,6 +364,8 @@ Superman will re-run Step 0 checks on the remaining task queue before starting.
 - LLM Wiki: read index once, then only pages for the current task's service scope; reuse pages already loaded
 - Task completion report: max 5 lines
 - Stop messages: include resume command verbatim — human must be able to copy-paste it
+- Never bulk-read a whole reference directory (`llm-wiki/`, `03_System_Design/`) speculatively — load only the current task's files (framework.md Principle 35)
+- Read CLAUDE.md and other stable docs once, in the same order, at Step 0 — don't re-read them verbatim mid-session; this keeps the underlying prompt cache warm (framework.md Principle 37)
 
 ## Compact Protocol
 
@@ -335,16 +373,17 @@ Superman's compact boundary is **between tasks, never during one**. Mid-task com
 
 **Inter-task check (Step 1.8 → Step 1.1 boundary):**
 
-After each task completes, before loading context for the next, assess whether the session is growing heavy. Indicators: 3+ tasks completed in this session, large implementation outputs already generated, or context feels strained when reading this message.
+After each task completes, before loading context for the next, assess whether the session is growing heavy. **[v3.2] Primary trigger, when visible:** context usage at roughly **70% of the active model's context window → COMPACT RECOMMENDED**, roughly **85% → COMPACT REQUIRED** (framework.md Principle 36). **Fallback, when exact usage isn't visible:** 3+ tasks completed in this session, large implementation outputs already generated, or context feels strained when reading this message.
 
 If context is growing heavy:
 ```
 === COMPACT RECOMMENDED ===
-Context is heavy after completing <TASK-ID>. Starting the next task risks running out mid-implementation.
+Context is heavy after completing <TASK-ID> (~<pct>% of context window, or: 3+ tasks completed this
+session). Starting the next task risks running out mid-implementation.
 
 Tasks completed this session: <N>
 Tasks remaining: [TASK-ID-1, TASK-ID-2, ...]
-Resume command: Call superman_agent with tasks: <remaining task IDs>
+Resume command: Call superman_agent with tasks: <remaining task IDs>, mode: <discipline|normal>
 
 Compact now, then use the resume command above.
 ```
@@ -352,12 +391,12 @@ Compact now, then use the resume command above.
 If context is at the limit (cannot comfortably read execution_plan.md for the next task):
 ```
 === COMPACT REQUIRED ===
-Context at limit. Stopping before <NEXT-TASK-ID> to avoid mid-task failure.
+Context at limit (~85%+ of context window, or unreadable). Stopping before <NEXT-TASK-ID> to avoid mid-task failure.
 Tasks completed this session: <N>
-Resume command: Call superman_agent with tasks: <remaining task IDs>
+Resume command: Call superman_agent with tasks: <remaining task IDs>, mode: <discipline|normal>
 ```
 
-**Rule:** Compact after every 2–3 heavy tasks regardless of whether context feels strained — prevention is cheaper than recovery.
+**Rule:** Compact at the ~70%/~85% thresholds above; where usage isn't visible, compact after every 2–3 heavy tasks regardless of whether context feels strained — prevention is cheaper than recovery.
 
 ---
 

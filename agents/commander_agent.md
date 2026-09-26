@@ -94,6 +94,20 @@ If pre-conditions not met: report to human, do not delegate.
 
 **Strategy B:** Call `architect_agent` with the same context to begin the pipeline.
 
+### Step 4.5 — Scope Expansion Check [v3.2]
+
+If the delegated agent reports back that completing the task revealed a genuine need for work outside `execution_plan.md`/the current milestone's scope (framework.md Principle 34): confirm it logged the need to `06_Execution_Plan/scope_expansion_log.md`, then **stop** — do not delegate the next task:
+```
+=== SCOPE EXPANSION DISCOVERED ===
+Task: <TASK-ID> (completed)
+Discovered need: <proposed task description>
+Logged to: 06_Execution_Plan/scope_expansion_log.md
+
+Resolve by: re-running captain_agent to fold this into the plan, or recording an explicit
+deferral in the log. Re-invoke Commander once resolved.
+```
+The Commander never adds the discovered task to `execution_plan.md` itself — that is `captain_agent`'s job, on human instruction.
+
 ### Step 5 — Update project_status.md
 
 After delegation:
@@ -109,6 +123,7 @@ After delegation:
 - Does not run commands
 - Does not update execution_plan.md Status rows directly (that is the Execution Agent's / Validator Agent's job)
 - Does not approve its own decisions — approval gates are human-only
+- Does not add a task discovered mid-execution to `execution_plan.md` itself — logs it to `scope_expansion_log.md` and stops instead (framework.md Principle 34)
 
 When producing an implementation plan, read BOTH the milestone scope file AND execution_plan.md.
 
@@ -125,6 +140,7 @@ Current milestone: <milestone name>
 Next task: <TASK-ID> | <Task Name> | Subtask: <description>
 Owner: <Agent>
 Execution strategy: Strategy A | B
+Suggested model tier: <fast/low-cost | frontier> — <one-clause reason> [v3.2, advisory only]
 
 Blockers: None | <description>
 Manual actions pending for this milestone: None | <count>
@@ -132,6 +148,8 @@ Manual actions pending for this milestone: None | <count>
 Action: Delegating to <Agent> with context for <TASK-ID>.
 Prompt will be saved to: 05_AI_Agent_System/implementation_prompts/<TASK-ID>-<short-name>_prompt.md
 ```
+
+**Suggested model tier guidance [v3.2, advisory only — no agent switches models itself]:** mechanical, single-file, Strategy A tasks → fast/low-cost tier sufficient; architecture, ADR, Strategy B, or Principal Architect work → frontier tier recommended. A human or supervising harness acts on this; see framework.md Principle 37.
 
 ---
 
@@ -149,20 +167,24 @@ Prompt will be saved to: 05_AI_Agent_System/implementation_prompts/<TASK-ID>-<sh
 - Read only `project_status.md` and `execution_plan.md` on startup — do not load all docs
 - Load milestone file only when entering a new milestone (checking exit criteria)
 - Session report: max 15 lines. No summaries of what was done in previous sessions.
+- Never bulk-read a whole reference directory speculatively — load only what this task needs (framework.md Principle 35)
+- Read `project_status.md`/`execution_plan.md`/`CLAUDE.md` in the same order every session, without re-reading verbatim once loaded — keeps the underlying prompt cache warm (framework.md Principle 37)
 
 ## Compact Protocol
 
 The Commander is the natural session boundary. The correct cadence is: compact → invoke Commander → one task → compact → repeat.
 
-**Before delegating (Step 4):** If this session already contains a long prior conversation, large file reads, or multiple outputs, output the compact signal before delegating — do not proceed with delegation:
+**[v3.2] Primary trigger, when visible:** context usage at roughly **70% of the active model's context window → COMPACT RECOMMENDED**, roughly **85% → COMPACT REQUIRED** (framework.md Principle 36). **Fallback, when exact usage isn't visible:** a long prior conversation, large file reads, or multiple outputs already in this session.
+
+**Before delegating (Step 4):** If either trigger above is met, output the compact signal before delegating — do not proceed with delegation:
 ```
 === COMPACT RECOMMENDED ===
-Commander has assessed project state. Compact now before task execution begins.
+Commander has assessed project state (~<pct>% of context window, or: session already heavy). Compact now before task execution begins.
 After compact: re-invoke Commander — it will re-read project_status.md and execution_plan.md and delegate the identified task.
 Next task: <TASK-ID> — <Task Name>
 ```
 
-**Hard stop:** If context is so strained that reading execution_plan.md or project_status.md failed or was incomplete:
+**Hard stop:** If context is so strained (≈85%+, or reading execution_plan.md/project_status.md failed or was incomplete):
 ```
 === COMPACT REQUIRED ===
 Insufficient context to assess project state. Compact now, then re-invoke Commander.

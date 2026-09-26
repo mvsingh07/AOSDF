@@ -54,7 +54,8 @@
 │   │   │   ├── backend_agent.md
 │   │   │   ├── frontend_agent.md          (inactive until UI phase)
 │   │   │   ├── infra_agent.md
-│   │   │   └── qa_agent.md
+│   │   │   ├── qa_agent.md
+│   │   │   └── principal_architect_agent.md  [v3.2] ← on-demand, human-invoked only
 │   │   │
 │   │   ├── prompt_templates/
 │   │   │   ├── task_prompt.md
@@ -65,7 +66,8 @@
 │   │       └── README.md
 │   │
 │   ├── 06_Execution_Plan/
-│   │   └── execution_plan.md
+│   │   ├── execution_plan.md
+│   │   └── scope_expansion_log.md         [v3.2] ← out-of-scope work discovered mid-task
 │   │
 │   ├── 07_Milestones/
 │   │   ├── M0_Project_Setup/              [v1.2] ← always first
@@ -489,6 +491,27 @@ Never deleted. Re-runs append `_v2`, `_v3`.
 ```
 
 **Status:** Pending | In Progress | Done | Blocked
+
+---
+
+### 06_Execution_Plan/scope_expansion_log.md [v3.2]
+
+```markdown
+# Scope Expansion Log
+# <Project>
+
+> Logged whenever implementing a task reveals a genuine need for work outside the current
+> milestone/execution_plan.md scope (framework.md Principle 34). The discovering agent logs a row
+> here and STOPS — it never adds the proposed task to execution_plan.md itself. A human resolves
+> each row by re-running captain_agent to fold it into the plan, or by recording an explicit
+> deferral reason in the Resolution column.
+
+| Entry ID | Discovered By (Task ID) | Proposed Task | Why Required | Suggested Milestone | Date | Status | Resolution |
+|---------|------------------------|--------------|--------------|--------------------|------|--------|-----------|
+| SX-001 | <TASK-ID> | <description of the out-of-scope work needed> | <Blocking / Improves current task, not strictly required> | <milestone> | <date> | Open | <Folded into plan via captain_agent on <date> / Deferred: <reason>> |
+```
+
+**Status:** Open | Folded Into Plan | Deferred
 
 ---
 

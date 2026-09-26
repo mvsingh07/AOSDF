@@ -2,7 +2,9 @@
 
 const { readLines, writeLines } = require('../fileio');
 const { findTables, replaceManyTables, precedingHeading } = require('../markdown-table');
-const { nextSequentialId } = require('../next-id');
+const { nextSequentialId, collectIds } = require('../next-id');
+
+const ACTION_ID_PATTERN = /^(action\s*id|id)$/i;
 
 const schema = {
   name: 'aosdf_log_manual_action',
@@ -53,16 +55,35 @@ function run(args, paths) {
 
   const table = pickTargetTable(tables, lines);
   const colIdx = (pattern) => table.header.findIndex((h) => pattern.test(h.trim()));
+  // Tries each pattern in priority order and returns the first column that exists, instead of
+  // scanning the header left-to-right and taking whichever alternative happens to appear first.
+  // Without this, a table with both "Milestone Task" and "Blocks" columns (the documented
+  // template has exactly this) would silently write an `unblocks` value into "Milestone Task"
+  // whenever that column happens to be positioned before "Blocks" — and Superman's blocker
+  // check reads "Blocks" specifically, so the dependency would never be seen.
+  const colIdxByPriority = (patterns) => {
+    for (const p of patterns) {
+      const idx = colIdx(p);
+      if (idx !== -1) return idx;
+    }
+    return -1;
+  };
 
-  const idIdx = colIdx(/^(action\s*id|id)$/i);
+  const idIdx = colIdx(ACTION_ID_PATTERN);
   const descIdx = colIdx(/^description$/i);
   const catIdx = colIdx(/^category$/i);
   const priorityIdx = colIdx(/^priority$/i);
-  const unblocksIdx = colIdx(/^(unblocks|blocks|milestone\s*task)$/i);
+  const unblocksIdx = colIdxByPriority([/^unblocks$/i, /^blocks$/i, /^milestone\s*task$/i]);
   const statusIdx = colIdx(/^(status|dev\s*status)$/i);
   const ownerIdx = colIdx(/^owner$/i);
 
-  const existingIds = idIdx !== -1 ? table.rows.map((r) => r[idIdx]) : [];
+  // Scan every table in the file (Pending + Completed, or however the project names them) for
+  // the highest existing ID, not just the table this row is about to be appended to — otherwise
+  // a fresh allocation can reuse an ID already sitting in a table this call never looked at.
+  const existingIds = collectIds(tables, ACTION_ID_PATTERN);
+  if (actionId && existingIds.includes(actionId)) {
+    throw new Error(`Manual action ID '${actionId}' already exists in ${paths.manualActions}.`);
+  }
   const newId = actionId || nextSequentialId(existingIds, 'MA', 1);
 
   const newRow = new Array(table.header.length).fill('');

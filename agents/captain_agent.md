@@ -185,15 +185,20 @@ For each milestone, create `07_Milestones/M{n}_<Name>/milestone.md`:
 Write `06_Execution_Plan/execution_plan.md` as a flat table, all milestones concatenated with blank separator rows between milestone groups:
 
 ```markdown
-| Phase | Milestone | Task | Subtask | Owner | Input | Output | Validation | Status |
-|------|----------|-----|--------|------|------|--------|----------|--------|
-| P0 | M0 | M0-T1: Repo | Create repository | Human | — | GitHub repo | Repo exists | Planned |
-| P0 | M0 | M0-T1: Repo | Create folder structure | Backend | CLAUDE.md | Folders | Matches spec | Planned |
-|    |    |              |                         |         |            |         |             |         |
-| P1 | M1 | M1-T1: Infra | Provision VPC | Infra | infra_architecture.md | VPC created | Terraform outputs | Planned |
+| Task ID | Phase | Milestone | Task | Subtask | Owner | Input | Output | Validation | Status |
+|---------|------|----------|-----|--------|------|------|--------|----------|--------|
+| M0-T1 | P0 | M0 | Repo | Create repository | Human | — | GitHub repo | Repo exists | Planned |
+| M0-T2 | P0 | M0 | Repo | Create folder structure | Backend | CLAUDE.md | Folders | Matches spec | Planned |
+|       |    |    |      |                         |         |            |         |             |         |
+| M1-T1 | P1 | M1 | Infra | Provision VPC | Infra | infra_architecture.md | VPC created | Terraform outputs | Planned |
 ```
 
-Every row = one independently executable subtask.
+Every row = one independently executable subtask, and every row gets its own unique `Task ID`
+(`M{n}-T{seq}`, sequential per milestone) — never reuse one ID across multiple rows, even when
+they share the same logical `Task` grouping. `aosdf_next_planned_task` and
+`aosdf_update_task_status` select and update rows by exact `Task ID` match; a plan whose rows
+don't each carry a distinct ID in a dedicated `Task ID` column can't be read or updated by those
+tools, even if the table otherwise looks well-formed.
 
 ---
 

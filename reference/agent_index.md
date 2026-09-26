@@ -1,5 +1,5 @@
 # Agent Index
-# AOSDF v2.5 — Quick Reference
+# AOSDF v3.2 — Quick Reference
 # Read this to understand which agent to call and when.
 
 ---
@@ -22,6 +22,11 @@ commander_agent        ← human calls once per session; reads state, delegates
 
 [ON DEMAND — Post-baseline]
 addendum_agent         ← human calls when a cross-cutting requirement arrives after plan is locked
+
+[ON DEMAND — Deep external review, human-paced — v3.2]
+principal_architect_agent ← human calls at a milestone/module/ADR boundary they choose; researches
+                          current external best practice and writes a dated redline findings doc;
+                          never auto-called, never edits existing design docs directly
 
 [ON DEMAND — Tracker sync, OPTIONAL, only if tracker_config.md exists — v2.5]
 tracker_sync_agent     ← human runs "Tracker: sync" (export) or "Tracker: import <ref>" (import); never
@@ -68,6 +73,7 @@ docs_site_agent        ← human runs "Project Docs: build"/"Project Docs: open"
 | `jira_sync_agent` | `agents/jira_sync_agent.md` | Human (`Jira: sync` / `Jira: import`) — pre-v2.5 projects only | Jira (via MCP); never another AOSDF agent | Export: `06_Execution_Plan/jira_issue_map.md`, `jira_config.md` (Sync History), Jira issues. Import: `15_Addendums/<slug>.md` (draft only) |
 | `concept_indexer_agent` | `agents/concept_indexer_agent.md` | Human (`Learn: rebuild` / `Learn: open` / `Learn: check coverage`) | Nothing — reads frontmatter, calls no other agent | `16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`, `identified_gaps.md` (append, `Category: Learning`) |
 | `docs_site_agent` | `agents/docs_site_agent.md` | Human (`Project Docs: build`/`open`) | `mkdocs build` (external command); never another AOSDF agent | `{project_name}-Documents/{project_name}-Documents-site/` (via `mkdocs build`'s own output — never writes source files or `mkdocs.yml` itself) |
+| `principal_architect_agent` | `agents/principal_architect_agent.md` | Human, at a milestone/module/ADR boundary | Nothing — web search/fetch only, no other agent | `principal_architect_review_<date>.md` in the reviewed scope's own directory only |
 
 ---
 
@@ -86,6 +92,7 @@ These agents require human judgment or human-authored input — they are never c
 | `jira_sync_agent` | On `Jira: sync` or `Jira: import <key>` — pre-v2.5 projects only if `jira_config.md` exists (v2.4) |
 | `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, or `Learn: check coverage` (v2.5) |
 | `docs_site_agent` | On `Project Docs: build` or `Project Docs: open` (v2.5, restructured 2026-08-19) |
+| `principal_architect_agent` | At a milestone/module/ADR boundary the human chooses, for an external-informed re-review (v3.2) |
 
 ---
 

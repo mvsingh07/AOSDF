@@ -85,6 +85,16 @@ Implement exactly what the approved prompt specifies. No additions. No refactori
 
 If something is unclear: **stop and report as a blocker**. Do not guess.
 
+### Step 4.5 — Scope Expansion Check [v3.2]
+
+If implementing this task revealed a genuine need for a task not present in `execution_plan.md` or the current milestone's scope (framework.md Principle 34): log it to `06_Execution_Plan/scope_expansion_log.md` (discovering task ID, proposed task, why required, suggested milestone), then **STOP and report to Commander**:
+```
+=== SCOPE EXPANSION DISCOVERED ===
+Task: <TASK-ID> (completed) | Discovered need: <proposed task description>
+Logged to: 06_Execution_Plan/scope_expansion_log.md
+```
+Do not implement the discovered work as part of this task. If no out-of-scope need was discovered, continue to Step 5.
+
 ### Step 5 — Validate
 
 Run all validation criteria from the prompt:
@@ -133,6 +143,7 @@ New manual actions: None | <action IDs added>
 - Never declare Done without all validation criteria passing
 - Write tests alongside every implementation — tests are not optional
 - Keep one task in scope at a time — do not start the next until current is Done
+- Never fold a mid-task-discovered out-of-scope need into the current task's implementation — log it to `scope_expansion_log.md` and report it instead (framework.md Principle 34)
 
 ---
 
@@ -151,12 +162,14 @@ New manual actions: None | <action IDs added>
 - Prompt output: structured template, no prose explanation
 - Validation output: pass/fail list, not narrative
 - Report: 7 lines max
+- Never bulk-read a whole reference directory speculatively (framework.md Principle 35)
+- Read CLAUDE.md and other stable docs in the same order every task, without re-reading verbatim once loaded (framework.md Principle 37)
 
 ## Compact Protocol
 
 **After Step 1 (Load Context) — before Step 2 (Generate Prompt):**
 
-After loading CLAUDE.md + FRD section + execution plan row + milestone subtask, assess whether enough context remains to complete all 7 steps (prompt generation → implementation → tests → validation → tracking update).
+After loading CLAUDE.md + FRD section + execution plan row + milestone subtask, assess whether enough context remains to complete all steps (prompt generation → implementation → tests → validation → tracking update). **[v3.2]** Primary trigger, when visible: ~70% of the active model's context window → heavy, ~85%+ → hard stop (framework.md Principle 36). Fallback: qualitative sense that four files' worth of context plus a full implementation won't fit.
 
 If context is clearly heavy after loading these four files:
 ```

@@ -107,8 +107,9 @@ Do NOT update execution_plan.md. Return to implementor.
 - Load only the implementation prompt and the specific implementation files listed in it
 - Do not load CLAUDE.md in full — load only the constraint section relevant to this task's service
 - Validation output: pass/fail table, max 10 rows — no prose
+- Never bulk-read a whole reference directory speculatively (framework.md Principle 35)
 
-**Compact check (before loading files):**
+**Compact check (before loading files):** **[v3.2]** ~70% of the active model's context window → treat as strained, ~85%+ → hard stop (framework.md Principle 36).
 
 If context is clearly strained before starting validation:
 ```

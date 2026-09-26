@@ -50,11 +50,53 @@ function handleToolsList(id) {
   sendResult(id, { tools: TOOLS.map((t) => t.schema) });
 }
 
+// Checks `args` against the tool's own declared JSON-schema `inputSchema` before the tool ever
+// runs: every `required` property must be present, every property present must match its
+// declared `type`, and if the schema says `additionalProperties: false` no unknown property may
+// be passed. This is intentionally a narrow structural check (not a full JSON-schema
+// implementation) — it exists so a malformed call fails fast with a clear message instead of a
+// tool silently writing whatever it was given, which is how e.g. an arbitrary task status used
+// to reach disk unchecked.
+function validateAgainstSchema(inputSchema, args) {
+  if (!inputSchema || typeof inputSchema !== 'object') return null;
+  const { properties = {}, required = [], additionalProperties } = inputSchema;
+
+  for (const key of required) {
+    if (!(key in args) || args[key] === undefined || args[key] === null || args[key] === '') {
+      return `Missing required property '${key}'.`;
+    }
+  }
+
+  if (additionalProperties === false) {
+    for (const key of Object.keys(args)) {
+      if (!(key in properties)) return `Unknown property '${key}' is not accepted by this tool.`;
+    }
+  }
+
+  for (const [key, value] of Object.entries(args)) {
+    const propSchema = properties[key];
+    if (!propSchema || value === undefined) continue;
+    const expected = propSchema.type;
+    if (!expected) continue;
+    const actual = Array.isArray(value) ? 'array' : typeof value;
+    if (actual !== expected) {
+      return `Property '${key}' must be of type '${expected}', got '${actual}'.`;
+    }
+  }
+
+  return null;
+}
+
 function handleToolsCall(id, params, paths) {
   const { name, arguments: args = {} } = params || {};
   const tool = TOOLS.find((t) => t.schema.name === name);
   if (!tool) {
     sendError(id, -32602, `Unknown tool: ${name}`);
+    return;
+  }
+  const validationError = validateAgainstSchema(tool.schema.inputSchema, args);
+  if (validationError) {
+    sendResult(id, { content: [{ type: 'text', text: validationError }], isError: true });
     return;
   }
   try {
@@ -112,4 +154,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { TOOLS };
+module.exports = { TOOLS, validateAgainstSchema };

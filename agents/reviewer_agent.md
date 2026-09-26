@@ -95,10 +95,10 @@ Return redlined output to `architect_agent` for revision.
 ## Token Efficiency
 
 - Load only: the implementation prompt, CLAUDE.md, and security_requirements.md — nothing else
-- Do not load FRD or source files speculatively
+- Do not load FRD or source files speculatively (framework.md Principle 35)
 - Review output: structured checklist table only, no prose narrative
 
-**Compact check (before loading inputs):**
+**Compact check (before loading inputs):** **[v3.2]** ~70% of the active model's context window → treat as strained, ~85%+ → hard stop (framework.md Principle 36).
 
 If context is clearly strained before starting the review:
 ```

@@ -10,7 +10,21 @@ function splitRow(line) {
   let trimmed = line.trim();
   if (trimmed.startsWith('|')) trimmed = trimmed.slice(1);
   if (trimmed.endsWith('|')) trimmed = trimmed.slice(0, -1);
-  return trimmed.split('|').map((cell) => cell.trim());
+  // Split on unescaped pipes only — a literal '|' inside a cell must be written as '\|'
+  // (see sanitizeCell) or it would otherwise be mistaken for a column boundary and shift
+  // every later cell in the row one column to the right.
+  return trimmed
+    .split(/(?<!\\)\|/)
+    .map((cell) => cell.trim().replace(/\\\|/g, '|'));
+}
+
+// Makes a value safe to place inside a single markdown table cell: escapes literal '|'
+// characters (which would otherwise be parsed as a column boundary on the next read) and
+// collapses newlines to a space (a raw newline would break out of the row entirely).
+function sanitizeCell(value) {
+  return String(value == null ? '' : value)
+    .replace(/\r?\n/g, ' ')
+    .replace(/\|/g, '\\|');
 }
 
 function isSeparatorLine(line) {
@@ -71,11 +85,16 @@ function renderSeparator(widths) {
   return '| ' + widths.map((w) => '-'.repeat(Math.max(w, 1))).join(' | ') + ' |';
 }
 
-// Renders a full table (header + rows) as an array of formatted lines.
+// Renders a full table (header + rows) as an array of formatted lines. Every cell is run
+// through sanitizeCell() first so a value containing '|' or a newline can never corrupt the
+// table structure on the next parse — this is the only path tools use to write a table, so
+// this guarantee applies to every write regardless of which tool produced the value.
 function renderTable(header, rows) {
-  const widths = colWidths(header, rows);
-  const lines = [renderRow(header, widths), renderSeparator(widths)];
-  for (const row of rows) lines.push(renderRow(row, widths));
+  const safeHeader = header.map(sanitizeCell);
+  const safeRows = rows.map((row) => row.map(sanitizeCell));
+  const widths = colWidths(safeHeader, safeRows);
+  const lines = [renderRow(safeHeader, widths), renderSeparator(widths)];
+  for (const row of safeRows) lines.push(renderRow(row, widths));
   return lines;
 }
 
@@ -117,6 +136,7 @@ module.exports = {
   renderRow,
   renderSeparator,
   renderTable,
+  sanitizeCell,
   precedingHeading,
   replaceTableRows,
   replaceManyTables,

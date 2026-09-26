@@ -21,4 +21,21 @@ function nextSequentialId(existingIds, prefix, defaultWidth = 3) {
   return `${prefix}-${String(maxNum + 1).padStart(w, '0')}`;
 }
 
-module.exports = { nextSequentialId };
+// Collects every value found under a matching column across ALL of a file's tables, not just
+// the one a tool is about to write to. An allocator that only scanned the "current" table (e.g.
+// just the Pending table) could hand out an ID already used by a row sitting in a Completed or
+// Resolved table elsewhere in the same file, since it never saw that table's IDs at all.
+function collectIds(tables, idColPattern) {
+  const ids = [];
+  for (const table of tables) {
+    const idIdx = table.header.findIndex((h) => idColPattern.test(h.trim()));
+    if (idIdx === -1) continue;
+    for (const row of table.rows) {
+      const v = (row[idIdx] || '').trim();
+      if (v) ids.push(v);
+    }
+  }
+  return ids;
+}
+
+module.exports = { nextSequentialId, collectIds };

@@ -189,7 +189,7 @@ Agents READ this folder. No agent writes to or modifies files here.
 # {ProjectName}
 # AOSDF v2.2
 
-**Status:** SETUP
+**Current State:** SETUP
 
 ## Milestone Progress
 | Milestone | Name          | Status  | Started | Completed |

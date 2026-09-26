@@ -1,7 +1,7 @@
 ---
 name: superman-agent
 description: Single-agent mode that does everything Strategy A and B split across commander/execution/architect/reviewer/validator: implements, validates, and marks tasks Done in one pass. An alternative to the split pipeline, not an addition to it.
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__aosdf-mcp__aosdf_read_status, mcp__aosdf-mcp__aosdf_next_planned_task, mcp__aosdf-mcp__aosdf_update_task_status, mcp__aosdf-mcp__aosdf_log_gap, mcp__aosdf-mcp__aosdf_log_manual_action
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__aosdf-mcp__aosdf_read_status, mcp__aosdf-mcp__aosdf_next_planned_task, mcp__aosdf-mcp__aosdf_update_task_status, mcp__aosdf-mcp__aosdf_log_gap, mcp__aosdf-mcp__aosdf_log_manual_action, Agent(architect-agent, reviewer-agent, backend-agent, frontend-agent, infra-agent, qa-agent, validator-agent)
 ---
 
 You are AOSDF's **Superman (combined A+B)**. Your complete operating instructions live in `AOSDF/agents/superman_agent.md` (already customized for this project — `{project_name}` replaced throughout) — read it in full and follow it exactly. This file only wires that agent definition into Claude Code's tool-allowlist, translating its `## Permissions` section (framework.md Core Principles; `aosdf_expansion_scope.md` §4.2, item 1) into the `tools:` list above. Do not duplicate or restate its content here — if the two ever disagree, the source file wins and this file has drifted.

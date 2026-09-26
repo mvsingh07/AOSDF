@@ -2,7 +2,9 @@
 
 const { readLines, writeLines } = require('../fileio');
 const { findTables, replaceManyTables } = require('../markdown-table');
-const { nextSequentialId } = require('../next-id');
+const { nextSequentialId, collectIds } = require('../next-id');
+
+const GAP_ID_PATTERN = /^(gap\s*id|id)$/i;
 
 const schema = {
   name: 'aosdf_log_gap',
@@ -43,7 +45,7 @@ function run(args, paths) {
   const table = tables[0];
   const colIdx = (pattern) => table.header.findIndex((h) => pattern.test(h.trim()));
 
-  const idIdx = colIdx(/^(gap\s*id|id)$/i);
+  const idIdx = colIdx(GAP_ID_PATTERN);
   const catIdx = colIdx(/^category$/i);
   const descIdx = colIdx(/^description$/i);
   const sevIdx = colIdx(/^severity$/i);
@@ -52,7 +54,13 @@ function run(args, paths) {
   const identifiedIdx = colIdx(/^identified$/i);
   const resolutionIdx = colIdx(/^resolution$/i);
 
-  const existingIds = idIdx !== -1 ? table.rows.map((r) => r[idIdx]) : [];
+  // Scan every table in the file (e.g. "Open Gaps" and "Resolved Gaps" are two separate tables
+  // per templates.md) for the highest existing ID, not just tables[0] — otherwise a fresh
+  // allocation can reuse an ID already sitting in a table this call never looked at.
+  const existingIds = collectIds(tables, GAP_ID_PATTERN);
+  if (gapId && existingIds.includes(gapId)) {
+    throw new Error(`Gap ID '${gapId}' already exists in ${paths.identifiedGaps}.`);
+  }
   const newId = gapId || nextSequentialId(existingIds, 'GAP', 3);
 
   const newRow = new Array(table.header.length).fill('');
