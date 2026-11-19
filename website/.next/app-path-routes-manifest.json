@@ -1,0 +1,10 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/_global-error/page": "/_global-error",
+  "/framework/page": "/framework",
+  "/hosting/page": "/hosting",
+  "/learn/[roadmap]/[module]/[lesson]/page": "/learn/[roadmap]/[module]/[lesson]",
+  "/learn/[roadmap]/[module]/page": "/learn/[roadmap]/[module]",
+  "/learn/page": "/learn",
+  "/learn/[roadmap]/page": "/learn/[roadmap]"
+}

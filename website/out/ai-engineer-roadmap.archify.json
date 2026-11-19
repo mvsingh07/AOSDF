@@ -1,0 +1,178 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AI Engineer / FDE Learning Roadmap",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1000,
+      490
+    ]
+  },
+  "lanes": [
+    {
+      "id": "foundation",
+      "label": "Foundations, cloud, and systems"
+    },
+    {
+      "id": "delivery",
+      "label": "AI engineering to customer delivery"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ml_foundations",
+      "lane": "foundation",
+      "col": 0,
+      "type": "backend",
+      "label": "ML basics",
+      "sublabel": "data + evaluation",
+      "tag": "01"
+    },
+    {
+      "id": "cloud_foundations",
+      "lane": "foundation",
+      "col": 1,
+      "type": "cloud",
+      "label": "AWS + cloud",
+      "sublabel": "network + IAM",
+      "tag": "02"
+    },
+    {
+      "id": "async_systems",
+      "lane": "foundation",
+      "col": 2,
+      "type": "messagebus",
+      "label": "Queues",
+      "sublabel": "delivery + retry",
+      "tag": "03"
+    },
+    {
+      "id": "models_transformers",
+      "lane": "foundation",
+      "col": 3,
+      "type": "backend",
+      "label": "Transformers",
+      "sublabel": "attention + tokens",
+      "tag": "04"
+    },
+    {
+      "id": "scale_design",
+      "lane": "foundation",
+      "col": 4,
+      "type": "backend",
+      "label": "System design",
+      "sublabel": "scale + trade-offs",
+      "tag": "05"
+    },
+    {
+      "id": "embeddings",
+      "lane": "foundation",
+      "col": 5,
+      "type": "database",
+      "label": "Embeddings",
+      "sublabel": "vectors + sources",
+      "tag": "06"
+    },
+    {
+      "id": "rag",
+      "lane": "delivery",
+      "col": 0,
+      "type": "backend",
+      "label": "RAG",
+      "sublabel": "grounded answers",
+      "tag": "07"
+    },
+    {
+      "id": "rag_evaluation",
+      "lane": "delivery",
+      "col": 1,
+      "type": "database",
+      "label": "RAG evals",
+      "sublabel": "hybrid + quality",
+      "tag": "08"
+    },
+    {
+      "id": "agents_workflows",
+      "lane": "delivery",
+      "col": 2,
+      "type": "security",
+      "label": "Agents",
+      "sublabel": "tools + approval",
+      "tag": "09"
+    },
+    {
+      "id": "production_ai",
+      "lane": "delivery",
+      "col": 3,
+      "type": "cloud",
+      "label": "Production AI",
+      "sublabel": "cost + security",
+      "tag": "10"
+    },
+    {
+      "id": "email_reliability",
+      "lane": "delivery",
+      "col": 4,
+      "type": "messagebus",
+      "label": "Email + DR",
+      "sublabel": "delivery + recovery",
+      "tag": "11"
+    },
+    {
+      "id": "fde_delivery",
+      "lane": "delivery",
+      "col": 5,
+      "type": "frontend",
+      "label": "FDE delivery",
+      "sublabel": "customer outcome",
+      "tag": "12"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ml_foundations",
+      "to": "cloud_foundations"
+    },
+    {
+      "from": "cloud_foundations",
+      "to": "async_systems"
+    },
+    {
+      "from": "async_systems",
+      "to": "models_transformers"
+    },
+    {
+      "from": "models_transformers",
+      "to": "scale_design"
+    },
+    {
+      "from": "scale_design",
+      "to": "embeddings"
+    },
+    {
+      "from": "embeddings",
+      "to": "rag"
+    },
+    {
+      "from": "rag",
+      "to": "rag_evaluation"
+    },
+    {
+      "from": "rag_evaluation",
+      "to": "agents_workflows"
+    },
+    {
+      "from": "agents_workflows",
+      "to": "production_ai"
+    },
+    {
+      "from": "production_ai",
+      "to": "email_reliability"
+    },
+    {
+      "from": "email_reliability",
+      "to": "fde_delivery"
+    }
+  ]
+}

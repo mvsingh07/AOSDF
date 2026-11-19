@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Reliable Queue Delivery",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "request", "label": "Request and state" },
+    { "id": "delivery", "label": "Delivery path" },
+    { "id": "recovery", "label": "Failure and recovery", "variant": "exception" }
+  ],
+  "mainPath": ["accept", "outbox", "publish", "claim", "effect", "ack"],
+  "nodes": [
+    { "id": "accept", "lane": "request", "col": 0, "type": "frontend", "label": "Accept", "sublabel": "request ID" },
+    { "id": "outbox", "lane": "request", "col": 1, "type": "database", "label": "Commit", "sublabel": "state + outbox" },
+    { "id": "publish", "lane": "delivery", "col": 2, "type": "messagebus", "label": "Publish", "sublabel": "durable queue" },
+    { "id": "claim", "lane": "delivery", "col": 3, "type": "backend", "label": "Claim", "sublabel": "visibility lease" },
+    { "id": "effect", "lane": "delivery", "col": 4, "type": "external", "label": "Apply", "sublabel": "idempotent effect" },
+    { "id": "ack", "lane": "delivery", "col": 5, "type": "backend", "label": "Ack", "sublabel": "after success" },
+    { "id": "retry", "lane": "recovery", "col": 3, "type": "cloud", "label": "Retry", "sublabel": "backoff + jitter" },
+    { "id": "dlq", "lane": "recovery", "col": 4, "type": "messagebus", "label": "Quarantine", "sublabel": "DLQ + inspect" },
+    { "id": "replay", "lane": "recovery", "col": 5, "type": "security", "label": "Replay", "sublabel": "approved fix" }
+  ],
+  "edges": [
+    { "from": "accept", "to": "outbox", "label": "record intent" },
+    { "from": "outbox", "to": "publish", "label": "dispatch" },
+    { "from": "publish", "to": "claim", "label": "deliver" },
+    { "from": "claim", "to": "effect", "label": "process" },
+    { "from": "effect", "to": "ack", "label": "commit result" },
+    { "from": "claim", "to": "retry", "label": "transient failure", "role": "error" },
+    { "from": "retry", "to": "dlq", "label": "attempt limit", "role": "error" },
+    { "from": "dlq", "to": "replay", "label": "fix + review" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Request contract", "items": ["Return an operation ID after durable acceptance", "State and outbox entry commit together"] },
+    { "dot": "amber", "title": "Failure contract", "items": ["A lost acknowledgement may redeliver the same job", "The consumer checks the effect before repeating it"] },
+    { "dot": "emerald", "title": "Recovery contract", "items": ["Bound attempts and isolate poison messages", "Replay only after inspecting the cause and duplicate risk"] }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "A Document Service at Growing Scale",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "reader", "type": "external", "label": "Reader", "sublabel": "view or edit", "pos": [40, 300], "size": [128, 64] },
+    { "id": "edge", "type": "cloud", "label": "Edge Cache", "sublabel": "public assets", "pos": [250, 300], "size": [138, 64] },
+    { "id": "balancer", "type": "cloud", "label": "Load Balancer", "sublabel": "healthy targets", "pos": [470, 300], "size": [138, 64] },
+    { "id": "api", "type": "backend", "label": "API Fleet", "sublabel": "auth + logic", "pos": [690, 300], "size": [138, 64] },
+    { "id": "primary", "type": "database", "label": "Primary DB", "sublabel": "durable writes", "pos": [910, 300], "size": [138, 64] },
+    { "id": "cache", "type": "database", "label": "App Cache", "sublabel": "bounded freshness", "pos": [690, 110], "size": [138, 64] },
+    { "id": "replica", "type": "database", "label": "Read Replica", "sublabel": "may lag", "pos": [910, 110], "size": [138, 64] },
+    { "id": "objects", "type": "cloud", "label": "Object Store", "sublabel": "document bytes", "pos": [910, 490], "size": [138, 64] }
+  ],
+  "connections": [
+    { "from": "reader", "to": "edge", "label": "HTTPS", "variant": "emphasis" },
+    { "from": "edge", "to": "balancer", "label": "uncached API", "variant": "emphasis" },
+    { "from": "balancer", "to": "api", "label": "healthy instance", "variant": "emphasis", "labelDy": 56 },
+    { "from": "api", "to": "primary", "label": "authoritative write", "variant": "emphasis", "labelDy": -19 },
+    { "from": "api", "to": "cache", "label": "cache lookup" },
+    { "from": "primary", "to": "replica", "label": "async replication", "variant": "dashed" },
+    { "from": "api", "to": "objects", "label": "authorized file access" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Begin with the request", "items": ["Define reads, edits, permission checks, and response targets", "Estimate peak demand before adding capacity"] },
+    { "dot": "violet", "title": "Move the bottleneck deliberately", "items": ["Edge and app caches reduce repeated reads", "Replicas add read capacity but may return older data"] },
+    { "dot": "emerald", "title": "Keep the contract clear", "items": ["The primary owns committed edits", "A user must be authorized before file access"] }
+  ]
+}
