@@ -1,3 +1,20 @@
+---
+concepts: []
+concept_category:
+difficulty:
+prerequisites: []
+interview_angle: >
+  TBD — one or two sentences framing this module's domain model as something you'd say out loud in
+  an interview.
+built_at: {{MILESTONE}}
+diagram: false
+entities: []
+tags: []
+summary: >
+  TBD — one or two sentences on what this domain model establishes (Tier 1 frontmatter, AOSDF v2.5,
+  extended v3.3 — see framework.md § Concept Frontmatter Standard).
+---
+
 # {{ID}} {{TITLE}} — Domain Model
 
 > **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}_module`

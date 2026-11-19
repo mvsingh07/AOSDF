@@ -1,5 +1,8 @@
 # Agent: Docs Site
-# AOSDF v2.5 — OPTIONAL [PJ1, restructured 2026-08-19]
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0 — OPTIONAL [PJ1, restructured 2026-08-19]
 # Part of Track P (Project Docs Site) only — Track D (Docs Browser) was built, then cancelled
 # 2026-08-19 (execution_plan.md D0's Cancelled note): AOSDF/ is the product this framework
 # produces, not documentation about a product, so it doesn't get a rendered site any more than
@@ -111,3 +114,7 @@ site needs an AI agent's judgment.
   the validation; open it in a browser for human review instead of reading rendered HTML back into
   context
 - Report build/open results in one line, not a walkthrough
+
+## Metadata pre-build gate (3.6.0)
+
+The installed `tools/document_metadata_hook.py` hook in `mkdocs.yml` validates new/adopted Markdown before rendering. If missing, report incomplete setup instead of bypassing it or authoring config in this build role. A failed check requires correcting the named document; do not remove the hook or expand legacy exemptions. Opening an already built site does not validate current sources. No background build or indexing is introduced.

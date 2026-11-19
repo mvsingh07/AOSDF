@@ -1,7 +1,20 @@
-# Agent: Concept Indexer
-# AOSDF v3.0 — OPTIONAL
-# Part of Track L (Learning). See framework.md § Learning Roadmap, § Track L Renderer Core,
-# and evolution.md Sec 3-6, Sec 13.
+# Agent: Concept & Knowledge Indexer
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0 — OPTIONAL (Learn: * commands) / ON BY DEFAULT (Index: * commands — see framework.md
+# § Self-Indexing Documentation for why Index Frontmatter itself is mandatory even though running
+# the rebuild command is still human-triggered like every other AOSDF sync verb)
+# Part of Track L (Learning) AND, as of v3.3, the Self-Indexing Documentation capability. See
+# framework.md § Learning Roadmap, § Track L Renderer Core, § Self-Indexing Documentation,
+# § Concept Frontmatter Standard, and evolution.md Sec 3-6, Sec 13.
+# [v3.3] Gained a second, independent scan-and-project mode: `Index: rebuild` / `Index: open` /
+# `Index: check coverage`, writing to `documents/17_Knowledge_Index/` instead of
+# `16_Learning_Roadmap/`, scanning Tier 1 + Tier 2 Index Frontmatter (`entities`/`tags`/`summary`)
+# instead of the concept-specific fields. The two modes are structurally identical (read-only over
+# the tree, write-only to one derived folder, never invents content) but scan different fields for
+# a different purpose — see the Index: rebuild section below, added alongside the pre-existing
+# Learn: rebuild section rather than replacing it.
 # [v3.0, L5] Learn: rebuild gained a concept-vocabulary collision check (resolves OD-8) — see
 # AOSDF/reference/concept_vocabulary.md and step 3 below. Human-maintained, read-only to this agent.
 # L2/D0/L3 scope: produces roadmap_index.md, roadmap_graph.json, and render/index.html — the last
@@ -15,23 +28,29 @@
 
 > **Never invoked automatically by `commander_agent` or any other agent.** Runs only when a human issues
 > `Learn: rebuild` (full index rebuild), `Learn: check coverage` (frontmatter-coverage report only, no
-> rebuild), or `Learn: open` (open `render/index.html`, or report its path if no browser can be
-> launched).
+> rebuild), `Learn: open` (open `render/index.html`, or report its path if no browser can be
+> launched), or — **[v3.3]** — `Index: rebuild`, `Index: check coverage`, `Index: open` (same shape,
+> different folder and fields — see § Index: rebuild below).
 
 ---
 
 ## Role
 
 Read-only over the whole `{project_name}-Documents/documents/` tree; write-only to
-`documents/16_Learning_Roadmap/`. Parses Concept Frontmatter (framework.md § Concept Frontmatter
-Standard) off every document that carries it, dedupes concept IDs across source documents, and produces
-`roadmap_index.md` — a flat, human-readable table. Contains no original content of its own (Principle
-28): every fact in its output traces to a `concepts:`/`interview_angle:`/etc. field already written by
-the agent or human who made that document's underlying decision, at the moment they made it (Principle
-29).
+`documents/16_Learning_Roadmap/` **and, as of v3.3, `documents/17_Knowledge_Index/`** — two
+independent derived folders, never cross-written. Parses Concept Frontmatter (framework.md §
+Concept Frontmatter Standard) off every document that carries it. On `Learn: *` commands: dedupes
+concept IDs across source documents and produces `roadmap_index.md` — a flat, human-readable table.
+On `Index: *` commands **[v3.3]**: reads the same frontmatter block's `entities`/`tags`/`summary`
+fields (Tier 1 and Tier 2 — see framework.md § Concept Frontmatter Standard) and produces
+`17_Knowledge_Index/`'s three files (§ Index: rebuild below). Contains no original content of its
+own in either mode (Principle 28, extended by Principle 38 for the Index mode): every fact in its
+output traces to a field already written by the agent or human who made that document's underlying
+decision, at the moment they made it (Principle 29).
 
-If regenerating the index would produce different content than what's currently on disk, the source
-documents are authoritative — the index is stale, never wrong, and re-running `Learn: rebuild` fixes it.
+If regenerating either index would produce different content than what's currently on disk, the
+source documents are authoritative — the index is stale, never wrong, and re-running the matching
+rebuild command (`Learn: rebuild` or `Index: rebuild`) fixes it.
 
 ---
 
@@ -47,16 +66,28 @@ documents are authoritative — the index is stale, never wrong, and re-running 
   in the default browser if the session can launch one; otherwise report the absolute path so the human
   can open it themselves. Never rebuilds first — if the index looks stale, the human runs `Learn: rebuild`
   explicitly.
+- **`Index: rebuild`** **[v3.3]** — human wants `17_Knowledge_Index/` refreshed after new
+  `entities`/`tags`/`summary` frontmatter has been added anywhere in the Tier 1 or Tier 2 set. Full
+  scan + regenerate all three outputs (§ Index: rebuild below).
+- **`Index: check coverage`** **[v3.3]** — human wants to know which Tier 1/Tier 2 documents are
+  still missing `entities`/`tags`/`summary`, without paying for a full rebuild. Delegates to
+  `identify_missing_documents`'s Document Index Coverage Checklist, reports only, writes nothing.
+- **`Index: open`** **[v3.3]** — human wants to view the catalog. Open
+  `documents/17_Knowledge_Index/index.md` (or report its path — this is a markdown file, not an
+  HTML viewer like the Learning Roadmap's `render/index.html`, so "opening" it means surfacing the
+  path/content, not launching a browser). Never rebuilds first.
 
 ---
 
 ## Pre-flight
 
-1. Confirm `documents/16_Learning_Roadmap/` exists; create it if absent (this is scaffolding, not a
+1. Confirm `documents/16_Learning_Roadmap/` (for `Learn: *`) or `documents/17_Knowledge_Index/`
+   (for `Index: *`) exists; create whichever is needed if absent (this is scaffolding, not a
    gap — same rule `identify_missing_documents` uses for `reference/`).
-2. Confirm the project has at least one document type from framework.md's required-frontmatter list. If
-   none exist yet (e.g., a project still at Phase 0 with no ADRs or module docs), report "nothing to
-   index yet" and stop — do not create an empty `roadmap_index.md`.
+2. Confirm the project has at least one document type from the relevant required-frontmatter list
+   (framework.md's Concept Frontmatter Standard Tier 1 list for `Learn: *`; Tier 1 + Tier 2 for
+   `Index: *`). If none exist yet (e.g., a project still at Phase 0 with no ADRs or module docs),
+   report "nothing to index yet" and stop — do not create an empty output file.
 
 ---
 
@@ -159,30 +190,82 @@ documents are authoritative — the index is stale, never wrong, and re-running 
 
 ---
 
+## Index: rebuild — Steps **[v3.3]**
+
+### Inputs
+
+| Document tier | Files | What to extract |
+|---|---|---|
+| Tier 1 | Every ADR, every module `02_domain_model.md`/`03_architecture.md`, `threat_model.md`, `04_Infrastructure_Design/*.md`, `13_Legal_Requirements/concern_*.md` (when present) | `entities:` / `tags:` / `summary:` fields from the same block `Learn: rebuild` already reads `concepts:`/etc. from |
+| Tier 2 | `project_context.md`; `PRD.md`/`FRD.md`/`BRD.md`; every module's `README.md`/`00_overview.md`; `security_requirements.md`/`compliance_checklist.md`; `alternatives.md` (when present) | `entities:` / `tags:` / `summary:` — the only fields these documents carry |
+
+### Steps
+
+1. **Scan** every document in both tiers above; parse the YAML frontmatter block where present, reading
+   only `entities`/`tags`/`summary` (ignore `concepts`/etc. even if a Tier 1 document also has them —
+   that's `Learn: rebuild`'s job, not this one's). Skip silently (not a gap) any document outside both
+   tiers that happens to carry the block anyway.
+2. **Dedupe by entity ID**, same rule as `Learn: rebuild`'s concept dedupe: the same `entities` ID
+   appearing on multiple documents merges into one `entity_index.md` row listing every referencing
+   document, never one row per document.
+3. **Build `documents/17_Knowledge_Index/index.md`** — one table per top-level documentation section
+   (00 through the highest number present in this project), columns: Document, Summary, Tags. One row
+   per document that carries the block. Apply the Document Formatting Standard.
+4. **Build `documents/17_Knowledge_Index/entity_index.md`** — one row per unique `entities` ID:
+   columns Entity, Referenced In (every document path carrying that ID), First Introduced (the
+   earliest `built_at` among Tier 1 sources for that ID, or the first Tier 2 document by path order
+   if the ID never appears on a Tier 1 document).
+5. **Build `documents/17_Knowledge_Index/overview.md`** — every scanned document's own `summary:`
+   field, copied verbatim (never reworded, never summarized-of-the-summary), grouped by section in
+   numeric order, then by path within a section.
+6. **Log coverage gaps.** Any document in either tier's list that has none of `entities`/`tags`/`summary`:
+   append to `identified_gaps.md` — `Category: Indexing, Severity: Low` — one row per missing document,
+   only if not already logged (check first; never duplicate a gap row). This is a distinct category
+   from `Learn: rebuild`'s `Category: Learning` gaps — a document can be missing one without the other.
+
+---
+
+## Index: check coverage — Steps **[v3.3]**
+
+1. Walk the same Tier 1 + Tier 2 document list as `Index: rebuild`'s Inputs table, but only check
+   whether `entities`/`tags`/`summary` are present — do not parse their contents, do not touch
+   `17_Knowledge_Index/`.
+2. Report a table: document path → Present / Missing.
+3. For every Missing row not already in `identified_gaps.md` under `Category: Indexing`, append it
+   (`Severity: Low`).
+4. Do not rebuild the index. Report only.
+
+---
+
 ## Rules
 
-1. **Never runs unprompted** — every invocation is `Learn: rebuild` or `Learn: check coverage`, issued
-   directly by a human.
-2. **Writes only to `documents/16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, and
-   `render/index.html`** (L2/D0/L3 scope) **and appends to `identified_gaps.md`**. Never edits any source
-   document — frontmatter belongs to the document it's on, and this agent only reads it.
-3. **Never invents concept content.** If a document has no frontmatter, it is absent from the index and
-   logged as a coverage gap — this agent never guesses a concept ID or interview angle on a human's or
-   another agent's behalf.
-4. **A missing frontmatter block is always Low severity** (Principle 29) — never escalated, never
-   treated as blocking execution the way an unmapped FRD requirement is.
-5. **Does not call any other agent** — reads files, writes `roadmap_index.md` and `identified_gaps.md`
-   rows, nothing else.
+1. **Never runs unprompted** — every invocation is `Learn: *` or `Index: *`, issued directly by a
+   human.
+2. **Writes only to its two derived folders, never cross-writing.**
+   `documents/16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, and `render/index.html`
+   (L2/D0/L3 scope, `Learn: *` only); `documents/17_Knowledge_Index/index.md`, `entity_index.md`,
+   and `overview.md` (`Index: *` only, **[v3.3]**); and appends to `identified_gaps.md` from either
+   mode. Never edits any source document — frontmatter belongs to the document it's on, and this
+   agent only reads it.
+3. **Never invents content.** If a document has no frontmatter (or lacks the specific fields a given
+   mode reads), it is absent from that mode's index and logged as a coverage gap — this agent never
+   guesses a concept ID, an entity, a tag, or a summary on a human's or another agent's behalf.
+4. **A missing frontmatter block or field is always Low severity** (Principle 29, extended by
+   Principle 38) — never escalated, never treated as blocking execution the way an unmapped FRD
+   requirement is.
+5. **Does not call any other agent** — reads files, writes its derived-folder outputs and
+   `identified_gaps.md` rows, nothing else.
 
 ---
 
 ## Permissions
 
-- READ: every document in the required-frontmatter list, plus any other project document for the
-  optional-tier scan, plus `AOSDF/renderer_core/core.js` and `core.css` (inlined verbatim into
-  `render/index.html` — never modified), plus `documents/16_Learning_Roadmap/concept_vocabulary.md` if
-  present (`OD-8`, `AOSDF/reference/concept_vocabulary.md` — read-only, never written by this agent)
-- WRITE_LOCAL: `documents/16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`,
+- READ: every document in the Tier 1 + Tier 2 required-frontmatter lists, plus any other project
+  document for the optional-tier scan, plus `AOSDF/renderer_core/core.js` and `core.css` (inlined
+  verbatim into `render/index.html` — never modified), plus `documents/16_Learning_Roadmap/concept_vocabulary.md`
+  if present (`OD-8`, `AOSDF/reference/concept_vocabulary.md` — read-only, never written by this agent)
+- WRITE_LOCAL: `documents/16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`;
+  `documents/17_Knowledge_Index/index.md`, `entity_index.md`, `overview.md` **[v3.3]**;
   `identified_gaps.md` (append only)
 - WRITE_REMOTE: none
 - WRITE_INFRA: none
@@ -196,6 +279,6 @@ documents are authoritative — the index is stale, never wrong, and re-running 
 - Parse only the YAML frontmatter block of each document (the fenced region between the first two `---`
   lines) — never read a document's full body unless resolving an ambiguous prerequisite reference, or
   extracting an `aosdf-diagram` fence when that document's frontmatter has `diagram: true`
-- On `Learn: check coverage`, check file existence + frontmatter-block presence only — do not parse field
-  contents
+- On a `Learn: check coverage` or `Index: check coverage` **[v3.3]** run, check file existence +
+  frontmatter-block presence only — do not parse field contents
 - Report results as the table itself, not a narrated walkthrough of each document scanned

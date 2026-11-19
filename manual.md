@@ -1,8 +1,28 @@
 # AOSDF — How This Works
+
+
 # A Plain-Language Guide
-# AOSDF v2.5
+# AOSDF v3.6.0
 
 ---
+
+
+## Required document authoring (3.6)
+
+All new project Markdown documents use one `aosdf-doc/v1` header from creation, including generated documents, task evidence and future archive/run files. This expands older Tier 1/Tier 2 coverage rules for new documents; existing concept/index extensions remain in the same YAML mapping. Use `tools/create_document.py`, assign a fresh identity for every template instance, and run the installed `check_document_metadata.py` before handoff and docs builds. New projects start with no legacy exemptions; existing projects review explicit pre-existing paths. Setup and MkDocs site templates install the mandatory gate. See [authoring contract](reference/document_authoring.md).
+
+## Coordinated development (3.4 / 3.5)
+
+Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13. The Solution Architect owns ongoing canonical execution-plan writes after Captain creation/replanning; Principal Engineers coordinate threads; workers and validators report evidence. Strategy B task design/review roles are distinct from these coordination roles. Exactly four process Modes: Manual → Semi-auto → Easy → Auto; transitions are explicit and rollout stages are separate.
+
+Use proportional Small/Standard/High-risk plans and initial verdicts; High-risk workers stop for independent review. Additional review or plan revision requires founder approval. Reconcile accepted receipts once and preserve live ownership/history. Coordinated Strategy B enters `05_AI_Agent_System/coordination-threads/coordinator-definition.md`; Strategy A is explicit legacy compatibility.
+
+New setup records coordination opt-in and project-owned topology/model/ownership inputs, installs `templates/coordination_threads/` inactive and creates empty records only after those inputs are known. Root `reference/` policies install into project `06_Execution_Plan/`; roles into `05_AI_Agent_System/agents/`; prompts into `05_AI_Agent_System/prompt_templates/`. Rewrite source-relative links to these installed paths. Never copy foreign live state or enable a daemon/session from a template. See [portable upgrade protocol](reference/upgrades.md) for independent existing-project migration.
+
+File notifications are notification-only, bounded and target-configured; observer and receiver are separate. An ended conversation is not woken without an attached receive call. Events do not grant authorization or task acceptance. See `templates/coordination_threads/file-signals/README.md`.
+
+Documentation itself is the knowledge source; self-indexing and existing learning/docs tooling remain. No separate llm-wiki folder is required. See [indexable authoring standard](reference/document_authoring.md) for required new-document metadata, creation tooling, fixed legacy compatibility and build validation.
+
 
 ## What Problem Does This Solve?
 
@@ -66,9 +86,9 @@ Agents are AI workers. Each one has a defined role, specific inputs it reads, sp
 | **Identify Missing Docs** | Scans the project structure against the checklist. Reports gaps. Gets called by Workflow Initiator |
 | **Captain** | [v1.3] After 00–05 docs are complete, reads them all and generates the execution plan, milestone files, and tracking board. Validates that every FRD service has a task. Sets project_status = READY. |
 | **Commander** | Once per session, reads project_status.md + tracking board, finds the next task, delegates to the right agent. Never writes code. |
-| **Execution Agent** | Strategy A worker: receives task from commander, generates the implementation prompt, saves it, executes, validates, updates the board. |
+| **Execution Agent** | Strategy A worker: receives task from commander, generates the implementation prompt, saves it, executes, validates, reports evidence to SA. |
 | **Reviewer** | Strategy B only: receives an implementation prompt from Architect, checks for security and scalability violations, approves or redlines. |
-| **Validator** | Strategy B only: receives completed code from Implementor, runs tests, marks task Done in the tracking board if tests pass. |
+| **Validator** | Strategy B only: receives completed code from Implementor, runs tests, reports validated completion to SA if tests pass. |
 | **Architect** | Designs services, writes ADRs, creates implementation prompts for the backend agent |
 | **Backend** | Writes code. Only after contracts and schemas are defined. Writes tests too |
 | **Infra** | Provisions cloud infrastructure. Terraform/CDK/OpenTofu. Never writes business logic |
@@ -76,7 +96,7 @@ Agents are AI workers. Each one has a defined role, specific inputs it reads, sp
 | **Frontend** | Builds UI. Inactive until UI phase is defined in project context |
 | **Addendum** | [v2.1] Called after the plan is locked when a late cross-cutting requirement arrives. Reads the human-authored addendum doc, produces a scoped plan + tracking file entirely within `15_Addendums/`. Never touches the main tracking board or milestone files. |
 | **Tracker Sync** | [v2.5] Human-triggered only, via `Tracker: sync` / `Tracker: import`. Mirrors `execution_plan.md`'s Status column to Jira or Notion (whichever `tracker_config.md` names) one-directionally — the execution plan always wins except through explicit Import Mode. Generalizes the older `jira_sync_agent`, which stays working as-is for projects that haven't adopted `tracker_config.md`. |
-| **Concept Indexer** | [v2.5] Human-triggered only, via `Learn: rebuild` / `Learn: open` / `Learn: check coverage`. Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/`. Builds a personal, zero-setup interview-prep roadmap purely from Concept Frontmatter — never invents content of its own. |
+| **Concept & Knowledge Indexer** | [v2.5] Human-triggered only, via `Learn: rebuild` / `Learn: open` / `Learn: check coverage`. Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/`. Builds a personal, zero-setup interview-prep roadmap purely from Concept Frontmatter — never invents content of its own. **[v3.3]** Also runs `Index: rebuild` / `Index: open` / `Index: check coverage` — same discipline, writing to `17_Knowledge_Index/` from the wider Tier 1/Tier 2 `entities`/`tags`/`summary` frontmatter instead; this is the always-on-by-default context layer `captain_agent` now reads first. |
 | **Docs Site** | [v2.5] Human-triggered only, via `Project Docs: build` / `Project Docs: open`. Thin wrapper around `mkdocs build` — never authors config, never installs dependencies on the fly. Renders your project's own `{ProjectName}-Documents/`, nested inside that same folder — there is no separate site for `AOSDF/` itself. |
 | **Editor Extension** | [v2.5, E4/E5; v3.0, E6-T2/T3, L4-T1] VSCode first, if this project adopted IDE tooling (`workflow_initiator` Step 1 Q9). Status bar chip, an Inbox (Gaps, Manual Actions, pending Implementation Prompts), `AOSDF: Open Project Docs`, and `AOSDF: Open Learning Roadmap` (thin wrapper around `Learn: open` — ships only if Track E has shipped, per `L4`) — all read-only, thin clients of `aosdf-mcp` or direct file reads, never a second source of truth. Plus three write actions (`AOSDF: Run Agent Command...`, `Trigger Tracker Sync`, `Approve & Send`) that type into a terminal running Claude Code — never a direct file write from the extension itself. Supports multiple open project folders in one window (each with its own settings); a folder picker only appears once a second folder is open. Internal-only distribution (`OD-1`) — run from source (`AOSDF/aosdf-vscode/`, F5) or install a `.vsix` built via `npm run package`; never published to the VS Code Marketplace. |
 
@@ -86,7 +106,7 @@ Agents are AI workers. Each one has a defined role, specific inputs it reads, sp
 
 There are two modes:
 
-### Mode A: One Agent, One Step at a Time
+### Legacy Strategy A: One Agent, One Step at a Time
 
 Best for: solo engineer, careful review of every step.
 
@@ -100,7 +120,7 @@ Best for: solo engineer, careful review of every step.
 
 Human effort: approve prompts, review milestone outputs. That's it.
 
-### Mode B: Four-Agent Pipeline
+### Strategy B: Proportional task pipeline
 
 Best for: larger scope, wanting to move faster with automated quality control.
 
@@ -256,6 +276,7 @@ Most agents are called by other agents. But these agents **must always be called
 | `addendum_agent` | When a post-baseline cross-cutting requirement arrives | Needs a human-authored `15_Addendums/<slug>.md` before it can plan |
 | `tracker_sync_agent` / `jira_sync_agent` | On `Tracker: sync` / `Tracker: import` | Sync is opt-in and one-directional by design (Principle 24) — never runs on its own initiative |
 | `concept_indexer_agent` | On `Learn: rebuild` / `Learn: open` / `Learn: check coverage` | `16_Learning_Roadmap/` is only created when you ask for it — never generated as a side effect of writing other documents |
+| `concept_indexer_agent` (Index mode) **[v3.3]** | On `Index: rebuild` / `Index: open` / `Index: check coverage` | `17_Knowledge_Index/` is always relevant once Tier 1/Tier 2 frontmatter exists — the frontmatter itself is mandatory, only the rebuild command is opt-in-to-run |
 | `docs_site_agent` | On `Project Docs: build` / `Project Docs: open` | Building a site is a deliberate, human-triggered action — never automatic. Renders your project's own docs only; `AOSDF/` doesn't get a site of its own |
 
 **Everything else is called automatically** — the Commander Agent calls the Execution Agent, the Architect Agent calls the Reviewer, and so on.
@@ -323,7 +344,7 @@ Here is the exact order in which agents are called, from project start to first 
    execution_agent presents prompt to HUMAN: "Approve?"
    HUMAN approves
    execution_agent implements → validates
-   execution_agent updates execution_plan.md Status: Done (the only status record)
+   execution_agent reports evidence → SA reconciles canonical status
    execution_agent reports to commander
    commander finds next Planned task in execution_plan.md → calls execution_agent again
    ... (repeats until milestone complete)
@@ -336,7 +357,7 @@ Here is the exact order in which agents are called, from project start to first 
    reviewer_agent → implementor (approved prompt)
    implementor builds and tests
    implementor → validator_agent
-   validator_agent runs tests → updates execution_plan.md Status: Done (the only status record)
+   validator_agent records tests → SA reconciles canonical status
    validator_agent → (back to commander for next task)
 
 4. MILESTONE COMPLETE
@@ -594,7 +615,17 @@ project_root_path: Microservices/Comms-Engine/
 
 ---
 
-## How to Use the LLM Wiki [v1.6]
+## How to Use the LLM Wiki [v1.6, opt-in additional layer as of v3.3]
+
+> **[v3.3]** `llm-wiki/` is no longer scaffolded by default and no longer the first thing
+> `captain_agent` reads for context — that's now `documents/17_Knowledge_Index/`, self-indexing
+> derived directly from frontmatter already on the real documents, with no separate ingest step to
+> fall behind (see framework.md § Self-Indexing Documentation). A project opts in to `llm-wiki/`
+> explicitly (`workflow_initiator` Step 1, Q15) as an **additional** layer for cross-document
+> synthesis, session journaling, or contradiction-spotting — everything below still applies to a
+> project that does opt in. Use `Index: rebuild` / `Index: open` / `Index: check coverage` for the
+> self-indexing catalog every project has by default; the `Wiki:` commands below are for `llm-wiki/`
+> specifically, only relevant if enabled.
 
 ### What It Is
 The `llm-wiki/` folder is a persistent knowledge base maintained by the LLM across

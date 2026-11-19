@@ -1,10 +1,16 @@
 # AOSDF Templates
-# Version 1.3 — Production-Grade, Ready to Copy
+# Framework 3.6.0 — reusable templates (historical format tags retained below)
 
 > Use this as the canonical reference when setting up a new project.
 > Copy the structure, fill the templates, run workflow_initiator, then captain_agent.
 
 ---
+
+
+## Current coordination and authoring entry
+
+Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](reference/upgrades.md) for per-project migration; [document authoring](reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+
 
 ## Root Structure (v1.3)
 
@@ -356,11 +362,11 @@ State Transitions: | From | To | Condition |
 ```markdown
 # Execution Plan
 # <Project Name> — <Phase>
-# AOSDF v2.2
+# AOSDF <verified installed VERSION>
 
 > Every row = one independently executable subtask.
 > **Status column is the only task-status record.** Commander reads this file to find the next Planned task.
-> Agents update the Status column directly: Planned → In Progress → Done.
+> Captain creates/replans; SA alone reconciles ongoing Status: Planned → In Progress → Done. Workers/validators report evidence.
 > There is no separate tracking board — 08_Tracking_System/decisions_log.md is a lightweight
 > decisions log only and has no status authority.
 > Blank rows separate milestones for human readability.
@@ -569,7 +575,7 @@ Rejected because: ...
 
 ```markdown
 # Agent: Captain
-# AOSDF v1.3
+# AOSDF <verified installed VERSION>
 
 ## Role
 Reads all completed 00–05 documentation and generates the execution plan and milestone files. 
@@ -674,7 +680,7 @@ Log unmapped items to identified_gaps.md as severity: Critical.
 
 ```markdown
 # Agent: <Name>
-# AOSDF v1.3
+# AOSDF <verified installed VERSION>
 
 ## Role
 One sentence: what this agent does and why it exists.
@@ -699,3 +705,7 @@ Steps 1–N.
 - Load only what this task needs
 - Output: structured, no prose summaries
 ```
+
+## Mandatory new-document setup (3.6.0)
+
+Before generating project documents, install the tools and instructions in [the authoring contract](reference/document_authoring.md). Copy `tools/{document_metadata.py,check_document_metadata.py,create_document.py,document_metadata_hook.py,requirements-metadata.txt}` to the documentation repository's `tools/`; install the profile/schema in `docs/reference/`; copy `templates/document.md` to `docs/templates/document.md` and `templates/document-metadata-legacy.json` to `.aosdf/document-metadata-legacy.json` (empty for a new project). Copy/adapt `templates/document-authoring-AGENTS.md` to `docs/documents/AGENTS.md` with a fresh identity. Configure the hook shown in `templates/project_docs_site/mkdocs.yml.template`. Use the creator for new files; existing body templates are body inputs, never permission to omit metadata or reuse an ID. Run the gate before handoff and after generators; do not add legacy exemptions for new outputs.

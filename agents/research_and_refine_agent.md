@@ -1,5 +1,8 @@
 # Agent: Research & Refine
-# AOSDF v1.4
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0
 
 > **STOP. Do not read CLAUDE.md. Do not call commander_agent. Do not start implementation.**
 > Your only job: read task.md, read the Context Documents listed in it, research the scope, write research_results.md.

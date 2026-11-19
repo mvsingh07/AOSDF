@@ -1,5 +1,8 @@
 # Identify Missing Documents Agent
-# AOSDF v1.1
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0
 
 > Called by `workflow_initiator` or invoked directly when the project structure needs auditing.
 
@@ -120,7 +123,13 @@ If `14_Future_Migrations/alternatives.md` is absent: log as Low severity gap wit
 | `has_webhooks: true` | Webhook security section in `02_Security_Framework/threat_model.md` |
 | `multi_provider: true` | `03_System_Design/ADR/ADR-XXX-provider-routing.md` |
 
-### [v1.6] LLM Wiki Checklist
+### [v1.6, revised v3.3] LLM Wiki Checklist
+
+**[v3.3] Skip this entire check unless `project_status.md` § Project Configuration records `LLM
+Wiki: Enabled`** — as of v3.3, `llm-wiki/` is an opt-in additional layer, not the default context
+layer (framework.md § Self-Indexing Documentation); `workflow_initiator`'s new Step 1 question
+defaults to No. A project that never opted in has nothing to flag here — that is the intended
+state, not a gap. For a project that did opt in, this checklist is unchanged from v1.6:
 
 | Item                                            | Status |
 | ----------------------------------------------- | ------ |
@@ -130,7 +139,8 @@ If `14_Future_Migrations/alternatives.md` is absent: log as Low severity gap wit
 | `llm-wiki/sessions/session-contexts.md` exists  | [ ]    |
 | `llm-wiki/overview.md` written                  | [ ]    |
 
-If any item is missing: log to identified_gaps.md:
+If any item is missing (only for a project that recorded `LLM Wiki: Enabled`): log to
+identified_gaps.md:
 - Category: Documentation
 - Severity: Medium
 - Description: "llm-wiki not initialized"
@@ -166,6 +176,52 @@ If a required document is missing the block: log to `identified_gaps.md`:
 Never escalate above Low, and never treat this as blocking `project_status.md` reaching `READY` —
 Principle 29 is explicit that this is a nice-to-have, not a gate. Do not duplicate a gap row that's
 already logged for the same path.
+
+---
+
+### [v3.3] Document Index Coverage Checklist
+
+**Not gated on the Learning Roadmap opt-out** — unlike the checklist above, this one always runs.
+Self-indexing (framework.md § Self-Indexing Documentation) is mandatory frontmatter, not an
+opt-in toggle, even though the rebuild command that consumes it stays human-triggered like every
+other AOSDF sync verb (Principle 24). Disabling the Learning Roadmap only ever suppressed the
+*interview-prep-specific* nagging (Q10) — it says nothing about whether this project wants its docs
+to be findable.
+
+This is the check `concept_indexer_agent` delegates to on `Index: check coverage` (framework.md §
+Self-Indexing Documentation) — running it here means there is one coverage-check implementation per
+document set, not two, matching the pattern the Concept Frontmatter checklist above already uses.
+
+For every document in framework.md's Concept Frontmatter Standard Tier 1 **and** Tier 2 "Required
+on" lists that exists in the project, check whether it opens with a `---`-fenced YAML block
+containing at least `entities:`, `tags:`, and `summary:`:
+
+| Document type | Tier | Required? |
+| -------------- | ---- | --------- |
+| Every ADR (`03_System_Design/ADR/*.md`, `03_System_Design/NNN_<name>_module/decisions/*.md`) | 1 | Yes, if the ADR exists |
+| Every module `02_domain_model.md` / `03_architecture.md` | 1 | Yes, if the module folder exists |
+| `02_Security_Framework/threat_model.md` | 1 | Yes |
+| `04_Infrastructure_Design/*.md` | 1 | Yes, for every file present |
+| `13_Legal_Requirements/concern_*.md` | 1 | Yes, if `13_Legal_Requirements/` exists |
+| `00_Project_Context/project_context.md` | 2 | Yes |
+| `01_Product_Definition/PRD.md`, `FRD.md`, `BRD.md` | 2 | Yes, for every file present |
+| Every module `README.md` / `00_overview.md` | 2 | Yes, if the module folder exists |
+| `02_Security_Framework/security_requirements.md`, `compliance_checklist.md` | 2 | Yes |
+| `14_Future_Migrations/alternatives.md` | 2 | Yes, if `14_Future_Migrations/` exists |
+
+If a required document is missing `entities`/`tags`/`summary` (whether or not it already has a
+Tier 1 concept block for other fields): log to `identified_gaps.md`:
+- Category: Indexing
+- Severity: Low
+- Description: "`<path>` missing Document Index frontmatter (entities/tags/summary)"
+- Resolution: "Add the three-field block per framework.md § Concept Frontmatter Standard, Tier
+  1/2 as applicable"
+
+Never escalate above Low, and never treat this as blocking `project_status.md` reaching `READY` —
+same non-blocking discipline as the Concept Frontmatter checklist above, now extended to indexing
+(Principle 38). Do not duplicate a gap row already logged for the same path. Keep `Category:
+Learning` and `Category: Indexing` gaps distinct even when they land on the same document — a
+document can be missing one without the other.
 
 ---
 

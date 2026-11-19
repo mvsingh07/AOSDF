@@ -1,8 +1,14 @@
 # Agent Index
-# AOSDF v3.2 — Quick Reference
+# AOSDF v3.6.0 — Quick Reference
 # Read this to understand which agent to call and when.
 
 ---
+
+
+## Current coordination and authoring entry
+
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+
 
 ## Agent Call Sequence (Full Lifecycle)
 
@@ -37,9 +43,12 @@ jira_sync_agent        ← superseded by tracker_sync_agent; kept working for pr
                           human runs "Jira: sync" (export) or "Jira: import <key>" (import); never automatic
 
 [ON DEMAND — Learning Roadmap, OPTIONAL, human-invoked only — v2.5]
+[ON DEMAND — Self-Indexing (Knowledge Index), ON by default (not opt-in), human-invoked only — v3.3]
 concept_indexer_agent  ← human runs "Learn: rebuild" (regenerates roadmap_index.md, roadmap_graph.json,
                           and render/index.html), "Learn: open" (opens render/index.html), or
-                          "Learn: check coverage" (frontmatter-coverage report only); never automatic
+                          "Learn: check coverage" (frontmatter-coverage report only); OR "Index: rebuild"
+                          (regenerates 17_Knowledge_Index/index.md, entity_index.md, overview.md),
+                          "Index: open", or "Index: check coverage" — never automatic either way
 
 [ON DEMAND — MkDocs Project Docs Site, OPTIONAL, human-invoked only — v2.5, restructured 2026-08-19]
 docs_site_agent        ← human runs "Project Docs: build"/"Project Docs: open"
@@ -71,7 +80,7 @@ docs_site_agent        ← human runs "Project Docs: build"/"Project Docs: open"
 | `addendum_agent` | `agents/addendum_agent.md` | Human | Nothing | `15_Addendums/<slug>_plan.md`, `15_Addendums/tracking_addendums.md` |
 | `tracker_sync_agent` | `agents/tracker_sync_agent.md` | Human (`Tracker: sync` / `Tracker: import`) | Jira or Notion (via MCP, per `tracker_config.md` Provider); never another AOSDF agent | Export: `06_Execution_Plan/tracker_issue_map.md`, `tracker_config.md` (Sync History), tracker items. Import: `15_Addendums/<slug>.md` (draft only) |
 | `jira_sync_agent` | `agents/jira_sync_agent.md` | Human (`Jira: sync` / `Jira: import`) — pre-v2.5 projects only | Jira (via MCP); never another AOSDF agent | Export: `06_Execution_Plan/jira_issue_map.md`, `jira_config.md` (Sync History), Jira issues. Import: `15_Addendums/<slug>.md` (draft only) |
-| `concept_indexer_agent` | `agents/concept_indexer_agent.md` | Human (`Learn: rebuild` / `Learn: open` / `Learn: check coverage`) | Nothing — reads frontmatter, calls no other agent | `16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`, `identified_gaps.md` (append, `Category: Learning`) |
+| `concept_indexer_agent` | `agents/concept_indexer_agent.md` | Human (`Learn: rebuild` / `Learn: open` / `Learn: check coverage` / `Index: rebuild` / `Index: open` / `Index: check coverage`) | Nothing — reads frontmatter, calls no other agent | `16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`, `17_Knowledge_Index/index.md`, `entity_index.md`, `overview.md` (v3.3), `identified_gaps.md` (append, `Category: Learning` or `Category: Indexing`) |
 | `docs_site_agent` | `agents/docs_site_agent.md` | Human (`Project Docs: build`/`open`) | `mkdocs build` (external command); never another AOSDF agent | `{project_name}-Documents/{project_name}-Documents-site/` (via `mkdocs build`'s own output — never writes source files or `mkdocs.yml` itself) |
 | `principal_architect_agent` | `agents/principal_architect_agent.md` | Human, at a milestone/module/ADR boundary | Nothing — web search/fetch only, no other agent | `principal_architect_review_<date>.md` in the reviewed scope's own directory only |
 
@@ -90,7 +99,7 @@ These agents require human judgment or human-authored input — they are never c
 | `addendum_agent` | After human writes `15_Addendums/<slug>.md` |
 | `tracker_sync_agent` | On `Tracker: sync` or `Tracker: import <ref>` — only if `tracker_config.md` exists (v2.5) |
 | `jira_sync_agent` | On `Jira: sync` or `Jira: import <key>` — pre-v2.5 projects only if `jira_config.md` exists (v2.4) |
-| `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, or `Learn: check coverage` (v2.5) |
+| `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, `Learn: check coverage` (v2.5), or `Index: rebuild`, `Index: open`, `Index: check coverage` (v3.3) |
 | `docs_site_agent` | On `Project Docs: build` or `Project Docs: open` (v2.5, restructured 2026-08-19) |
 | `principal_architect_agent` | At a milestone/module/ADR boundary the human chooses, for an external-informed re-review (v3.2) |
 
@@ -113,9 +122,16 @@ These agents require human judgment or human-authored input — they are never c
 | Permission Level | What It Means | Agents With It |
 | ---------------- | ------------- | -------------- |
 | READ | Read any project file | All agents |
-| WRITE_LOCAL | Create/edit project files | `execution_agent`, `validator_agent`, `architect_agent`, `infra_agent`, `qa_agent`, `captain_agent`, `addendum_agent`, `tracker_sync_agent` (scoped to `tracker_issue_map.md`, `tracker_config.md` Sync History, and Import Mode addendum drafts only), `jira_sync_agent` (pre-v2.5 projects, same scope on the `jira_*` equivalents), `concept_indexer_agent` (scoped to `16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`, and `identified_gaps.md` append only), `docs_site_agent` (scoped to `{project_name}-Documents/{project_name}-Documents-site/` via `mkdocs build`'s own output only — never `mkdocs.yml`) |
+| WRITE_LOCAL | Create/edit project files | `execution_agent`, `validator_agent`, `architect_agent`, `infra_agent`, `qa_agent`, `captain_agent`, `addendum_agent`, `tracker_sync_agent` (scoped to `tracker_issue_map.md`, `tracker_config.md` Sync History, and Import Mode addendum drafts only), `jira_sync_agent` (pre-v2.5 projects, same scope on the `jira_*` equivalents), `concept_indexer_agent` (scoped to `16_Learning_Roadmap/roadmap_index.md`, `roadmap_graph.json`, `render/index.html`, `17_Knowledge_Index/index.md`, `entity_index.md`, `overview.md` (v3.3), and `identified_gaps.md` append only), `docs_site_agent` (scoped to `{project_name}-Documents/{project_name}-Documents-site/` via `mkdocs build`'s own output only — never `mkdocs.yml`) |
 | WRITE_INFRA | Provision/modify cloud resources | `infra_agent` only (requires human approval before apply) |
 | WRITE_DATA | Mutate production data | None — human only |
 | WRITE_REMOTE | Push to remote git | **None — git push is always a human action** |
 | WRITE_REMOTE (external, v2.5) | Create/update tracker items via MCP | `tracker_sync_agent` (Jira or Notion, per `tracker_config.md`) or `jira_sync_agent` (pre-v2.5 projects) only, and only on an explicit human command each time |
 | ADMIN | Cross-cutting (secrets, IAM, DNS) | Human only |
+
+## Coordination entry points
+
+- [Solution Architect](../agents/solution_architect_agent.md): objective/dependencies/ownership and sole ongoing canonical-plan writer.
+- [Principal Engineer](../agents/principal_engineer_agent.md): one thread, scoped dispatch and receipt reconciliation.
+- [Coordinator entry](../templates/coordination_threads/coordinator-definition.md): coordinated Strategy B.
+- [Worker entry](../templates/coordination_threads/worker-definition.md): proportional task execution and evidence.

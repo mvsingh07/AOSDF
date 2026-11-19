@@ -1,0 +1,28 @@
+{
+  "id": "async-systems",
+  "title": "Queues and reliable delivery",
+  "summary": "Start with what a queue is and when to use one, then design work that survives retries, duplicates, overload, and partial failure.",
+  "level": "Systems",
+  "index": "README.md",
+  "assets": [
+    "queue-mark.svg",
+    "queue-basics.svg",
+    "acceptance.svg",
+    "backpressure.svg",
+    "retries.svg",
+    "idempotency.svg",
+    "outbox-events.svg",
+    "delivery-channels.svg",
+    "operations.svg"
+  ],
+  "lessons": [
+    { "id": "what-is-a-queue", "title": "What a queue is and when to use one", "file": "00-what-is-a-queue.md" },
+    { "id": "queue-boundary", "title": "The queue boundary and worker contract", "file": "01-queue-boundary.md" },
+    { "id": "backpressure", "title": "Capacity, backpressure, and scheduling", "file": "02-backpressure.md" },
+    { "id": "retries-and-dlq", "title": "Timeouts, retries, and dead-letter queues", "file": "03-retries-and-dlq.md" },
+    { "id": "idempotency", "title": "Idempotency and delivery guarantees", "file": "04-idempotency.md" },
+    { "id": "events-and-sagas", "title": "Events, outbox, and sagas", "file": "05-events-and-sagas.md" },
+    { "id": "delivery-channels", "title": "Webhooks, live updates, and scheduled jobs", "file": "06-delivery-channels.md" },
+    { "id": "operations", "title": "Operating and reviewing a delivery system", "file": "07-operations.md" }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "coordination-threads/automation/schema/state.schema.json",
+  "title": "Coordination agent execution-mechanics state",
+  "description": "Per-agent state.json. Records DISPATCH MECHANICS ONLY, never project/task status (that is execution_plan.md). See automation-proposal.md sections 4-6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["agent", "thread", "model", "dispatch_sequence", "task_digest", "status", "updated_utc"],
+  "properties": {
+    "agent": { "type": "string", "description": "Stable agent address, e.g. agent2-1" },
+    "thread": { "type": "integer", "minimum": 1 },
+    "model": { "type": "string", "enum": ["claude", "codex"], "description": "Current executor; switchable without changing identity" },
+    "dispatch_sequence": { "type": "integer", "minimum": 0, "description": "Matches the current track.md row number; 0 = never dispatched" },
+    "task_digest": { "type": ["string", "null"], "description": "SHA-256 of the current task.md bytes; a changed digest invalidates a stale claim" },
+    "status": {
+      "type": "string",
+      "enum": ["ready", "running", "completed", "blocked", "failed"],
+      "description": "Dispatch mechanics only. 'blocked' = a dispatch dependency, NOT the persistent-goal status."
+    },
+    "run_id": { "type": ["string", "null"], "description": "Active run/session identifier, or null when idle" },
+    "result_location": { "type": ["string", "null"], "description": "Path to the current/last runs/NNN/result.json" },
+    "owned_write_targets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files/schema this agent exclusively writes this dispatch (must be disjoint across agents)"
+    },
+    "canonical_task_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "SEQ/Task IDs the current task.md addresses (for the monitor; status still read from execution_plan.md)"
+    },
+    "claim": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Atomic dispatch claim. Only one process may hold a (dispatch_sequence, task_digest) claim.",
+      "properties": {
+        "owner": { "type": "string", "description": "Process/session that holds the claim" },
+        "fence": { "type": "integer", "minimum": 1, "description": "Monotonic fence token; completion is accepted only from the current fence (dispatch_core)" },
+        "claimed_utc": { "type": "string" },
+        "heartbeat_utc": { "type": ["string", "null"], "description": "Last heartbeat; a stale heartbeat + expired lease = orphan (watchdog.py)" },
+        "lease_expires_utc": { "type": ["string", "null"], "description": "After this, a stale-run sweep may reclaim" }
+      }
+    },
+    "baseline_ref": { "type": ["string", "null"], "description": "Provenance id of the captured uncommitted-dependency baseline (baseline.py)" },
+    "learning_present": { "type": "boolean", "description": "task.md carries the Read-alongside learning block (P1-b)" },
+    "checkpoint": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Last context-compaction checkpoint. At a checkpoint the worker writes context.md/As-built and the next dispatch resumes a FRESH, compact session.",
+      "properties": {
+        "at_utc": { "type": "string" },
+        "reason": { "type": "string", "description": "task-boundary | runtime-budget | context-size" },
+        "resumed_from": { "type": "string", "description": "context.md handoff the fresh session resumed from" }
+      }
+    },
+    "updated_utc": { "type": "string", "description": "ISO-8601 UTC of the last state write" },
+    "notes": { "type": "string" }
+  }
+}

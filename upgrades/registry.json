@@ -1,0 +1,12 @@
+{
+  "schema": "aosdf-public-distribution/v1",
+  "framework_version": "3.6.0",
+  "packaging_status": "unreleased",
+  "source": "this-checkout",
+  "inventory": "releases/3.6.0/inventory.json",
+  "migration": "releases/3.6.0/migrate.md",
+  "project_applications": "project-owned; not distributed",
+  "excluded_proposals": [
+    "3.7.0 update4 (on hold)"
+  ]
+}

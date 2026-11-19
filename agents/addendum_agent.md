@@ -1,5 +1,8 @@
 # Agent: Addendum
-# AOSDF v2.1 — General Template
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0 — General Template
 # Copy to {project_name}-Documents/documents/05_AI_Agent_System/agents/ and customize.
 
 > **STOP. Read this fully before doing anything.**
@@ -30,7 +33,7 @@ The main `execution_plan.md` and all milestone files are **read-only** for this 
 
 **Do NOT invoke for:**
 - Scope changes that restructure in-progress milestones → re-run `captain_agent` instead
-- Bug fixes on a single task → update the execution_plan.md row directly
+- Bug fixes on a single task → Report evidence/deltas to the Solution Architect for execution_plan.md row directly
 - Research questions → use `research_and_refine_agent`
 
 **Called by:** Human only.

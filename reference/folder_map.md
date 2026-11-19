@@ -1,8 +1,14 @@
 # Folder Map
-# AOSDF v2.5 — Quick Reference
+# AOSDF v3.6.0 — Quick Reference
 # Canonical workspace layout. Every project using AOSDF follows this structure.
 
 ---
+
+
+## Current coordination and authoring entry
+
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+
 
 ## Workspace Layout
 
@@ -19,7 +25,7 @@
 │   │                                                 2026-08-19 — see execution_plan.md's D0 entry.
 │   ├── framework.md                               Full specification
 │   ├── manual.md                                  Plain-language guide
-│   ├── setup_aosdf.md                             New project setup + upgrade guide
+│   ├── prompts/setup_aosdf.md                             New project setup + upgrade guide
 │   ├── workflow_initiator.md                      Entry-point agent
 │   ├── templates.md                               Document templates (00–05)
 │   ├── templates/
@@ -215,13 +221,21 @@
             │   ├── <slug>.md                          (human-authored)
             │   ├── <slug>_plan.md                     (addendum_agent-generated)
             │   └── tracking_addendums.md              (addendum_agent-generated; append-only)
-            └── 16_Learning_Roadmap/                   ← [v2.5] OPTIONAL — created only if explicitly requested;
-                │                                          derived-only, no original content
-                ├── roadmap_index.md                   (concept_indexer_agent-generated, on Learn: rebuild)
-                ├── roadmap_graph.json                  [v2.5 L2] (concept_indexer_agent-generated node/edge graph)
-                └── render/index.html                   [v2.5 L2/L3] (concept_indexer_agent-generated, self-contained Build Order + Learn Order viewer with localStorage review tracking; inlines AOSDF/renderer_core/)
+            ├── 16_Learning_Roadmap/                   ← [v2.5] OPTIONAL — created only if explicitly requested;
+            │   │                                          derived-only, no original content
+            │   ├── roadmap_index.md                   (concept_indexer_agent-generated, on Learn: rebuild)
+            │   ├── roadmap_graph.json                  [v2.5 L2] (concept_indexer_agent-generated node/edge graph)
+            │   └── render/index.html                   [v2.5 L2/L3] (concept_indexer_agent-generated, self-contained Build Order + Learn Order viewer with localStorage review tracking; inlines AOSDF/renderer_core/)
+            └── 17_Knowledge_Index/                    ← [v3.3] ON by default (not opt-in, unlike 16 above);
+                │                                          derived-only, no original content (Principle 38)
+                ├── index.md                           (concept_indexer_agent-generated, on Index: rebuild — content catalog)
+                ├── entity_index.md                     [v3.3] (concept_indexer_agent-generated — entity → backlinks table)
+                └── overview.md                         [v3.3] (concept_indexer_agent-generated — mechanical `summary:` rollup)
 
-llm-wiki/                                          ← [v1.6] Persistent LLM knowledge base
+llm-wiki/                                          ← [v1.6, OPTIONAL as of v3.3] Persistent LLM knowledge base;
+                                                        opt-in additive layer (workflow_initiator Step 1, Q15),
+                                                        not the default context layer — see framework.md
+                                                        § Self-Indexing Documentation
     ├── WIKI.md
     ├── index.md
     ├── overview.md
@@ -265,3 +279,7 @@ AOSDF/
 # Project documentation — planning docs, agent definitions, gap trackers, never committed
 {ProjectName}-Documents/
 ```
+
+## Added coordination and authoring surfaces
+
+`agents/{solution_architect_agent,principal_engineer_agent}.md`; `reference/current-workflow-rules.md`, dated directives, `upgrades.md`, `document_authoring.md`; `templates/coordination_threads/` (contracts, alignment, inactive automation and file-signals); `templates/prompt_templates/` (task, Standard, High-risk/review/debug); `templates/document.md` (proposed additive metadata profile). No project runtime/claims/topology is part of the root.

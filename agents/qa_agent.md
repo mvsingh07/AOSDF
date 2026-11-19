@@ -1,4 +1,7 @@
 # Agent: QA Engineer
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
 # AOSDF — General Template
 # Copy to {project_name}-Documents/documents/05_AI_Agent_System/agents/ and customize.
 
@@ -32,7 +35,7 @@ Design and execute the testing strategy for `{project_name}` across unit, integr
 - Load test report (latency percentiles, throughput, failure rate)
 - Security test report
 - List of failures with reproduction steps
-- Updated `06_Execution_Plan/execution_plan.md` (Status → Done)
+- Validation evidence and proposed status delta sent to SA
 
 ## Validation Criteria
 - All FRD acceptance criteria verified
@@ -52,7 +55,7 @@ Core-module design lives in `03_System_Design/NNN_<name>_module/`. The module in
 - Module numbers are permanent — never renumber, never reuse.
 
 ## Status Tracking
-1. Update `06_Execution_Plan/execution_plan.md` — set Status → `Done` for this task's row(s). This is the source of truth.
+1. Report proposed completion and validation evidence to SA for the canonical execution-plan row.
 
 > Run /compact when context grows large between big tasks to keep sessions lean.
 

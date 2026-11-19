@@ -1,10 +1,16 @@
 # Workflow Initiator Agent
-# AOSDF v1.2
+# AOSDF v3.6.0
 
 > This is the entry point for every new project using AOSDF.
 > Call this agent first. It sets up everything before execution begins.
 
 ---
+
+
+## Current coordination and authoring entry
+
+Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](reference/upgrades.md) for per-project migration; [document authoring](reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+
 
 ## Role
 
@@ -14,16 +20,33 @@ Think of it as: **the engineer who walks onto the job site first, checks the blu
 
 ---
 
-## LLM Wiki Context [v1.6]
+## Knowledge Index Context [v3.3]
 
-At project start or resume:
+At project start or resume, before the LLM Wiki check below:
+1. Check if `documents/17_Knowledge_Index/` exists.
+2. If present: read `index.md` and `overview.md` to orient — this is the primary context layer
+   (framework.md § Self-Indexing Documentation), always current by construction (Principle 38), and
+   should be read before `llm-wiki/` even when both exist.
+3. If missing but the project already has Tier 1/Tier 2 Concept Frontmatter written: this is not
+   yet a gap on its own (the index is only built on a human-triggered `Index: rebuild`) — note it in
+   the readiness report as "not yet built" rather than logging a gap.
+
+## LLM Wiki Context [v1.6, revised v3.3]
+
+**[v3.3]** `llm-wiki/` is opt-in, not scaffolded by default — see Step 1's new question below. Only
+run this check if `project_status.md` § Project Configuration records `LLM Wiki: Enabled`; if the
+project never opted in, skip this entire section (there is nothing to orient from and nothing to
+flag — that is the intended state, not a gap).
+
+At project start or resume, for a project that opted in:
 1. Check if `llm-wiki/` exists at the project root
 2. If missing: log to identified_gaps.md — Category: Documentation, Severity: Medium,
    Description: "llm-wiki not initialized — run LLM Wiki setup prompt"
-3. If present: read `llm-wiki/index.md` and `llm-wiki/overview.md` to orient
+3. If present: read `llm-wiki/index.md` and `llm-wiki/overview.md` — as an **additional** layer on
+   top of `17_Knowledge_Index/`, never instead of it (framework.md § Self-Indexing Documentation)
 4. Check `llm-wiki/sessions/session-contexts.md` for recent session history
 
-Include wiki status in your project readiness report:
+Include wiki status in your project readiness report (only when the project opted in):
 - Wiki initialized: yes/no
 - Last sync date (from log.md)
 - Number of sessions recorded
@@ -214,13 +237,39 @@ removing a question anywhere in this list requires re-checking those citations, 
     - Record the choice in `project_status.md` § Project Configuration — `captain_agent` reads it
       when it runs (Step 5, or `/aosdf-plan`) and follows whichever mode is recorded.
 
+15. **[v3.3] Enable the legacy LLM Wiki as an additional, human-curated layer on top of
+    self-indexing?**
+    - Default: **No.** Self-indexing (`17_Knowledge_Index/`, framework.md § Self-Indexing
+      Documentation) is what `captain_agent` and every other agent read for context by default as
+      of v3.3 — it requires no separate ingestion step and cannot fall behind the documentation the
+      way `llm-wiki/` historically did (see
+      `AI_Development_Model/improvements/prompts/aosdf-refinement-3.3.md` § 1 for the concrete case
+      that motivated this default flip).
+    - If **Yes**: record `LLM Wiki: Enabled` in `project_status.md` § Project Configuration, then
+      point the human at `AOSDF/designing_aosfd/integrate-llm-wiki.md` (the existing, unchanged
+      LLM Wiki setup prompt) to actually scaffold `llm-wiki/` — this agent still never creates the
+      wiki folder itself, exactly as before v3.3. `identify_missing_documents`' LLM Wiki Checklist
+      and this agent's own LLM Wiki Context step then run normally. Pick Yes for a team that
+      specifically wants cross-document
+      synthesis, contradiction-spotting, or a running session journal — things a deterministic
+      frontmatter projection cannot do (see the refinement plan's § 2 and § 11 for the full
+      reasoning on what `llm-wiki/` is still uniquely good for).
+    - If **No** (the default): no `llm-wiki/` folder is created. This does not disable anything
+      else — `17_Knowledge_Index/` and the rest of self-indexing work exactly the same regardless
+      of this answer, since the frontmatter fields it reads are mandatory (not gated on this
+      question) and only the rebuild command is opt-in-to-run (Principle 24), the same way it
+      already was before this question existed.
+    - This is a one-time decision, same opt-in-once pattern as Q8/Q9/Q10 — never revisited
+      automatically; a human must deliberately re-run this step to change it.
+
 ---
 
 **Step 1 recap.** Before moving to Step 2, restate every answer captured above in one short block —
 project name, root, one-sentence description, scope, UI, reference docs (or the founder-interview
 minimum-context checklist completed instead), cloud provider, team size, compliance, tracker opt-in,
 IDE tooling adoption, Learning Roadmap, Project Docs Site, agent names (if changed), execution
-strategy, and milestone generation mode — and let the human correct anything before Step 2 starts.
+strategy, milestone generation mode, and LLM Wiki opt-in — and let the human correct anything before
+Step 2 starts.
 This mirrors `identify_missing_documents`' own "state findings before acting" discipline, applied to
 setup input instead of setup output.
 
@@ -532,3 +581,13 @@ Actions view against this project right away.
 - Do not reproduce full file contents in output — reference file paths
 - Report gaps as a numbered list, not paragraphs
 - Stop and ask only when the answer genuinely cannot be inferred from context
+
+## Coordination setup questions (3.4+)
+
+Record coordination Enabled/Disabled, process Mode (Manual/Semi-auto/Easy/Auto), founder/SA identity, thread count and identities, selected model policy, disjoint owner paths, dependency routing, environment/tool boundaries and budgets. If Auto is selected, record the explicit approved bounded wave; do not infer it from CLI flags. Install inactive contracts/policies and empty project records per templates/coordination_threads/README.md. No live config, foreign claims or automatic launch. Existing projects use the branch migration recipe.
+
+For document-native knowledge, require existing entities/tags/summary and offer additive aosdf-doc/v1 metadata with report-only legacy migration. No additional wiki folder is needed. Adopt richer validation through the registered project plan; do not rewrite immutable accepted evidence.
+
+## Mandatory new-document setup (3.6.0)
+
+Before generating project documents, install the tools and instructions in [the authoring contract](reference/document_authoring.md). Copy `tools/{document_metadata.py,check_document_metadata.py,create_document.py,document_metadata_hook.py,requirements-metadata.txt}` to the documentation repository's `tools/`; install the profile/schema in `docs/reference/`; copy `templates/document.md` to `docs/templates/document.md` and `templates/document-metadata-legacy.json` to `.aosdf/document-metadata-legacy.json` (empty for a new project). Copy/adapt `templates/document-authoring-AGENTS.md` to `docs/documents/AGENTS.md` with a fresh identity. Configure the hook shown in `templates/project_docs_site/mkdocs.yml.template`. Use the creator for new files; existing body templates are body inputs, never permission to omit metadata or reuse an ID. Run the gate before handoff and after generators; do not add legacy exemptions for new outputs.

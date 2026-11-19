@@ -7,6 +7,25 @@
 
 ## Why This Exists
 
+The public **AI Engineer / FDE** learning feature publishes complete modules one at a time through
+indexed documentation. Its authoring chronology is in
+[`roadmap_authoring.md`](roadmap_authoring.md), and the transformation from the detailed
+reference plan is recorded in [`roadmap_curriculum.md`](roadmap_curriculum.md). The current
+one-roadmap UI lives in `AOSDF-Hosting/app/learn/`. The published modules are
+[`modules/ml-foundations/`](modules/ml-foundations/README.md) and
+[`modules/async-systems/`](modules/async-systems/README.md), and
+[`modules/scale-design/`](modules/scale-design/README.md); their manifests and Markdown lessons
+are synced into Hosting with `npm run sync:learning`. The public site needs no account or database.
+Keep the project-specific `16_Learning_Roadmap` process distinct from this public baseline.
+
+The topic-list and reference-plan gap review added `security/` (object authorization and threat
+modeling, web attack boundaries, secrets and dependencies), `ai/` (ML, transformers,
+embeddings, RAG, evaluation, prompt injection and tool boundaries), `cloud/` (AWS
+architecture primitives), and email infrastructure material. These are focused additions,
+not a claim that every item in
+`topic-list.md` is covered. “Cannot be hacked” is not an achievable guarantee; the material teaches
+specific controls, tests, and recovery instead.
+
 `concept_indexer_agent` today only ever indexes a *product's own* Concept Frontmatter — real design
 decisions, captured at the moment they were made. That's deliberately narrow: Principle 28/29 forbid an
 agent from inventing learning content. But it means a brand-new product with three ADRs has a three-node
@@ -70,6 +89,11 @@ inlined into `roadmap_graph.json`'s `diagram` field (`L7`'s merge mode, verbatim
 `concept_indexer_agent` step 6 rule — see that agent's file), every diagram here **must** already be a
 plain-text `aosdf-diagram` fence, the same format `concept_indexer_agent` already knows how to extract
 verbatim. This was a deliberate check made before writing any content, not an oversight.
+
+Public learning modules can also include local SVG figures with descriptive alt text. The
+Queues and reliable delivery and Scale and system design keep `aosdf-diagram` text fallbacks and sync SVG
+assets into Hosting for browser rendering. The text fences remain available to the framework
+indexer and to readers who need a text version of a flow.
 
 ---
 
@@ -157,9 +181,23 @@ If a future source under a real open license (MIT/CC-BY/etc.) is identified, its
 directly per its license terms rather than treated as inspiration-only — the restriction above is specific
 to this unlicensed repo, not a blanket policy against external sources.
 
+**Iteration 4 — public AI Engineer / FDE roadmap baseline:**
+
+| Folder | New coverage |
+| --- | --- |
+| `ai/` | ML learning and evaluation, neural networks and transformers, embeddings and vector search, RAG, retrieval evaluation, prompt injection and tool boundaries |
+| `cloud/` | AWS placement, IAM, VPC, compute, storage, and service-choice trade-offs |
+| `security/` | Threat modeling and object authorization, web attack boundaries, secrets and dependencies |
+| `backend/` | Email authentication, deliverability, suppression, and provider failover |
+
+The 12-module sequence and its mapping to the reference plan are in
+[`roadmap_curriculum.md`](roadmap_curriculum.md). ML foundations, Queues and reliable delivery, and Scale and system design
+have complete public lessons, each with separate documents, examples, exercises, diagrams,
+and source links.
+
 Not yet covered (future iterations, add as gaps are actually noticed — no fixed backlog list is
 maintained here on purpose, per the "opportunistic, not scheduled" rule above): mobile-specific topics,
-cloud provider primitives (AWS/GCP/Azure service catalogs), infrastructure-as-code, container
+full cloud provider service catalogs (AWS/GCP/Azure), infrastructure-as-code, container
 orchestration, specific language idioms beyond JavaScript's event loop, full applied system-design
 walkthroughs (deliberately out of scope — see `system-design-case-study-index.md`). Add a subfolder (e.g.
 `cloud/`, `mobile/`) the same way `principles/`/`frontend/`/`backend/`/`backend/distributed-systems/`/

@@ -1,0 +1,42 @@
+name: Validate public distribution
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  framework:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r tools/requirements-metadata.txt
+      - run: npm test
+        working-directory: aosdf-mcp
+      - run: npm test
+        working-directory: aosdf-vscode
+      - run: python -m unittest discover -s tests -q
+        working-directory: templates/coordination_threads/automation
+      - run: python -m unittest discover -s tests -q
+        working-directory: templates/coordination_threads/file-signals
+      - run: python -m unittest discover -s tools/tests -q
+      - run: python upgrades/check_inventory.py
+  website:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - run: npm run sync:learning
+      - run: git diff --exit-code -- content/learning public/learning lib/learning-docs.generated.ts
+      - run: npm run build

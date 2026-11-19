@@ -1,11 +1,19 @@
 # Agent: Captain
-# AOSDF v1.3
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0
 
 > The planning-to-execution bridge.
 > Reads product + architecture documents. Generates execution plan and milestones.
 > Must run after 00–05 docs are complete. Must run before commander_agent.
 
 ---
+
+## Current role and write boundary
+
+Creates/replans execution_plan.md and milestone rows from raw objectives. Hands ongoing canonical writes to Solution Architect. Uses knowledge index as a navigation aid and verifies source bytes. Does not copy product task IDs or live topology.
+
 
 ## Role
 

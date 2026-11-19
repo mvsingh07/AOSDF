@@ -1,3 +1,13 @@
+> **[v3.3, opt-in only]** As of AOSDF v3.3, `llm-wiki/` is no longer scaffolded by default and is no
+> longer what `captain_agent` reads for context — that role now belongs to `17_Knowledge_Index/`,
+> a self-indexing capability derived from frontmatter already required on the real documentation
+> (see `framework.md` § Self-Indexing Documentation and
+> `AI_Development_Model/improvements/prompts/aosdf-refinement-3.3.md`). Run this prompt only if a
+> project has deliberately opted in to `llm-wiki/` as an *additional* layer
+> (`workflow_initiator.md` Step 1, Q15) for cross-document synthesis, contradiction-spotting, or
+> session journaling — things `17_Knowledge_Index/` does not attempt. Everything below this banner
+> is unchanged from when this prompt was the default.
+
 You are setting up an LLM Wiki — a persistent, compounding knowledge base — for the                                                  
   project: Comms-Engine
                                                                                                                                        

@@ -1,0 +1,5 @@
+{
+  "schema": "aosdf-document-legacy/v1",
+  "legacy_paths": [],
+  "policy": "New projects start empty. Existing-project legacy entries require explicit review; never grandfather a newly created document."
+}

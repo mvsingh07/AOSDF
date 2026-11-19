@@ -1,0 +1,16 @@
+{
+  "_comment": "Inactive schema illustration only. No authorization is transferred.",
+  "wave_id": "EXAMPLE",
+  "title": "Project-defined bounded scope",
+  "objective": "Set from registered project objectives",
+  "autonomous": false,
+  "status": "paused",
+  "verified_by_architect": false,
+  "stop_conditions": [
+    "missing authority",
+    "ownership conflict",
+    "validation/security stop",
+    "wave budget reached"
+  ],
+  "sprints": []
+}

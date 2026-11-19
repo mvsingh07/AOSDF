@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="920" height="402" viewBox="0 0 920 402" role="img" aria-labelledby="title desc">
+    <title id="title">Acceptance is a promise</title><desc id="desc">The API records an export operation, returns 202 with an ID, then a queue delivers the job to a worker that creates a file.</desc>
+    <defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#dbe7f4" stroke-width=".65"/></pattern><filter id="shadow" x="-20%" y="-30%" width="140%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#1e3b58" flood-opacity=".09"/></filter><marker id="arrow-blue" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M1 1.5 8 4.5 1 7.5" fill="none" stroke="#1466b2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-teal" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M1 1.5 8 4.5 1 7.5" fill="none" stroke="#087f79" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-violet" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M1 1.5 8 4.5 1 7.5" fill="none" stroke="#7152ba" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-amber" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M1 1.5 8 4.5 1 7.5" fill="none" stroke="#a35d0c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="arrow-rose" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M1 1.5 8 4.5 1 7.5" fill="none" stroke="#b3445f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+    <style>.kicker{font:700 12px ui-monospace,Menlo,monospace;letter-spacing:1.4px;fill:#3975a8}.heading{font:750 25px Inter,Arial,sans-serif;letter-spacing:-.6px;fill:#142a42}.subtitle{font:400 13px Inter,Arial,sans-serif;fill:#60758c}.node-title{font:700 14px Inter,Arial,sans-serif;fill:#18334d}.node-detail{font:400 11px Inter,Arial,sans-serif;fill:#61778e}.edge-label{font:700 10px Inter,Arial,sans-serif}.note{font:600 13px Inter,Arial,sans-serif;fill:#28516e}.note-key{font:800 10px ui-monospace,Menlo,monospace;letter-spacing:1px;fill:#2676af}</style>
+    <rect width="920" height="402" rx="18" fill="#f7faff"/><rect x="1" y="1" width="918" height="400" rx="17" fill="none" stroke="#cbdff1" stroke-width="2"/>
+    <rect x="18" y="18" width="884" height="310" rx="12" fill="url(#grid)" opacity=".8"/>
+    <text x="38" y="43" class="kicker">SYSTEMS / QUEUES</text>
+    <text x="38" y="77" class="heading">Acceptance is a promise</text>
+    <text x="38" y="100" class="subtitle">Respond after durable intent, then complete the effect.</text>
+    <path d="M216 184H248" fill="none" stroke="#1466b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/><path d="M442 184H474" fill="none" stroke="#7152ba" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-violet)"/><path d="M668 184H700" fill="none" stroke="#a35d0c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-amber)"/><path d="M122 223V249" fill="none" stroke="#1466b2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-blue)"/><path d="M800 223V249" fill="none" stroke="#087f79" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+    
+    <g role="group" aria-label="API: Validate request">
+    <rect x="28" y="145" width="188" height="78" rx="13" fill="#fff" stroke="#aed5f4" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="28" y="145" width="5" height="78" rx="2.5" fill="#1466b2"/>
+    <rect x="41" y="162" width="44" height="44" rx="11" fill="#e8f3ff"/>
+    <g transform="translate(45 166) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#1466b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="26" height="22" rx="4"/><path d="M5 13h26M11 20h5m-5 5h9"/></g></g>
+    <text x="95" y="177" class="node-title">API</text>
+    <text x="95" y="198" class="node-detail">Validate request</text>
+  </g><g role="group" aria-label="Operation: Durable status row">
+    <rect x="254" y="145" width="188" height="78" rx="13" fill="#fff" stroke="#cec1ee" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="254" y="145" width="5" height="78" rx="2.5" fill="#7152ba"/>
+    <rect x="267" y="162" width="44" height="44" rx="11" fill="#f1ecfc"/>
+    <g transform="translate(271 166) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#7152ba" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="18" cy="9" rx="11" ry="4"/><path d="M7 9v18c0 2 5 4 11 4s11-2 11-4V9M7 18c0 2 5 4 11 4s11-2 11-4"/></g></g>
+    <text x="321" y="177" class="node-title">Operation</text>
+    <text x="321" y="198" class="node-detail">Durable status row</text>
+  </g><g role="group" aria-label="Queue: Deliver job">
+    <rect x="480" y="145" width="188" height="78" rx="13" fill="#fff" stroke="#f0d39b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="480" y="145" width="5" height="78" rx="2.5" fill="#a35d0c"/>
+    <rect x="493" y="162" width="44" height="44" rx="11" fill="#fff4df"/>
+    <g transform="translate(497 166) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#a35d0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="7" width="24" height="6" rx="2"/><rect x="6" y="16" width="24" height="6" rx="2"/><rect x="6" y="25" width="24" height="6" rx="2"/></g></g>
+    <text x="547" y="177" class="node-title">Queue</text>
+    <text x="547" y="198" class="node-detail">Deliver job</text>
+  </g><g role="group" aria-label="Worker: Create file">
+    <rect x="706" y="145" width="188" height="78" rx="13" fill="#fff" stroke="#a9ddd4" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="706" y="145" width="5" height="78" rx="2.5" fill="#087f79"/>
+    <rect x="719" y="162" width="44" height="44" rx="11" fill="#e4f7f3"/>
+    <g transform="translate(723 166) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#087f79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="24" height="20" rx="4"/><path d="M13 17l-3 3 3 3m10-6 3 3-3 3M17 25l3-10"/></g></g>
+    <text x="773" y="177" class="node-title">Worker</text>
+    <text x="773" y="198" class="node-detail">Create file</text>
+  </g><g role="group" aria-label="202 + ID: Check progress later">
+    <rect x="28" y="255" width="188" height="78" rx="13" fill="#fff" stroke="#aed5f4" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="28" y="255" width="5" height="78" rx="2.5" fill="#1466b2"/>
+    <rect x="41" y="272" width="44" height="44" rx="11" fill="#e8f3ff"/>
+    <g transform="translate(45 276) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#1466b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5h11l6 6v19H10zM21 5v6h6M14 18h9m-9 5h9"/></g></g>
+    <text x="95" y="287" class="node-title">202 + ID</text>
+    <text x="95" y="308" class="node-detail">Check progress later</text>
+  </g><g role="group" aria-label="Result: Completed status">
+    <rect x="706" y="255" width="188" height="78" rx="13" fill="#fff" stroke="#a9ddd4" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="706" y="255" width="5" height="78" rx="2.5" fill="#087f79"/>
+    <rect x="719" y="272" width="44" height="44" rx="11" fill="#e4f7f3"/>
+    <g transform="translate(723 276) scale(1)"><g transform="translate(0 0)" fill="none" stroke="#087f79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5h11l6 6v19H10zM21 5v6h6M14 18h9m-9 5h9"/></g></g>
+    <text x="773" y="287" class="node-title">Result</text>
+    <text x="773" y="308" class="node-detail">Completed status</text>
+  </g>
+    <rect x="28" y="342" width="864" height="43" rx="9" fill="#e9f3fb"/>
+    <text x="43" y="368" class="note-key">KEY IDEA</text><text x="125" y="368" class="note">A 202 response means the operation can be found later; it does not mean the file exists.</text>
+  </svg>

@@ -1,0 +1,14 @@
+{
+  "id": "ml-foundations",
+  "title": "ML foundations",
+  "summary": "Understand the learning problem, data, training, evaluation, and production boundary before choosing a model.",
+  "level": "Foundation",
+  "index": "README.md",
+  "lessons": [
+    { "id": "what-ml-solves", "title": "What machine learning solves", "file": "01-what-ml-solves.md" },
+    { "id": "data-and-splits", "title": "Data, labels, and trustworthy splits", "file": "02-data-and-splits.md" },
+    { "id": "training-mechanics", "title": "Loss, parameters, and gradient descent", "file": "03-training-mechanics.md" },
+    { "id": "evaluation", "title": "Evaluation and decision thresholds", "file": "04-evaluation.md" },
+    { "id": "inference-and-monitoring", "title": "Inference, monitoring, and review", "file": "05-inference-and-monitoring.md" }
+  ]
+}

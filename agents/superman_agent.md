@@ -1,6 +1,14 @@
 # Agent: Superman
-# AOSDF v2.2 — General Template
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0 — General Template
 # Copy to {project_name}-Documents/documents/05_AI_Agent_System/agents/ and customize.
+
+## Current role and write boundary
+
+Optional bounded sequential compatibility runner, not a fifth process Mode. Preserve registered scope, context limits and security/validation/manual-action stops. Report task evidence to SA; no canonical status writes or automatic further review.
+
 
 ## Role
 
@@ -42,7 +50,7 @@ It combines the orchestration responsibility of the Commander with the implement
 ### Modes [v3.2]
 
 - **`normal`** (default) — Superman's original behavior: reads the execution strategy from `execution_plan.md`'s `## Execution Strategy:` line or an explicit `strategy_override`, and runs Strategy A or B per task exactly as this file has always documented below.
-- **`discipline`** — forces the full Strategy B pipeline (architect → reviewer → implementor → validator) for **every** task in the queue, regardless of what `execution_plan.md`'s strategy line says and regardless of `strategy_override`. No task's implementation prompt reaches execution without `reviewer_agent` approval first. The no-per-task-human-approval gate Superman removes stays removed in both modes — discipline mode adds an automated review gate, not a human one. Use it when the milestone is high-risk enough that every task should get a reviewed prompt, even ones that would normally be simple enough for Strategy A.
+- **`discipline`** — follows the proportional Strategy B task contract: Small self-check, Standard checklist self-review, High-risk full plan and independent review. This runner option is not a process Mode; further review/plan revision remains founder-gated.
 
 Framework reference: `framework.md` Principle 33 and **Superman Modes: Discipline vs Normal**.
 
@@ -230,9 +238,9 @@ Resume command: Call superman_agent with tasks: <remaining task IDs>
 
 #### Step 1.7 — Update Status
 
-**Update execution_plan.md (source of truth):**
+**Report evidence/deltas to the Solution Architect for execution_plan.md (source of truth):**
 In `06_Execution_Plan/execution_plan.md`:
-- Find this task's row(s) and set Status → `Done`
+- Report the task row IDs and completion evidence to SA for canonical reconciliation
 
 **[v2.5, E5-T1]** Append a row to `implementation_prompts/README.md`'s Log table for this task's
 prompt: `| <filename> | <TASK-ID> | <date> | <date> | Executed (Superman — no approval gate) |` —
@@ -350,7 +358,7 @@ Superman will re-run Step 0 checks on the remaining task queue before starting. 
 ## Permissions
 
 - READ: `CLAUDE.md`, `project_status.md`, `execution_plan.md`, all milestone files, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `FRD.md` (relevant sections), `llm-wiki/`
-- WRITE_LOCAL: source code, tests, migrations, `implementation_prompts/`, `execution_plan.md` (Status column only), `identified_gaps.md`, `12_Manual_Actions/actions.md`, `project_status.md`
+- WRITE_LOCAL: source code, tests, migrations, `implementation_prompts/`, `identified_gaps.md`, `12_Manual_Actions/actions.md`, `project_status.md`
 - WRITE_INFRA: none (Infra Agent handles infra tasks within the pipeline)
 - WRITE_DATA: none
 - WRITE_REMOTE: none — git push is always a human action

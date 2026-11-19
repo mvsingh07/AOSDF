@@ -1,8 +1,14 @@
 # AOSDF Setup Guide
 # How to Initialize AOSDF for a New Project + How to Upgrade an Existing Project
-# AOSDF v2.5
+# AOSDF v3.6.0
 
 ---
+
+
+## Current coordination and authoring entry
+
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+
 
 ## Overview
 
@@ -51,7 +57,7 @@ Read the AOSDF framework at: AOSDF/framework.md
 Read the general agent templates at: AOSDF/agents/
 Read the templates at: AOSDF/templates.md
 
-Your job is to set up this project from scratch following AOSDF v2.2.
+Your job is to set up this project from scratch following the installed AOSDF VERSION and current-workflow-rules.
 
 ---
 
@@ -187,7 +193,7 @@ Agents READ this folder. No agent writes to or modifies files here.
 ```markdown
 # Project Status
 # {ProjectName}
-# AOSDF v2.2
+# AOSDF v3.6.0
 
 **Current State:** SETUP
 
@@ -209,7 +215,7 @@ Agents READ this folder. No agent writes to or modifies files here.
 ```markdown
 # Identified Gaps
 # {ProjectName}
-# AOSDF v2.2
+# AOSDF v3.6.0
 
 All gaps identified during development are logged here immediately.
 Never defer gap logging — log it now, resolve it later.
@@ -231,7 +237,7 @@ Never defer gap logging — log it now, resolve it later.
 ```markdown
 # Manual Actions Tracker
 # {ProjectName}
-# AOSDF v2.2 [v1.7]
+# AOSDF v3.6.0 [v1.7]
 
 All human-required steps are logged here. Never defer — log the row before finishing the task that generates it.
 
@@ -252,7 +258,7 @@ All human-required steps are logged here. Never defer — log the row before fin
 ```markdown
 # Manual Action Guides
 # {ProjectName}
-# AOSDF v2.2 [v1.7]
+# AOSDF v3.6.0 [v1.7]
 
 Step-by-step instructions for each action ID. Add a section here when a new action is logged in actions.md.
 
@@ -278,7 +284,7 @@ Step-by-step instructions for each action ID. Add a section here when a new acti
 ```markdown
 # Future Migrations — Alternatives & Portability Guide
 # {ProjectName}
-# AOSDF v2.0
+# AOSDF v3.6.0
 
 > Required reading for captain_agent and any architecture agent.
 > Every infrastructure client must be wrapped behind an abstraction interface.
@@ -464,8 +470,8 @@ Read this before doing anything. Follow every rule here. No exceptions.
 ## 1. What We Are Building
 [Product name, definition, primary consumer, future vision]
 
-## 2. Framework — AOSDF v2.2
-[Note that this project follows AOSDF v2.2. List key principles.]
+## 2. Framework — installed AOSDF VERSION
+[Record verified installed VERSION and link current-workflow-rules. List key principles.]
 
 ## 3. Execution Strategy
 [Strategy A or B. Entry point each session. Commander reads project_status.md.]
@@ -522,7 +528,7 @@ Output a structured readiness report:
 ```
 === AOSDF Setup Complete ===
 Project: {ProjectName}
-AOSDF Version: v2.5
+AOSDF Version: <verified installed VERSION>
 Date: {today}
 
 ✅ Created:
@@ -775,12 +781,12 @@ If all checked → call `captain_agent`. If not → fill the missing items first
 
 # How to Upgrade AOSDF for an Already-Setup Project
 
-> Use this section if you already have AOSDF running on a project and want to bring it up to v2.2.
+> Historical migration only. Current installations use the paired root/branch protocol in reference/upgrades.md; do not downgrade versions or copy stale labels from this section.
 > Work through the steps in order. Each step is independent — skip any that are already done.
 
 ---
 
-## What Changed in v2.2 (Summary of Gaps to Fix)
+## Historical v2.2 migration (not the current upgrade path)
 
 | Change | Version | What to Do |
 | ------ | ------- | ---------- |
@@ -996,3 +1002,7 @@ This updates the wiki with all the new files, new agents, and updated CLAUDE.md.
 - [ ] `execution_agent.md` — `manual_action.md` refs updated to `12_Manual_Actions/actions.md`
 - [ ] `CLAUDE.md` — version updated to v2.2, refs updated
 - [ ] Wiki synced: `Wiki: full-sync`
+
+## Mandatory new-document setup (3.6.0)
+
+Before generating project documents, install the tools and instructions in [the authoring contract](../reference/document_authoring.md). Copy `tools/{document_metadata.py,check_document_metadata.py,create_document.py,document_metadata_hook.py,requirements-metadata.txt}` to the documentation repository's `tools/`; install the profile/schema in `docs/reference/`; copy `templates/document.md` to `docs/templates/document.md` and `templates/document-metadata-legacy.json` to `.aosdf/document-metadata-legacy.json` (empty for a new project). Copy/adapt `templates/document-authoring-AGENTS.md` to `docs/documents/AGENTS.md` with a fresh identity. Configure the hook shown in `templates/project_docs_site/mkdocs.yml.template`. Use the creator for new files; existing body templates are body inputs, never permission to omit metadata or reuse an ID. Run the gate before handoff and after generators; do not add legacy exemptions for new outputs.

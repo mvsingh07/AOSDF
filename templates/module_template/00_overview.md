@@ -1,3 +1,12 @@
+---
+entities: []
+tags: []
+summary: >
+  TBD — one or two sentences on what this module is and why it exists. This is Tier 2 Index
+  Frontmatter (AOSDF v3.3, framework.md § Concept Frontmatter Standard) — required, reused verbatim
+  by 17_Knowledge_Index/, never a separate "write learning content" task.
+---
+
 # {{ID}} {{TITLE}} — Overview
 
 > **Status:** Not Started · **Module:** `{{ID}}_{{SLUG}}_module` · **Milestone:** {{MILESTONE}}

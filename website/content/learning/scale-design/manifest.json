@@ -1,0 +1,87 @@
+{
+  "id": "scale-design",
+  "title": "Scale and system design",
+  "summary": "Start with a single request, then design capacity, traffic, storage, consistency, and safe change for a growing service.",
+  "level": "Systems",
+  "index": "README.md",
+  "assets": [
+    "scale-mark.svg",
+    "system-map.svg",
+    "requirements.svg",
+    "capacity.svg",
+    "scaling.svg",
+    "api-boundary.svg",
+    "caching.svg",
+    "queries.svg",
+    "replication.svg",
+    "consistency.svg",
+    "concurrency.svg",
+    "compatibility.svg",
+    "logo-nginx.svg",
+    "logo-postgresql.svg",
+    "logo-redis.svg",
+    "logo-kubernetes.svg",
+    "logo-cloudflare.svg",
+    "logo-prometheus.svg",
+    "logo-grafana.svg",
+    "logo-opentelemetry.svg",
+    "logo-k6.svg",
+    "logo-flyway.svg",
+    "logo-envoyproxy.svg",
+    "logo-openapiinitiative.svg",
+    "logo-fastapi.svg",
+    "logo-sqlalchemy.svg"
+  ],
+  "lessons": [
+    {
+      "id": "system-design-basics",
+      "title": "What system design solves",
+      "file": "00-system-design-basics.md"
+    },
+    {
+      "id": "capacity-and-latency",
+      "title": "Capacity, throughput, and tail latency",
+      "file": "01-capacity-and-latency.md"
+    },
+    {
+      "id": "scaling-and-balancing",
+      "title": "Scaling and load balancing",
+      "file": "02-scaling-and-balancing.md"
+    },
+    {
+      "id": "edge-and-api-boundary",
+      "title": "The edge and API boundary",
+      "file": "03-edge-and-api-boundary.md"
+    },
+    {
+      "id": "caching-and-invalidation",
+      "title": "Caching and invalidation",
+      "file": "04-caching-and-invalidation.md"
+    },
+    {
+      "id": "queries-and-connections",
+      "title": "Queries, indexes, and connections",
+      "file": "05-queries-and-connections.md"
+    },
+    {
+      "id": "replication-and-sharding",
+      "title": "Replication, partitioning, and sharding",
+      "file": "06-replication-and-sharding.md"
+    },
+    {
+      "id": "consistency-and-time",
+      "title": "Consistency, partitions, and time",
+      "file": "07-consistency-and-time.md"
+    },
+    {
+      "id": "concurrency-and-runtime",
+      "title": "Concurrency, locks, and runtime health",
+      "file": "08-concurrency-and-runtime.md"
+    },
+    {
+      "id": "compatibility-and-review",
+      "title": "Compatible change and architecture review",
+      "file": "09-compatibility-and-review.md"
+    }
+  ]
+}

@@ -52,3 +52,8 @@ markdown_extensions:
   - fenced_code
   - toc:
       permalink: true
+
+# Required installation: copy metadata tools to tools/ and the empty legacy
+# baseline to .aosdf/document-metadata-legacy.json before the first build.
+hooks:
+  - tools/document_metadata_hook.py

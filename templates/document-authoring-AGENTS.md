@@ -1,0 +1,7 @@
+# Document authoring instructions
+
+Every new Markdown document below this directory must begin with the `aosdf-doc/v1` header specified in [the authoring contract](../reference/document_authoring.md). This includes plans, generated indexes/evidence and new archive/run files. Preserve existing document bodies, facts, decisions and assigned IDs. No removal, merge or supersession without the user's specific consent.
+
+Use the documentation repository's `tools/create_document.py` with body-only Markdown and an actual title/type/summary. Each template instance needs a new identity; never copy an existing/template ID. Existing dates are preserved; unknown historical dates stay null. New-file dates may record actual creation. Run `python tools/check_document_metadata.py --root docs/documents --legacy-baseline .aosdf/document-metadata-legacy.json` from the documentation repository before handoff and after document generators. MkDocs also runs this check before building. Fix named failures; never bypass the hook or add newly created files to the fixed legacy inventory.
+
+The baseline protects explicit pre-existing legacy records, not future files or entire folders. Non-Markdown assets keep their native format. A helper cannot control arbitrary text editors; every author/generator must satisfy the gate before handing off or building. Shared ownership and immutable evidence rules still apply.

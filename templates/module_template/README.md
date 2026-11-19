@@ -1,3 +1,11 @@
+---
+entities: []
+tags: []
+summary: >
+  TBD — one or two sentences on what this module is and why it exists (Tier 2 Index Frontmatter,
+  AOSDF v3.3 — see framework.md § Concept Frontmatter Standard).
+---
+
 # {{ID}} — {{TITLE}}
 
 | Field | Value |

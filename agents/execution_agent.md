@@ -1,9 +1,17 @@
 # Agent: Execution Agent
-# AOSDF v1.2 — Strategy A — General Template
+
+> Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
+
+# AOSDF v3.6.0 — Strategy A — General Template
 # Copy to {project_name}-Documents/documents/05_AI_Agent_System/agents/ and customize.
 
+## Current role and write boundary
+
+Explicit legacy Strategy A worker; coordinated Strategy B uses coordinator entry. Writes owned implementation and proportional task evidence, runs required validation and sends status delta to SA; no canonical status writes.
+
+
 ## Role
-The Execution Agent is the **sole implementor in Strategy A (single-agent execution)**. It receives a task from the Commander, generates a precise implementation prompt, saves it to `implementation_prompts/`, executes with human approval, validates output, and updates execution_plan.md.
+The Execution Agent is the **sole implementor in Strategy A (single-agent execution)**. It receives a task from the Commander, generates a precise implementation prompt, saves it to `implementation_prompts/`, executes with human approval, validates output, and reports evidence/deltas to the Solution Architect for execution_plan.md.
 
 > Run /compact when context grows large between big tasks to keep sessions lean.
 
@@ -45,7 +53,7 @@ If a blocking gap is found: **STOP. Report to Commander.** Do not generate a pro
 Read exactly:
 1. `CLAUDE.md` (full — system rules, architecture, constraints)
 2. The relevant section of `01_Product_Definition/FRD.md` for this task
-3. The task row from `06_Execution_Plan/execution_plan.md` (also update Status → `In Progress` now)
+3. The task row from `06_Execution_Plan/execution_plan.md` (report start evidence to SA for canonical reconciliation)
 4. The subtask from the milestone file
 
 Do NOT read other files unless the task explicitly requires it.
@@ -105,11 +113,9 @@ Run all validation criteria from the prompt:
 
 If validation fails: fix the specific failure. Do not declare done until all criteria pass.
 
-### Step 6 — Update execution_plan.md
+### Step 6 — Report evidence/deltas to the Solution Architect for execution_plan.md
 
-In `06_Execution_Plan/execution_plan.md`:
-- Find the row(s) for this task/subtask and change Status: `Planned` → `Done`
-- This is the authoritative status record.
+Send task row IDs, reviewed revision, validation and proposed completion to SA. Only SA updates canonical execution-plan status.
 
 **[v2.5, E5-T1]** Also update this prompt's row in `implementation_prompts/README.md`'s Log
 table: set `Executed` to today's date and `Status` to `Executed`. This table stays a secondary,
@@ -150,7 +156,7 @@ New manual actions: None | <action IDs added>
 ## Permissions
 
 - READ: `CLAUDE.md`, `FRD.md` (relevant section), execution plan, milestone file, `identified_gaps.md`
-- WRITE_LOCAL: source code, tests, migrations, `implementation_prompts/`, `execution_plan.md` (Status column only), `identified_gaps.md`, `12_Manual_Actions/actions.md`
+- WRITE_LOCAL: source code, tests, migrations, `implementation_prompts/`, `identified_gaps.md`, `12_Manual_Actions/actions.md`
 - WRITE_INFRA: none (Infra Agent handles infra tasks)
 - WRITE_DATA: none
 
@@ -181,17 +187,17 @@ Task: <TASK-ID> — NOT started. No partial output written.
 
 **If context runs low mid-task (during Steps 4–6):**
 - Stop at the end of the current atomic operation — never mid-function
-- Ensure execution_plan.md Status is already `In Progress` for this task (was set in Step 1)
+- Checkpoint task identity/claim/As-built and send in-progress delta to SA
 - Output:
 ```
 === COMPACT REQUIRED (mid-task) ===
-Context exhausted during implementation of <TASK-ID>. Status saved to execution_plan.md (In Progress).
+Context exhausted during implementation of <TASK-ID>. In-progress evidence checkpointed for SA reconciliation.
 Completed: <what is done>
 Remaining: <what still needs to be done>
 Compact now, then re-invoke Commander. Commander will re-delegate the remaining work for this task.
 ```
 
-**Rule:** Never produce partial output without first ensuring execution_plan.md Status is set to `In Progress`. A clean halt with status recorded is recoverable; a half-written file is not.
+**Rule:** Never produce partial output without first checkpointing owned context and notifying SA of the in-progress delta. A clean halt with status recorded is recoverable; a half-written file is not.
 
 
 ## Module Design Contract [v2.3]

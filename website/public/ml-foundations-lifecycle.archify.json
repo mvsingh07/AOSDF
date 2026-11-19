@@ -1,0 +1,121 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "From learning problem to monitored decision",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "path",
+      "label": "ML feature lifecycle"
+    }
+  ],
+  "mainPath": [
+    "decision",
+    "data",
+    "split",
+    "train",
+    "evaluate",
+    "serve"
+  ],
+  "nodes": [
+    {
+      "id": "decision",
+      "lane": "path",
+      "col": 0,
+      "type": "frontend",
+      "label": "Decision",
+      "sublabel": "target + baseline"
+    },
+    {
+      "id": "data",
+      "lane": "path",
+      "col": 1,
+      "type": "database",
+      "label": "Examples",
+      "sublabel": "features + labels"
+    },
+    {
+      "id": "split",
+      "lane": "path",
+      "col": 2,
+      "type": "security",
+      "label": "Holdout",
+      "sublabel": "future-like cases"
+    },
+    {
+      "id": "train",
+      "lane": "path",
+      "col": 3,
+      "type": "backend",
+      "label": "Train",
+      "sublabel": "fit parameters"
+    },
+    {
+      "id": "evaluate",
+      "lane": "path",
+      "col": 4,
+      "type": "security",
+      "label": "Evaluate",
+      "sublabel": "errors + threshold"
+    },
+    {
+      "id": "serve",
+      "lane": "path",
+      "col": 5,
+      "type": "cloud",
+      "label": "Serve",
+      "sublabel": "review + monitor"
+    }
+  ],
+  "edges": [
+    {
+      "from": "decision",
+      "to": "data"
+    },
+    {
+      "from": "data",
+      "to": "split"
+    },
+    {
+      "from": "split",
+      "to": "train"
+    },
+    {
+      "from": "train",
+      "to": "evaluate"
+    },
+    {
+      "from": "evaluate",
+      "to": "serve",
+      "label": "release gate"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Define before training",
+      "items": [
+        "Name the user decision and an explicit baseline",
+        "Use only fields available when the decision is made"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Keep evaluation honest",
+      "items": [
+        "Split by future use; reserve a final test set",
+        "Choose a threshold from error costs and review capacity"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Operate the decision",
+      "items": [
+        "Version the model and feature contract",
+        "Review corrections, monitor quality, and retain rollback"
+      ]
+    }
+  ]
+}

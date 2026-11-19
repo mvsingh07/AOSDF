@@ -1,5 +1,5 @@
 # Document Formatting Standard
-# AOSDF v1.4 — Quick Reference
+# AOSDF v3.6.0 — Quick Reference
 # Applies to every file with a table created or updated by any agent. Non-negotiable.
 
 ---
@@ -53,7 +53,7 @@ In tables that span multiple milestones or phases, add a blank row between group
 
 Every agent that writes a file with a table must follow Rules 1–4. This includes:
 - `captain_agent` → `execution_plan.md`, `milestone.md`, `08_Tracking_System/decisions_log.md`
-- `execution_agent` / `validator_agent` → `execution_plan.md` Status column updates
+- `solution_architect_agent` → ongoing `execution_plan.md` Status column updates
 - `research_and_refine_agent` → `research_results.md`
 - `addendum_agent` → `<slug>_plan.md`, `tracking_addendums.md`
 - Any agent writing `identified_gaps.md` or `12_Manual_Actions/actions.md`
@@ -84,3 +84,7 @@ These are typical minimum widths — always extend to the actual longest value i
 - [ ] Every data cell padded to column width with trailing spaces
 - [ ] Blank row between milestone groups in execution_plan.md
 - [ ] Column widths match other files in this project with the same schema
+
+## Metadata comes first
+
+New project Markdown documents must also satisfy [document_authoring.md](document_authoring.md). Table layout rules do not replace the required YAML header. Use the document creator and metadata gate installed under the project's documentation repository `tools/`; template copies need fresh IDs.
