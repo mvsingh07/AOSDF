@@ -154,7 +154,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "4abc98c43766a240291e756ce77df959646db39b36df5bce758c2af5026836e2"
+      "sha256": "e5ed7f21e5741116e105a58e3661e8b743c1da40eb5b3b0f3496746447bb0c4f"
     },
     {
       "path": "SECURITY.md",
@@ -415,6 +415,10 @@
     {
       "path": "aosdf-vscode/test/statusFormatter.test.js",
       "sha256": "20f8d19e7926c7faf82caf48770f0a288ce670b866d925de3a27ba99e4302edd"
+    },
+    {
+      "path": "assets/readme/aosdf-banner.svg",
+      "sha256": "cb83e260856413ab7e8659e9a78a26ed1d5229ef235b53f3d8a3766d37f782be"
     },
     {
       "path": "designing_aosfd/framework.md",
