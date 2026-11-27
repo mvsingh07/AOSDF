@@ -2,7 +2,7 @@
 
 > Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
 
-# AOSDF v3.6.0
+# AOSDF v3.8.0
 
 > The planning-to-execution bridge.
 > Reads product + architecture documents. Generates execution plan and milestones.

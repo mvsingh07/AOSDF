@@ -1,5 +1,5 @@
 # Workflow Initiator Agent
-# AOSDF v3.6.0
+# AOSDF v3.8.0
 
 > This is the entry point for every new project using AOSDF.
 > Call this agent first. It sets up everything before execution begins.
@@ -9,7 +9,7 @@
 
 ## Current coordination and authoring entry
 
-Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](reference/upgrades.md) for per-project migration; [document authoring](reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](automation/coordination-threads/README.md) for opt-in setup and inactive tooling; [upgrades](reference/upgrades.md) for per-project migration; [document authoring](reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
 
 
 ## Role
@@ -584,10 +584,18 @@ Actions view against this project right away.
 
 ## Coordination setup questions (3.4+)
 
-Record coordination Enabled/Disabled, process Mode (Manual/Semi-auto/Easy/Auto), founder/SA identity, thread count and identities, selected model policy, disjoint owner paths, dependency routing, environment/tool boundaries and budgets. If Auto is selected, record the explicit approved bounded wave; do not infer it from CLI flags. Install inactive contracts/policies and empty project records per templates/coordination_threads/README.md. No live config, foreign claims or automatic launch. Existing projects use the branch migration recipe.
+Record coordination Enabled/Disabled, process Mode (Manual/Semi-auto/Easy/Auto), founder/SA identity, thread count and identities, selected model policy, disjoint owner paths, dependency routing, environment/tool boundaries and budgets. If Auto is selected, record the explicit approved bounded wave; do not infer it from CLI flags. Install inactive contracts/policies and empty project records per automation/coordination-threads/README.md. No live config, foreign claims or automatic launch. Existing projects use the branch migration recipe.
 
 For document-native knowledge, require existing entities/tags/summary and offer additive aosdf-doc/v1 metadata with report-only legacy migration. No additional wiki folder is needed. Adopt richer validation through the registered project plan; do not rewrite immutable accepted evidence.
 
 ## Mandatory new-document setup (3.6.0)
 
 Before generating project documents, install the tools and instructions in [the authoring contract](reference/document_authoring.md). Copy `tools/{document_metadata.py,check_document_metadata.py,create_document.py,document_metadata_hook.py,requirements-metadata.txt}` to the documentation repository's `tools/`; install the profile/schema in `docs/reference/`; copy `templates/document.md` to `docs/templates/document.md` and `templates/document-metadata-legacy.json` to `.aosdf/document-metadata-legacy.json` (empty for a new project). Copy/adapt `templates/document-authoring-AGENTS.md` to `docs/documents/AGENTS.md` with a fresh identity. Configure the hook shown in `templates/project_docs_site/mkdocs.yml.template`. Use the creator for new files; existing body templates are body inputs, never permission to omit metadata or reuse an ID. Run the gate before handoff and after generators; do not add legacy exemptions for new outputs.
+
+## Consolidated automation installation
+
+Install the complete framework `automation/` folder into project `05_AI_Agent_System/automation/`, including shared scripts, `modes/`, `coordination-threads/`, `file-signals/`, tests, schemas and inactive examples. Do not copy only the thread contracts. Root role definitions still install into `05_AI_Agent_System/agents/`; root policies into `06_Execution_Plan/`. Rewrite links and set `AOSDF_PROJECT_ROOT` to the actual workspace. Create empty project-owned records only after explicit topology/ownership/model inputs. Ultimate Auto remains opt-in; C16/C17 define single-review and outcome-first delivery; no process starts on installation.
+
+## Lean delivery templates and founder visibility
+
+Instantiate the empty `templates/execution_plan/deferred-to-hardening.md` under project `06_Execution_Plan/` and `templates/manual_actions/human-actions.md` under `12_Manual_Actions/` with fresh metadata identities. The former is the one append-only hardening list; the latter has generated-table markers and no product items. Install dormant founder-inbox and channel-rotation code with the complete automation bundle. Set the actual documents root/tools/project identity; do not copy live inbox, channel/history, run or grant state. C16/C17 govern new-project roles. Creating source templates does not authorize a notification, rotation, wake, process start or protected operation.

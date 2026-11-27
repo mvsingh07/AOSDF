@@ -1,0 +1,186 @@
+{
+  "schema": "aosdf-source-adaptations/v1",
+  "update": "update4",
+  "source": "registry-selected frozen payloads from the originating update module",
+  "adapted_files": [
+    {
+      "source": "payload/update4-executor-selection/automation/visible_launch.py.txt",
+      "sha256": "23369748c0de66aff0037e76c7b88d3c0d7ae093472e42f43c626cc275bca622",
+      "destination": "automation/visible_launch.py"
+    },
+    {
+      "source": "payload/update4-peer-coordination/automation/tests/test_visible_launch.py.txt",
+      "sha256": "75ebab17a6272675d1f30f7beb2b67980bdd573612c18538cbf2c5e2ebe758ef",
+      "destination": "automation/tests/test_visible_launch.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/channel_delivery.py.txt",
+      "sha256": "f13a4ec5a4d6f3525f602f8dc86d0ed997522d248dea948d0969df7f08ea51df",
+      "destination": "automation/channel_delivery.py"
+    },
+    {
+      "source": "payload/update4-architect-wakeup-window/architect_bridge.py.txt",
+      "sha256": "b23665d907ae05b408e228b61c424856eaab4da7549053bd16a8937d003e702e",
+      "destination": "automation/architect_bridge.py"
+    },
+    {
+      "source": "payload/update4-architect-wakeup-window/architect_invoke.py.txt",
+      "sha256": "39bc76759a22c6f2e6b616a3068e8a881ef6feb71630c2a30c769f7eb06aa043",
+      "destination": "automation/architect_invoke.py"
+    },
+    {
+      "source": "payload/update4-executor-selection/automation/coordinator_trigger.py.txt",
+      "sha256": "49c855b22cd02701ff2eeaa3adfbf4f600cfbeaf048a537b63a33db7711de700",
+      "destination": "automation/coordinator_trigger.py"
+    },
+    {
+      "source": "payload/update4-existing-flow/automation/config/coordinator_launch.json.txt",
+      "sha256": "879020dffd88ee0dbf12faecd4ebc80d532c675cb41d9e8b5cbaf38571d74fe4",
+      "destination": "automation/config/coordinator_launch.example.json"
+    },
+    {
+      "source": "payload/update4-round-mail-repair/automation/tests/test_channel_delivery.py.txt",
+      "sha256": "120a23636c7128576fb6d780f1d8a108158fe20efb3d3e199ac0043fc892af7a",
+      "destination": "automation/tests/test_channel_delivery.py"
+    },
+    {
+      "source": "payload/update4-owner-binding/automation/tests/test_auto_mode_ready.py.txt",
+      "sha256": "74eced7b419a6f5e75bbb099b563f67bab32eeab3289d3fb01358a48e683865a",
+      "destination": "automation/tests/test_auto_mode_ready.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/FILE-COORDINATION.md.txt",
+      "sha256": "4d34cec91fb70ccb19baec0e5d75e26b7eaab89de25f71551f73328a12254030",
+      "destination": "automation/FILE-COORDINATION.md"
+    },
+    {
+      "source": "payload/update4-owner-binding/automation/owner_sessions.py.txt",
+      "sha256": "675497d80a5a77fca973a6405154b9f44db045ac26bdd7434c17de5aa5e453ee",
+      "destination": "automation/owner_sessions.py"
+    },
+    {
+      "source": "payload/update4-round-mail-repair/automation/coordinator_continuation.py.txt",
+      "sha256": "586b5f7c4dcba91a70a557b3867737297f152244a6f4951440f76478aabf1220",
+      "destination": "automation/coordinator_continuation.py"
+    },
+    {
+      "source": "payload/update4-owner-binding/automation/coordinator-continuation.hook.json.txt",
+      "sha256": "2260f52411d72767234fac37f88dc251c41ca29fd253f77105d34e416301f4ea",
+      "destination": "automation/coordinator-continuation.hook.json"
+    },
+    {
+      "source": "payload/update4-owner-wake/automation/initiate_automation.py.txt",
+      "sha256": "921978a5749e78b0bfa8e8852c21e729e8c2cbf523e9a3cf40a26b3ab6759874",
+      "destination": "automation/initiate_automation.py"
+    },
+    {
+      "source": "payload/update4-round-mail-repair/automation/tests/test_owner_continuation.py.txt",
+      "sha256": "d8ab7e92d4b426cf74ba77c5ad22d4719e902587769ebffaee7115e531aeb3bb",
+      "destination": "automation/tests/test_owner_continuation.py"
+    },
+    {
+      "source": "payload/update4-executor-selection/automation/supervisor.py.txt",
+      "sha256": "6cd07b89c11dc2c7330962734be7fc9e7c5f6f75267f7398d12e09d12269dd9d",
+      "destination": "automation/supervisor.py"
+    },
+    {
+      "source": "payload/update4-executor-selection/automation/tests/test_execution_selection.py.txt",
+      "sha256": "db08eb030571fa6d14b61122ba875e0c8d10fb75e701d670e4e76de78ac5ed2b",
+      "destination": "automation/tests/test_execution_selection.py"
+    },
+    {
+      "source": "payload/update4-round-mail-repair/automation/tests/test_peer_coordination.py.txt",
+      "sha256": "58032b8265b39815bcd9efa95abff7a7123beb13593548e7809ab5e07c475a93",
+      "destination": "automation/tests/test_peer_coordination.py"
+    },
+    {
+      "source": "payload/update4-architect-native/automation/tests/test_architect_native_transport.py.txt",
+      "sha256": "99887750e8a085706526a2a07243ed4739056f2cecfa4bb62b3189745e5a652b",
+      "destination": "automation/tests/test_architect_native_transport.py"
+    },
+    {
+      "source": "payload/update4-architect-wakeup-window/tests/test_architect_wakeup_window.py.txt",
+      "sha256": "e0d91794a3cc1301b255e9faf4eea644074f793bffe46f86e9f5cb342302479b",
+      "destination": "automation/tests/test_architect_wakeup_window.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/owner_wake.py.txt",
+      "sha256": "3fb83baccb550e31a134be79fc3f04997de143e85ce2d89c37d2f3ceb08d5662",
+      "destination": "automation/owner_wake.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/tests/test_owner_wake.py.txt",
+      "sha256": "731395549f242a2ee2f0c8f3fc3f4a7ac57a5f1868a12715c06b1f1e8c7e77a7",
+      "destination": "automation/tests/test_owner_wake.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/automode.py.txt",
+      "sha256": "4d557c8ea127e715256365bc3045918a4424809ea973c162feff7300f0d7181c",
+      "destination": "automation/automode.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/daemon.py.txt",
+      "sha256": "520eefc2c0d508d205c7da27fbe965344c3c82e7f9c6cafc23e4b095307ded00",
+      "destination": "automation/daemon.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/tests/test_automode.py.txt",
+      "sha256": "400e6a10959ec8e8ac17764526a1ba0e9f8f97caa72bfb3f838d387224bd3ad1",
+      "destination": "automation/tests/test_automode.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/_engine.py.txt",
+      "sha256": "a1b22767951b4f993fdc9db677166121ade2a5de6ea0371fd114c41e22cc233f",
+      "destination": "automation/modes/_engine.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/ultimate-auto/ultimate_auto.py.txt",
+      "sha256": "26916b49858d80dd09b8083ab7bfd6883c53c0348b5d9b1787a6e15a3053cefb",
+      "destination": "automation/modes/ultimate-auto/ultimate_auto.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/semi-auto/semi_auto.py.txt",
+      "sha256": "a56704afc9b5b9f54e0d1e949caf53dff341a3ccb44f7af64929305c33f660ac",
+      "destination": "automation/modes/semi-auto/semi_auto.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/manual/manual.py.txt",
+      "sha256": "6aaea7fe5a4b62ece8bde87e83acbc454046a2f3b337ae7ce0693ce8f1d62260",
+      "destination": "automation/modes/manual/manual.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/easy/easy.py.txt",
+      "sha256": "6c4db49515774e9e72e39c26b3725301d1c785da23fe809c632f2f9b2afac9a9",
+      "destination": "automation/modes/easy/easy.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/auto/auto.py.txt",
+      "sha256": "854636ec7273ece3710744288275374808b9c4e310f26b3ca4aa402d78b90586",
+      "destination": "automation/modes/auto/auto.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/tests/test_modes.py.txt",
+      "sha256": "8df113010498adf5c9d95f062f95c3cd83e9bd1126d866c514bd1d18d1b02512",
+      "destination": "automation/tests/test_modes.py"
+    },
+    {
+      "source": "payload/update4-automode/automation/modes/README.md.txt",
+      "sha256": "d9fe982fb5e23783a8d10fbf5e5a7f10a4a3ab80657f93298b654627a50452cb",
+      "destination": "automation/modes/README.md"
+    }
+  ],
+  "merged_role_and_policy_deltas": [
+    "durable assignments and worker ownership",
+    "peer inbox snapshots, read ACKs and linked answers",
+    "strict wave/scope round tags and drained-thread response",
+    "fresh profile override only by explicit target choice"
+  ],
+  "selection_decisions": [
+    "Use existing bridge/invoke/trigger; omit separate sprint_loop and its product manifest/tests.",
+    "Cherry-pick supervisor executor helper into original generic supervisor; do not import real-pilot permissions.",
+    "Do not adopt product-specific C14 or C16 as generic policy; ship optional review example.",
+    "Consolidate source paths into automation; preserve old release inventories.",
+    "Replace product-local path/profile defaults; source transport remains a documented three-thread reference implementation."
+  ],
+  "runtime_activation": false
+}

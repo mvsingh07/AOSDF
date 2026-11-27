@@ -2,7 +2,7 @@
 
 > Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
 
-# AOSDF v3.6.0 — OPTIONAL (Learn: * commands) / ON BY DEFAULT (Index: * commands — see framework.md
+# AOSDF v3.8.0 — OPTIONAL (Learn: * commands) / ON BY DEFAULT (Index: * commands — see framework.md
 # § Self-Indexing Documentation for why Index Frontmatter itself is mandatory even though running
 # the rebuild command is still human-triggered like every other AOSDF sync verb)
 # Part of Track L (Learning) AND, as of v3.3, the Self-Indexing Documentation capability. See

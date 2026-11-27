@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "coordination-threads/automation/schema/result.schema.json",
+  "title": "Per-dispatch structured result (runs/NNN/result.json)",
+  "description": "Structured outcome + gate evidence keyed to the dispatch envelope (stage2-dispatcher-plan.md P0-6). A failed REQUIRED gate blocks acceptance; design/local/shared/live stages are distinct; a result is validated against the envelope (task_sha256, fence) before consumption.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "sequence",
+    "agent",
+    "task_sha256",
+    "fence",
+    "stage",
+    "gates",
+    "created_utc"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "agent": {
+      "type": "string"
+    },
+    "task_sha256": {
+      "type": "string",
+      "description": "Full SHA-256 of the task.md this result answers; must equal the envelope's"
+    },
+    "fence": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The fence token under which the work ran"
+    },
+    "baseline_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Provenance id of the captured baseline (baseline.py manifest)"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "design",
+        "local",
+        "shared",
+        "live"
+      ],
+      "description": "What was actually exercised. A 'local'/dev result NEVER asserts 'live' delivery/acceptance."
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "kind",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "required",
+              "optional"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "skip"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Concrete evidence (command + result, file link). Required for pass/fail."
+          }
+        }
+      }
+    },
+    "teaches": {
+      "type": "object",
+      "description": "Learning handoff (P1-b). Recommended; never a gate on engineering acceptance.",
+      "properties": {
+        "changed_behavior": {
+          "type": "string"
+        },
+        "example_ref": {
+          "type": "string"
+        },
+        "limitation": {
+          "type": "string",
+          "description": "current-versus-target"
+        },
+        "self_check": {
+          "type": "string"
+        }
+      }
+    },
+    "limitations": {
+      "type": "string"
+    },
+    "created_utc": {
+      "type": "string"
+    },
+    "deferred": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "One-line optional work postponed to the single hardening list; never an acceptance-path safety defect."
+    },
+    "new_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Every new path created for this task; coordinator checks each against required deliverables."
+    }
+  }
+}

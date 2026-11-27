@@ -18,3 +18,8 @@ __pycache__/
 /templates/coordination_threads/automation/var/
 /templates/coordination_threads/file-signals/runtime/
 /dist/
+
+/automation/var/
+/automation/file-signals/runtime/
+/automation/config/*.json
+!/automation/config/*.example.json

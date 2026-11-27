@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.8.0 — 2026-11-26 (update5)
+
+Merged single implementation review (C16) and strict outcome-first delivery (C17) into generic policy and roles: required acceptance once, blocker/deferred findings, one append-only hardening list and required-deliverable file accounting. Added the previously missed founder decision inbox, guarded decision answers, non-blocking learning/research/human-actions, Summary lines, low/exhausted wake-budget alerts and stopped-owner health reporting. Wake budgets accept 1–96; examples remain inactive with conservative limits. Added verbatim quiet-channel rotation, history-aware older-round lookup and new empty metadata-valid templates. Automation stays under the consolidated root parent. No local profile selection, separate sprint controller, product pilot grants, live channels/history, run state or seeded deferral/inbox items were imported. Existing projects migrate independently; no runtime, launch, wake, push, deploy or automation enablement follows from source adoption.
+
+## 3.7.0 — 2026-11-25 (update4)
+
+Consolidated inactive automation under a single root parent with per-Mode entry scripts and coordination contracts. Added existing-owner bindings and wake adapters, automode controller/live console, immutable peer delivery/read ACKs, bounded continuation/native wake windows, consumed-round reconciliation, durable role discipline and explicit fresh-session executor/profile selection. README now includes an illustrative animated flow and a checked interactive diagram. Existing review defaults remain; Ultimate Auto and the single-review policy are optional. The historical separate sprint controller, private pilot permissions and product runtime state are excluded. Existing projects migrate separately. Source/fixture acceptance does not establish native CLI authentication, live wake or production delivery.
+
 ## Unreleased — repository packaging
 
 Extracted the public website and learning interface into `website/`, documented public/private ownership and the software-factory foundations, added synthetic adoption examples and standalone upgrade guidance/source inventory. Public upgrade adoption no longer requires a private originating workspace. Framework VERSION remains 3.6.0; proposed 3.7.0/update4 is not applied. Managed hosting and live product coordination remain separate.

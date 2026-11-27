@@ -154,7 +154,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "e5ed7f21e5741116e105a58e3661e8b743c1da40eb5b3b0f3496746447bb0c4f"
+      "sha256": "d17f213cdb5162aa371f6341c5e2f97b9f43b98241535b337c2080f65faffd07"
     },
     {
       "path": "SECURITY.md",
@@ -466,7 +466,7 @@
     },
     {
       "path": "framework.md",
-      "sha256": "86fc21ca1036d33beaa9518a99af5f4dcd3f456d1ae1ea7255b921e1ac280997"
+      "sha256": "54ca56c155ff7b1fc502bb84bcff7df16776ab12e89bb3d0cab62a4127238a9c"
     },
     {
       "path": "manual.md",
@@ -1106,7 +1106,7 @@
     },
     {
       "path": "templates/coordination_threads/README.md",
-      "sha256": "5650320751159eff47e60cb3983cf4829d9c03799d82bf5da7b65801e2bcbd5f"
+      "sha256": "0b7cbe201dd7de6d8b5327191d784ed33e70a0f39974092187be6cf691c807fd"
     },
     {
       "path": "templates/coordination_threads/automation-proposal.md",

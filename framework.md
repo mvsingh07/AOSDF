@@ -1,24 +1,24 @@
 # AI-Orchestrated Software Development Framework (AOSDF)
 
-
-# Version 3.6.0
-
----
-
-
-## Required document authoring (3.6)
+## Required document authoring
 
 All new project Markdown documents use one `aosdf-doc/v1` header from creation, including generated documents, task evidence and future archive/run files. This expands older Tier 1/Tier 2 coverage rules for new documents; existing concept/index extensions remain in the same YAML mapping. Use `tools/create_document.py`, assign a fresh identity for every template instance, and run the installed `check_document_metadata.py` before handoff and docs builds. New projects start with no legacy exemptions; existing projects review explicit pre-existing paths. Setup and MkDocs site templates install the mandatory gate. See [authoring contract](reference/document_authoring.md).
 
-## Coordinated development (3.4 / 3.5)
+## Coordination threads
+
+The complete automation bundle is [automation/](automation/README.md), with shared scripts, [per-mode folders](automation/modes/README.md), coordination contracts and notifications under one parent. The optional Ultimate Auto extension delivers input to existing bound owners; it does not replace worker dispatch or adopt a new review policy. See [the interactive lifecycle](assets/diagrams/aosdf-flow.html).
+
+The coordination source is **[automation/coordination-threads/](automation/coordination-threads/README.md)**. Start with the [coordinator definition](automation/coordination-threads/coordinator-definition.md), [Solution Architect contract](automation/coordination-threads/solution-architect.md), and [worker definition](automation/coordination-threads/worker-definition.md). See the [worked coordination example](examples/coordinated-development/README.md) for a practical walkthrough.
+
+The framework contains reusable contracts and inactive tooling. Project-owned `thread<N>/`, worker state, sprint assignments, and run evidence are created in the adopting project's `05_AI_Agent_System/automation/coordination-threads/` after its setup inputs are known. Source and installed bundles now both use `automation/coordination-threads/`; the old template location is covered by the migration guide.
 
 Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13. The Solution Architect owns ongoing canonical execution-plan writes after Captain creation/replanning; Principal Engineers coordinate threads; workers and validators report evidence. Strategy B task design/review roles are distinct from these coordination roles. Exactly four process Modes: Manual → Semi-auto → Easy → Auto; transitions are explicit and rollout stages are separate.
 
-Use proportional Small/Standard/High-risk plans and initial verdicts; High-risk workers stop for independent review. Additional review or plan revision requires founder approval. Reconcile accepted receipts once and preserve live ownership/history. Coordinated Strategy B enters `05_AI_Agent_System/coordination-threads/coordinator-definition.md`; Strategy A is explicit legacy compatibility.
+Use proportional Small/Standard/High-risk plans and the current C16/C17 review policy; High-risk work retains one independent coordinator-arranged review during implementation. Additional review requires an explicit founder request; revise plans only when acceptance cannot be met and preserve protected-scope approval. Reconcile accepted receipts once and preserve live ownership/history. Coordinated Strategy B enters `05_AI_Agent_System/automation/coordination-threads/coordinator-definition.md`; Strategy A is explicit legacy compatibility.
 
-New setup records coordination opt-in and project-owned topology/model/ownership inputs, installs `templates/coordination_threads/` inactive and creates empty records only after those inputs are known. Root `reference/` policies install into project `06_Execution_Plan/`; roles into `05_AI_Agent_System/agents/`; prompts into `05_AI_Agent_System/prompt_templates/`. Rewrite source-relative links to these installed paths. Never copy foreign live state or enable a daemon/session from a template. See [portable upgrade protocol](reference/upgrades.md) for independent existing-project migration.
+New setup records coordination opt-in and project-owned topology/model/ownership inputs, installs `automation/coordination-threads/` inactive and creates empty records only after those inputs are known. Root `reference/` policies install into project `06_Execution_Plan/`; roles into `05_AI_Agent_System/agents/`; prompts into `05_AI_Agent_System/prompt_templates/`. Rewrite source-relative links to these installed paths. Never copy foreign live state or enable a daemon/session from a template. See [portable upgrade protocol](reference/upgrades.md) for independent existing-project migration.
 
-File notifications are notification-only, bounded and target-configured; observer and receiver are separate. An ended conversation is not woken without an attached receive call. Events do not grant authorization or task acceptance. See `templates/coordination_threads/file-signals/README.md`.
+File notifications are notification-only, bounded and target-configured; observer and receiver are separate. An ended conversation is not woken without an attached receive call. Events do not grant authorization or task acceptance. See `automation/file-signals/README.md`.
 
 Documentation itself is the knowledge source; self-indexing and existing learning/docs tooling remain. No separate llm-wiki folder is required. See [indexable authoring standard](reference/document_authoring.md) for required new-document metadata, creation tooling, fixed legacy compatibility and build validation.
 
@@ -42,10 +42,10 @@ Documentation itself is the knowledge source; self-indexing and existing learnin
  │                      → 13_Legal_Requirements (optional)                     │
  │                      → 14_Future_Migrations  (optional)                     │
  │  (Tier 1 / Tier 2 Index Frontmatter added on each doc as it's written —     │
- │   no separate ingest step; see Self-Indexing Documentation below) [v3.3]    │
+ │   no separate ingest step; see Self-Indexing Documentation below)           │
  │                                                                             │
- │  Human runs:  Index: rebuild  ──► 17_Knowledge_Index/ populated  [v3.3]     │
- │  (Human may ALSO run: Wiki: ingest all → llm-wiki/, only if opted in [v3.3])│
+ │  Human runs:  Index: rebuild  ──► 17_Knowledge_Index/ populated             │
+ │  (Human may ALSO run: Wiki: ingest all → llm-wiki/, only if opted in)       │
  └───────────────────────────┬─────────────────────────────────────────────────┘
                              │  all 00–05 docs complete & locked
                              ▼
@@ -53,8 +53,8 @@ Documentation itself is the knowledge source; self-indexing and existing learnin
  │  PHASE 0 — PLANNING  (captain_agent — called once by Human)                 │
  │                                                                             │
  │  captain_agent reads:                                                       │
- │    17_Knowledge_Index/index.md + overview.md  (context layer)  [v3.3]       │
- │    llm-wiki/index.md + overview.md  (ADDITIONAL, only if opted in) [v3.3]   │
+ │    17_Knowledge_Index/index.md + overview.md  (context layer)               │
+ │    llm-wiki/index.md + overview.md  (ADDITIONAL, only if opted in)          │
  │    FRD, PRD, BRD, security, architecture, infra docs                        │
  │    13_Legal_Requirements/*.md  (if exists)                                  │
  │    14_Future_Migrations/alternatives.md  (if exists)                        │
@@ -123,7 +123,7 @@ Documentation itself is the knowledge source; self-indexing and existing learnin
     identified gap   ──► identified_gaps.md  (immediate, never deferred)
     human step found ──► 12_Manual_Actions/actions.md  (immediate)
 
-  INDEX REBUILD (Human, any time after new Index Frontmatter is added):  [v3.3]
+  INDEX REBUILD (Human, any time after new Index Frontmatter is added):
     Index: rebuild  |  Index: check coverage  |  Index: open
 
   WIKI SYNC (Human, after agent actions that change docs — ONLY if llm-wiki opted in):
@@ -137,63 +137,20 @@ Documentation itself is the knowledge source; self-indexing and existing learnin
 
 ---
 
-> Changes in v1.1 are marked `[v1.1]`
-> Changes in v1.2 are marked `[v1.2]`
-> Changes in v1.3 are marked `[v1.3]`
-> Changes in v1.4 are marked `[v1.4]`
-> Changes in v1.5 are marked `[v1.5]`
-> Changes in v1.6 are marked `[v1.6]`
-> Changes in v1.7 are marked `[v1.7]`
-> Changes in v1.8 are marked `[v1.8]`
-> Changes in v1.9 are marked `[v1.9]`
-> Changes in v2.0 are marked `[v2.0]`
-> Changes in v2.1 are marked `[v2.1]`
-> Changes in v2.2 are marked `[v2.2]`
-> Changes in v2.3 are marked `[v2.3]`
-> Changes in v2.4 are marked `[v2.4]`
-> Changes in v2.5 are marked `[v2.5]`
-> Changes in v3.0 are marked `[v3.0]`
-> Changes in v3.1 are marked `[v3.1]`
-> Changes in v3.2 are marked `[v3.2]`
-> Changes in v3.3 are marked `[v3.3]`
+## Outcome-first delivery and founder visibility
 
----
+The current [workflow policy](reference/current-workflow-rules.md) makes C16 single implementation review and C17 outcome-first delivery authoritative in every Mode. Deliver the required acceptance path once; defer optional refinement to the one hardening list. The [founder inbox](automation/README.md#founder-decisions-learning-and-lean-channels) makes blocking decisions visible without granting broader authority. Quiet channels can be rotated verbatim with history retained; learning items are non-blocking and are suppressed during RUNNING Ultimate Auto.
 
 ## What This Framework Does
 
-- Breaks product → phases → milestones → tasks → subtasks
-- Attaches agent prompts to every execution unit
-- Defines artifacts with strict input/output contracts
-- Enforces security + architecture discipline before any code is written
-- Tracks execution with full traceability
-- **[v1.1]** Supports both single-agent and multi-agent execution strategies
-- **[v1.1]** Minimizes human intervention after `05_AI_Agent_System` is complete
-- **[v1.2]** Defines a clear execution-ready gate via `project_status.md`
-- **[v1.2]** Introduces commander → execution/validator agent delegation pattern
-- **[v1.2]** Defines implementation prompts as tracked artifacts
-- **[v1.2]** Isolates all AI documentation from source code via `.gitignore`
-- **[v1.3]** Introduces `captain_agent` — bridges product/architecture docs to executable plan
-- **[v1.3]** Execution plan and milestones are agent-generated with FRD coverage validation, not written manually
-- **[v1.3]** Defines missing Strategy B agents: `reviewer_agent` and `validator_agent`
-- **[v1.4]** Introduces `research_and_refine_agent` — task-driven research outputting `research_results.md`; never modifies existing documents
-- **[v1.4]** Defines the global Document Formatting Standard — padded columns, separator dashes match column width; applies to all agent-generated files with tables
-- **[v1.5]** Defines the `{project_name}-Orchestrum` workspace layout — AOSDF is a separate reusable directory, not embedded in the project; application code and project documentation are cleanly separated
-- **[v1.6]** Integrates LLM Wiki as a persistent, file-based context layer (`llm-wiki/` fourth directory); agents read wiki before any design/architecture task; wiki is human-maintained, never agent-written
-- **[v1.7]** Introduces `12_Manual_Actions/` as a structured two-file system: `actions.md` (tracker with per-environment status + milestone reference) and `guides.md` (step-by-step instructions); supersedes the flat `manual_action.md` root file
-- **[v1.9]** Introduces `13_Legal_Requirements/` as an optional section — when present, all files are required reading for `captain_agent` and any architecture agent before planning or design work begins; legal constraints must produce concrete execution plan tasks
-- **[v2.0]** Introduces `14_Future_Migrations/` as a portability reference section — `alternatives.md` is required reading for `captain_agent` and any architecture agent; every infrastructure client must be wrapped behind an abstraction interface so providers can be swapped without business-logic rewrites
-- **[v2.1]** Introduces `15_Addendums/` as a post-baseline change management section — `addendum_agent` parses a human-authored addendum document and produces a scoped implementation plan and tracking file, entirely contained within `15_Addendums/`; the main tracking board and milestone files are never touched
-- **[v2.2]** `execution_plan.md` is the only task-status record — the Status column in every row is the canonical record of whether a task is Planned / In Progress / Done. There is no separate tracking board: `tracking_board.md` is removed; `08_Tracking_System/` holds only `decisions_log.md`, a lightweight decisions log with no status authority.
-- **[v2.3]** `03_System_Design` replaces `03_Architecture_Design` — cross-cutting design stays at the folder root; per-module design lives in numbered `NNN_<name>_module/` folders (seven-document set, cloned from `_template/`). Module numbers are permanent, never reused or renumbered.
-- **[v2.4]** Introduces optional Jira board integration — a project may opt in, at setup time only, to having its `execution_plan.md` / milestone / gap / manual-action state mirrored onto a Jira board via MCP. Off by default. When on, sync is **human-triggered only** (`Jira: sync`, mirroring the existing `Wiki:` command pattern) — no agent calls Jira automatically. See the **Jira Board Integration** section below and `AOSDF/reference/jira_mapping.md`.
-- **[v2.5]** Introduces the Concept Frontmatter Standard — a small YAML metadata block, required on every ADR, module `02_domain_model.md`/`03_architecture.md`, `02_Security_Framework/threat_model.md`, `04_Infrastructure_Design/*.md`, and `13_Legal_Requirements/concern_*.md` (when present). The agent (or human) writing the document fills it in as part of writing it — no separately-scheduled "write learning content" task. This is the raw material a later, independently-tracked capability (`16_Learning_Roadmap/`) derives a personal, zero-setup interview-prep roadmap from — see the **Concept Frontmatter Standard** section below and Principles 28-30. Also formalizes the `aosdf-diagram` fenced-block convention already used by this file's own diagrams.
-- **[v2.5]** Generalizes Jira-only sync to a provider-agnostic `tracker_sync_agent` — Jira *or* Notion, one provider per project, selected via `tracker_config.md`'s `Provider:` field and implemented against a shared `TrackerAdapter` interface. `jira_config.md` / `jira_sync_agent` keep working unchanged for existing projects. See the **Tracker Board Integration** section below, `AOSDF/reference/tracker_mapping.md`, and Principles 25-26.
-- **[v2.5]** Introduces `concept_indexer_agent` and `16_Learning_Roadmap/` — read-only over the documentation tree, write-only to `16_Learning_Roadmap/`, deriving `roadmap_index.md`, `roadmap_graph.json`, and a self-contained `render/index.html` from every `concepts:` entry in Concept Frontmatter, never duplicating source content (Principle 28). Human-triggered only, via `Learn: rebuild` / `Learn: open` / `Learn: check coverage`. See the **Learning Roadmap** section below.
-- **[v2.5 D0]** Introduces `AOSDF/renderer_core/` for Track L (`render/index.html`'s diagram panel + shared tokens). **[v2.5, restructured 2026-08-19]** Track P (Project Docs Site) renders with MkDocs + Material instead of a hand-rolled renderer — a single `mkdocs.yml` per project, a tiny CSS override for `aosdf-diagram`, and `docs_site_agent` as the thin human-triggered build/open wrapper. Track D (a matching site for `AOSDF/` itself) was built the same way, then cancelled — `AOSDF/` is the product, not project documentation. See **Track L Renderer Core** and **MkDocs-Based Project Docs Site** below.
-- **[v3.0, E6]** GA hardening: `aosdf-lint` formatting linter (Rules 1-2, reusing the write tools' own table renderer as the compliance definition), multi-workspace support in the editor extension, and internal-only packaging (`OD-1`). See **GA Hardening** below.
-- **[v3.1]** Codifies Principle 31 — denormalized status displays (`milestone.md` vs `execution_plan.md`) and MA-xxx cross-references must be reconciled whenever an agent reads a milestone.md, not left to silently drift; adds the **Reusable Architecture Patterns (Reference)** section, starting with Tenant Reputation Gating for shared outbound dispatch infrastructure.
-- **[v3.2]** Introduces `principal_architect_agent` — a human-invoked, on-demand agent that re-reviews an existing architecture or plan against current external best practice (official docs, established engineering references, recent community discussion) at a milestone or task boundary the human chooses, producing trackable redline findings rather than silent rewrites. Gives `superman_agent` a `mode` input (`discipline` forces the full Strategy B review pipeline for every task; `normal` is its pre-existing behavior). Introduces the Scope Expansion Protocol (`06_Execution_Plan/scope_expansion_log.md`) for work discovered mid-task that is genuinely outside the current plan. Formalizes auto-compaction triggers against context-window percentage, and adds advisory-only model-tier suggestions and a context-caching read-ordering discipline. See Principles 32-37 below.
-- **[v3.3]** Introduces the Document Index Frontmatter Standard — extends the v2.5 Concept Frontmatter Standard in place with three new fields (`entities`, `tags`, `summary`), required in a wider "Tier 2" document set (`project_context.md`, `PRD.md`/`FRD.md`/`BRD.md`, every module's `README.md`/`00_overview.md`, `security_requirements.md`, `compliance_checklist.md`, `alternatives.md`) alongside the existing "Tier 1" set, which keeps its full concept-frontmatter block plus the same three new fields. Introduces `17_Knowledge_Index/` — a derived-only folder (`index.md`, `entity_index.md`, `overview.md`), regenerated by `concept_indexer_agent` on human-triggered `Index: rebuild` / `Index: open` / `Index: check coverage`, extending the same "derived, never duplicated" discipline Principle 28 already applies to `16_Learning_Roadmap/`. This closes the drift gap `llm-wiki/` (v1.6) suffered from in practice — a separately-ingested copy of the docs that fell behind because re-ingesting it was a forgettable, unenforced follow-up step; `17_Knowledge_Index/` has no independent content to fall behind with, since it is a pure projection of frontmatter the authoring agent or human already wrote on the real document. `llm-wiki/` is not removed or broken for existing projects — see **Self-Indexing Documentation** below for the full design, the new required-on tiers, and `llm-wiki/`'s revised (opt-in, additive) role. Adds Principle 38. See `AI_Development_Model/improvements/prompts/aosdf-refinement-3.3.md` for the full design rationale.
+- Breaks product development into phases, milestones, tasks, and subtasks.
+- Connects requirements and architecture to executable plans with explicit acceptance criteria.
+- Defines specialized agent roles, input/output contracts, ownership, and handoffs.
+- Supports single-agent execution and coordinated multi-agent workflows.
+- Applies security, architecture, review, and validation requirements before accepting work.
+- Tracks task status, gaps, manual actions, and post-baseline changes in project-owned documents.
+- Preserves context through documentation metadata, derived knowledge indexes, and learning roadmaps.
+- Provides MCP, editor, tracker, and documentation-site integrations without creating a second source of truth.
 
 ---
 
@@ -214,69 +171,69 @@ Each milestone = a working, testable system slice. Not a feature dump.
 **5. Traceability**
 Every task → output → validation → status. Nothing exists outside the tracking system.
 
-**[v1.1] 6. Research-before-design**
+**6. Research-before-design**
 Before finalizing product definition and architecture, a research pass on comparable systems is required.
 
-**[v1.1] 7. Gap-tracking as first-class concern**
+**7. Gap-tracking as first-class concern**
 Every identified gap logged in `identified_gaps.md` with classification and status.
 
-**[v1.1] 8. Manual action tracking**
-Every human-required step logged immediately. **[v1.7]** Use `12_Manual_Actions/actions.md` (not the legacy `manual_action.md` root file). Add a row before finishing the task prompt — never defer.
+**8. Manual action tracking**
+Every human-required step logged immediately. Use `12_Manual_Actions/actions.md` (not the legacy `manual_action.md` root file). Add a row before finishing the task prompt — never defer.
 
-**[v1.1] 9. Minimum human intervention after 05_AI_Agent_System**
+**9. Minimum human intervention after 05_AI_Agent_System**
 System runs on agent execution with human approval gates only.
 
-**[v1.2] 10. Execution-ready gate**
+**10. Execution-ready gate**
 `project_status.md` is the single source of truth for whether the project is ready to begin execution. No agent begins implementation work unless `project_status.md` shows `READY`.
 
-**[v2.2] 22. execution_plan.md is the only task-status record — no separate tracking board**
+**22. execution_plan.md is the only task-status record — no separate tracking board**
 The Status column in `execution_plan.md` is the canonical record of task progress. Agents update the Status column directly when a task moves from `Planned` → `In Progress` → `Done`. There is no `tracking_board.md`. `08_Tracking_System/decisions_log.md` holds only a lightweight decisions log — it has no status authority and is never the source agents read to determine what to execute next.
 
-**[v2.3] 23. System design is per-module**
+**23. System design is per-module**
 `03_System_Design/` (formerly `03_Architecture_Design/`) splits into cross-cutting root docs (`system_architecture.md`, `service_design.md`, `data_flow.md`, `ADR/`) and one `NNN_<name>_module/` folder per core module, cloned from `_template/`. See the `03_System_Design` section below for the full module convention.
 
-**[v2.4] 24. Jira board sync is optional, decided once at setup, and always human-triggered**
+**24. Jira board sync is optional, decided once at setup, and always human-triggered**
 A project may opt in to Jira board sync only during `workflow_initiator` setup (Step 1, Q8) — never mid-project without a human explicitly re-running that decision. When opted in, the human also fixes a sync cadence recommendation (see `jira_mapping.md`), but no agent is ever permitted to call the Jira MCP tools on its own initiative — sync only happens when a human issues the `Jira: sync` command, exactly as wiki updates only happen via `Wiki:` commands. `execution_plan.md`'s Status column remains the sole source of truth at all times; Jira is a mirror of it, never the reverse, except through the explicit Import Mode described in `jira_sync_agent.md`.
 
-**[v2.5] 25. Tracker sync is provider-agnostic and swappable**
+**25. Tracker sync is provider-agnostic and swappable**
 `tracker_sync_agent` (generalizing `jira_sync_agent` — see **Tracker Board Integration** below) never imports a provider SDK outside its adapter implementation. Adding a third provider in the future requires only a new adapter file, never a change to `execution_plan.md`'s schema or to any other agent. A project configures exactly one tracker provider at a time — dual-sync is out of scope, since two live mirrors could independently drift, the exact failure mode Principle 22 exists to prevent.
 
-**[v2.5] 26. Tooling is a client of the files, never a second source of truth**
+**26. Tooling is a client of the files, never a second source of truth**
 The editor extension (VSCode first — see `aosdf_expansion_scope.md` §4.1, IDE-agnostic by design), `aosdf-mcp`, and any Claude Code hook (when built) read and write the existing markdown files in `{project_name}-Documents/`. None of them may introduce a parallel database, cache, or state store that could diverge from `execution_plan.md`'s Status column (Principle 22) or `project_status.md`. If a view needs to be fast, it may cache for rendering, but a cache is invalidated by file changes, never treated as authoritative. This is the same discipline Principle 30 later extends to the learning renderer.
 
-**[v1.2] 11. Implementation prompts are tracked artifacts**
+**11. Implementation prompts are tracked artifacts**
 Every prompt generated for a task is saved to `05_AI_Agent_System/implementation_prompts/` before execution. Not ephemeral — they are part of the project record.
 
-**[v1.2] 12. AI documentation is never committed to source control**
-All AOSDF documentation (00–11 folders, agents, prompts, tracking) lives in `{project_name}-Documents/` and `AOSDF/` at the workspace root, both excluded from git via `.gitignore`. **[v1.5]** See Workspace Layout section for the canonical structure.
+**12. AI documentation is never committed to source control**
+All AOSDF documentation (00–11 folders, agents, prompts, tracking) lives in `{project_name}-Documents/` and `AOSDF/` at the workspace root, both excluded from git via `.gitignore`. See Workspace Layout section for the canonical structure.
 
-**[v1.2] 13. M0 is always the first milestone**
+**13. M0 is always the first milestone**
 Every project starts with Milestone 0: project repo and tech stack setup. No infrastructure or code work begins before M0 is complete.
 
-**[v1.3] 14. Execution plan and milestones are agent-generated artifacts**
+**14. Execution plan and milestones are agent-generated artifacts**
 After 00–05 documentation is complete, `captain_agent` reads the FRD, architecture, and security documents and generates the execution plan and milestone files. Manually writing these without running captain_agent is not permitted — coverage validation would be skipped.
 
-**[v1.3] 15. captain_agent validates FRD → task coverage**
+**15. captain_agent validates FRD → task coverage**
 Every service specification in the FRD must map to at least one task in the execution plan. Unmapped requirements are logged to `identified_gaps.md` as Critical gaps before execution begins.
 
-**[v1.3] 16. project_status.md transitions have defined owners**
+**16. project_status.md transitions have defined owners**
 - `SETUP` → `PLANNING`: `workflow_initiator` (after structure is confirmed)
 - `PLANNING` → `READY`: `captain_agent` (after execution plan passes coverage validation)
 - `READY` → `IN_PROGRESS`: `commander_agent` (on first task delegation)
 - `IN_PROGRESS` → `COMPLETE`: `commander_agent` (after all M3 exit criteria pass)
 - Any state → `BLOCKED`: any agent that hits an unresolvable blocker
 
-**[v1.7] 17. Manual actions are tracked with per-environment status and milestone reference**
+**17. Manual actions are tracked with per-environment status and milestone reference**
 `12_Manual_Actions/actions.md` is the authoritative tracker for all human-required steps. Every row must include: Action ID, description, the milestone task it unblocks, priority (P1/P2/P3), and per-environment status (Dev · Staging · Prod). `12_Manual_Actions/guides.md` holds the step-by-step completion instructions for every action. Agents add rows to `actions.md` before completing any task prompt that generates a human step. Agents never defer this logging.
 
-**[v1.6] 18. LLM Wiki as persistent context layer**
+**18. LLM Wiki as persistent context layer**
 Every project following AOSDF has an `llm-wiki/` folder as its fourth directory.
 Agents READ from the wiki for context before starting any task that involves design,
 research, or architecture. Agents NEVER write to `llm-wiki/` — the wiki is updated
 by the human via direct session commands. The wiki and the project documents are
 separate systems that must never overlap in write access.
 
-**[v1.9] 19. Legal requirements are binding architecture constraints**
+**19. Legal requirements are binding architecture constraints**
 When `13_Legal_Requirements/` exists in a project, all files in it are required reading
 for `captain_agent` before generating or re-running the execution plan, and for any
 design or architecture agent before finalizing service design, tenant onboarding flows,
@@ -284,7 +241,7 @@ or data handling decisions. Every legal constraint must map to at least one conc
 task in the execution plan — they are not passive context. A legal constraint overrides
 an optional design decision whenever there is a conflict.
 
-**[v2.0] 20. Design for portability — every infrastructure client behind an abstraction interface**
+**20. Design for portability — every infrastructure client behind an abstraction interface**
 When `14_Future_Migrations/alternatives.md` exists in a project, it is required reading
 for `captain_agent` and any architecture or backend agent before designing services or
 writing infrastructure-touching code. Every infrastructure client (queue, cache, storage,
@@ -293,7 +250,7 @@ are confined to adapter implementation files only — never in business logic. S
 provider must require only a new adapter, never a business-logic change. This principle
 applies from M0 — it is an architectural discipline, not a migration task.
 
-**[v2.1] 21. Post-baseline changes are managed through Addendums — never through ad-hoc milestone edits**
+**21. Post-baseline changes are managed through Addendums — never through ad-hoc milestone edits**
 After the execution plan is locked and work has begun, requirements that arrive
 post-baseline are handled through `15_Addendums/`. Each addendum is a human-authored
 document describing the change; `addendum_agent` converts it into a scoped implementation
@@ -302,37 +259,37 @@ execution plan, and milestone files are read-only for the addendum workflow — 
 only modified by `captain_agent` on explicit scope-change re-runs. Addendum tasks are
 tracked in `15_Addendums/tracking_addendums.md`, not in the main tracking board.
 
-**[v2.5] 28. Learning content is derived, never duplicated**
+**28. Learning content is derived, never duplicated**
 `16_Learning_Roadmap/` (when a project builds it) contains no original prose. Every fact in it traces to Concept Frontmatter on a document that exists for its own, non-learning reason. If regenerating it would produce different content than the last run, the source documents are authoritative — the roadmap is stale, never wrong, and re-running its rebuild command fixes it. No agent or human ever writes directly into `16_Learning_Roadmap/`.
 
-**[v2.5] 29. Concept capture happens at the moment of decision, by the agent (or human) making it**
+**29. Concept capture happens at the moment of decision, by the agent (or human) making it**
 `architect_agent`, and any human authoring `02_Security_Framework/threat_model.md`, `04_Infrastructure_Design/*.md`, or `13_Legal_Requirements/concern_*.md`, add Concept Frontmatter (see the **Concept Frontmatter Standard** section below) as part of the document they were already producing. No one schedules a separate "write learning content" task. A required document missing the frontmatter is logged as a Low-severity Learning gap — never a blocker to execution.
 
-**[v2.5] 30. The learning renderer is a read-only, zero-dependency artifact**
+**30. The learning renderer is a read-only, zero-dependency artifact**
 `16_Learning_Roadmap/render/index.html` has no build step, no external network calls, no accounts, and no server requirement — it reads only from data inlined at generation time, the same "tooling is a client of the files, never a second source of truth" discipline this framework already applies to the Wiki (Principle 18) and Jira sync (Principle 24). `{project_name}-Documents/{project_name}-Documents-site/` (MkDocs-based, see **MkDocs-Based Project Docs Site** below) is read-only, self-contained static HTML once built — a real build step exists there (`mkdocs build`), but the *output* is still an artifact anyone can open with no server, no accounts, and no runtime dependency, and stays local-only by default the same way (never publishes by default — see **Learning Roadmap** and `evolution.md` Sec 14).
 
-**[v3.1] 31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
+**31. Denormalized status displays and cross-references must be reconciled on read, never left to drift**
 `07_Milestones/*/milestone.md`'s own Status column is a human-readable display copy of `execution_plan.md`'s Status column (Principle 22) — it is not a second source of truth, but nothing keeps it automatically in sync either. Similarly, `12_Manual_Actions/actions.md` Action IDs (MA-xxx) can be reassigned or repurposed as the tracker evolves; any citation of a specific MA-xxx ID in a milestone.md, execution_plan.md, or implementation prompt is a point-in-time reference, not a permanent binding. **Discovered concretely in a live project:** a milestone.md showed every subtask as `Planned` while `execution_plan.md` showed nearly all of them `Done`, and the same file cited `MA-024`/`MA-025` for a task whose actions had since been renumbered to `MA-021`/`MA-022` after `actions.md` reassigned the ID `MA-024` to unrelated work. **Rule:** whenever any agent reads a milestone.md file for any reason, it MUST cross-check its Status column against `execution_plan.md` and its MA-xxx citations against `actions.md`'s current numbering, and correct any mismatch found in the same session — logged as a Documentation gap in `identified_gaps.md` if the fix is non-trivial. This is a targeted reconciliation triggered by the read, never a standing background sync job.
 
-**[v3.2] 32. Principal Architect review is human-invoked, periodic, and produces trackable redlines — never silent rewrites**
+**32. Principal Architect review is human-invoked, periodic, and produces trackable redlines — never silent rewrites**
 `principal_architect_agent` re-reviews an existing architecture or plan against current external practice (official docs, established engineering references, recent community discussion) only when a human explicitly invokes it for a milestone or task boundary they choose — never automatically, and never as a substitute for `architect_agent`'s day-to-day design ownership or `reviewer_agent`'s implementation-prompt gate. Findings go into a dated review document under the affected module's directory, separated into must-fix-before-proceeding / worth-tracking / no-change-needed, and any proposed change is written as a redline against the existing design docs — never an in-place rewrite. See **principal_architect_agent** under Agent Architecture below.
 
-**[v3.2] 33. Superman's Discipline Mode forces the reviewed pipeline; Normal Mode is unchanged**
+**33. Superman's Discipline Mode forces the reviewed pipeline; Normal Mode is unchanged**
 `superman_agent` accepts a `mode` of `discipline` or `normal` (default `normal`). Normal mode is Superman's pre-existing behavior — Strategy A or B, as read from `execution_plan.md` or an explicit `strategy_override`. Discipline mode forces the full Strategy B pipeline (architect → reviewer → implementor → validator) for every task in the run, regardless of what the execution plan's strategy line says — no implementation prompt reaches execution without `reviewer_agent` approval first. Both modes keep Superman's defining trait: no per-task human approval gate. See **Superman Modes** under Execution Strategies below.
 
-**[v3.2] 34. Out-of-scope work discovered mid-task is logged and stops the loop — never silently absorbed or silently dropped**
+**34. Out-of-scope work discovered mid-task is logged and stops the loop — never silently absorbed or silently dropped**
 When implementing a task reveals a genuine need for work outside the current milestone/execution-plan scope, the agent logs it to `06_Execution_Plan/scope_expansion_log.md` (discovering task, proposed task, why it's required, suggested milestone) and stops — the same shape as a Manual Action Required stop. A human resolves it by re-running `captain_agent` to fold the proposed task into the plan, or by recording an explicit deferral in the log. No agent adds an unplanned task to `execution_plan.md` on its own initiative. See **Scope Expansion Protocol** below.
 
-**[v3.2] 35. Every agent loads only what the current task needs — never a whole reference directory speculatively**
+**35. Every agent loads only what the current task needs — never a whole reference directory speculatively**
 Each agent's Token Efficiency Rules section already names the specific files it reads per task; this principle makes explicit and binding what those sections individually imply: reading an entire folder (`llm-wiki/`, `03_System_Design/`, `reference/`) "just in case" is a violation, not a convenience. If a task's scope is ambiguous enough that an agent cannot tell which file it needs, that ambiguity itself is reported as a blocker (per each agent's existing stopping conditions) rather than resolved by reading broadly.
 
-**[v3.2] 36. Auto-compaction is triggered by context-window percentage, not just task count**
+**36. Auto-compaction is triggered by context-window percentage, not just task count**
 Every agent with a Compact Protocol section treats visible context usage at roughly **70% of the active model's context window as COMPACT RECOMMENDED and roughly 85% as COMPACT REQUIRED**. Where exact usage isn't visible to the agent, the pre-existing qualitative heuristics (task count completed this session, size of outputs already generated) remain the fallback signal — they are secondary, not the primary trigger, wherever a percentage estimate is available.
 
-**[v3.2] 37. Model-tier and context-cache discipline are advisory, not runtime automation**
+**37. Model-tier and context-cache discipline are advisory, not runtime automation**
 AOSDF agents are instructions consumed by whatever LLM/harness executes them — they cannot themselves switch models or control an API-level prompt cache. Two advisory disciplines apply instead: (a) the session-orchestrating agents (`commander_agent`, `superman_agent`) print a `Suggested model tier` line inferred from the task's shape (mechanical/single-file/Strategy A → fast/low-cost tier; architecture/ADR/Strategy B/principal-review work → frontier tier) for a human or supervising harness to act on — no agent switches models itself; (b) every agent reads stable, rarely-changing documents (`CLAUDE.md`, `framework.md`, architecture docs) first, in the same order, without re-reading them verbatim mid-session, so the underlying LLM API's prompt cache is actually reused — task-specific/volatile reads (execution-plan rows, FRD sections) come after that stable prefix, never interleaved before it.
 
-**[v3.3] 38. Self-indexing is a property of the documentation, never a second copy of it**
+**38. Self-indexing is a property of the documentation, never a second copy of it**
 Every Tier 1 and Tier 2 document (see **Document Index Frontmatter Standard**, part of the **Concept Frontmatter Standard** section below) carries `entities` / `tags` / `summary` as part of being written, the same way Tier 1 already carries the rest of Concept Frontmatter (Principle 29). `17_Knowledge_Index/` contains no original content — extending Principle 28's "derived, never duplicated" rule from the Learning Roadmap to this folder too — every fact in it traces to a field already written on a real document, for that document's own reason, at the moment it was written. If regenerating the index would produce different content than what's on disk, the source documents are authoritative and the index is simply stale, never wrong — re-running `Index: rebuild` fixes it, exactly as `Learn: rebuild` already works this way for the Learning Roadmap. No agent writes directly into `17_Knowledge_Index/` outside of `Index: rebuild`, and no agent treats it as authoritative over the real document it was derived from. See **Self-Indexing Documentation** below.
 
 ---
@@ -377,22 +334,16 @@ instances this pattern was extracted from.
 
 ---
 
-## Root Structure (v1.2) — Superseded by v1.5 Workspace Layout below
+## Workspace Layout
 
-> **[v1.5]** The workspace layout below is the canonical structure. The v1.2 single-folder pattern is deprecated.
-
----
-
-## [v1.5] Workspace Layout
-
-Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace root. AOSDF lives as a **separate reusable directory** — not embedded inside any project. Application code and documentation are cleanly separated.
+Every project using AOSDF uses the `{project_name}-Orchestrum` workspace root. AOSDF lives as a **separate reusable directory** — not embedded inside any project. Application code and documentation are cleanly separated.
 
 ```
 {project_name}-Orchestrum/                     ← WORKSPACE ROOT (not a git repo itself)
 │
-├── .gitignore                                  [v1.5] ← excludes AOSDF/ and {project_name}-Documents/
+├── .gitignore                                  ← excludes AOSDF/ and {project_name}-Documents/
 │
-├── AOSDF/                                      [v1.5] ← General, reusable AI Development Model
+├── AOSDF/                                      ← General, reusable AI Development Model
 │   ├── framework.md                            This file
 │   ├── manual.md
 │   ├── setup_aosdf.md                          ← New project setup guide + upgrade guide
@@ -413,36 +364,36 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 │   │   ├── reviewer_agent.md
 │   │   ├── validator_agent.md
 │   │   ├── addendum_agent.md
-│   │   ├── jira_sync_agent.md                  [v2.4] ← OPTIONAL, superseded by tracker_sync_agent.md
-│   │   ├── tracker_sync_agent.md               [v2.5] ← OPTIONAL, human-invoked only; Jira or Notion
-│   │   ├── concept_indexer_agent.md            [v2.5] ← OPTIONAL, human-invoked only; Learn: rebuild / check coverage
-│   │   └── docs_site_agent.md                  [v2.5, restructured 2026-08-19] ← OPTIONAL, human-invoked only; Project Docs: build/open only
+│   │   ├── jira_sync_agent.md                         ← OPTIONAL, superseded by tracker_sync_agent.md
+│   │   ├── tracker_sync_agent.md                      ← OPTIONAL, human-invoked only; Jira or Notion
+│   │   ├── concept_indexer_agent.md                   ← OPTIONAL, human-invoked only; Learn: rebuild / check coverage
+│   │   └── docs_site_agent.md                                                  ← OPTIONAL, human-invoked only; Project Docs: build/open only
 │   ├── reference/                              ← Quick-reference docs for Claude + humans
 │   │   ├── agent_index.md
 │   │   ├── folder_map.md
 │   │   ├── formatting_standard.md
 │   │   ├── rules.md
-│   │   ├── jira_mapping.md                     [v2.4] ← OPTIONAL — read if tracker_config.md Provider: jira
-│   │   ├── notion_mapping.md                   [v2.5] ← OPTIONAL — read if tracker_config.md Provider: notion
-│   │   └── tracker_mapping.md                  [v2.5] ← OPTIONAL — TrackerAdapter interface + config schema
-│   ├── renderer_core/                          [v2.5 D0] ← Track L only — see Track L Renderer Core
+│   │   ├── jira_mapping.md                            ← OPTIONAL — read if tracker_config.md Provider: jira
+│   │   ├── notion_mapping.md                          ← OPTIONAL — read if tracker_config.md Provider: notion
+│   │   └── tracker_mapping.md                         ← OPTIONAL — TrackerAdapter interface + config schema
+│   ├── renderer_core/                                    ← Track L only — see Track L Renderer Core
 │   │   ├── core.js                             ← markdown→HTML, diagram panel, tables, nav, search
 │   │   └── core.css                            ← shared design tokens + styles, light/dark aware
-│   ├── aosdf-mcp/                              [v2.5 E2-T1] ← MCP server, six read/write tools (Principle 26);
+│   ├── aosdf-mcp/                                           ← MCP server, six read/write tools (Principle 26);
 │   │   │                                            bundled inside AOSDF/, not a standalone package (OD-3)
 │   │   ├── package.json                        ← zero runtime dependencies, hand-rolled stdio JSON-RPC
 │   │   └── src/                                ← config.js, markdown-table.js, tools/*.js — see its own README.md
 │   ├── designing_aosfd/                        ← AOSDF/ has no mkdocs.yml or site of its own — Track D
 │   │                                              (a docs site for the framework itself) was built, then
 │   │                                              cancelled 2026-08-19; see MkDocs-Based Project Docs Site
-│   ├── .claude/                                [v2.5 E3-T1] ← Master template, copied into {project_name}/
+│   ├── .claude/                                             ← Master template, copied into {project_name}/
 │   │   │                                            (the only git repo) at setup — see Claude Code Native
 │   │   │                                            Integration section below and folder_map.md
 │   │   ├── agents/                             ← 20 subagent defs, one per AOSDF agent role
 │   │   ├── commands/                            ← /aosdf-init, -plan, -next, -addendum, -research, -sync, -import
 │   │   ├── settings.json                        ← git-push deny rule + session-context-gate hook wiring
 │   │   └── hooks/session-context-gate.js        [E3-T2] ← Principle 27 PreToolUse gate
-│   └── .mcp.json                               [v2.5 E3-T1] ← registers aosdf-mcp as an MCP server; also
+│   └── .mcp.json                                            ← registers aosdf-mcp as an MCP server; also
 │                                                    copied to {project_name}/, paths pre-adjusted for there
 │
 ├── {project_name}/                             ← Application Code only
@@ -450,21 +401,21 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 │   └── {ui_component}/                         (optional UI — e.g. react-email-editor, Phase 2+)
 │
 ├── {project_name}-Documents/                   ← Project Documentation (gitignored) — the ONE project docs folder;
-│   ├── mkdocs.yml                              [v2.5, restructured 2026-08-19] ← Project Docs Site config, docs_dir: docs
-│   ├── .venv/                                  [v2.5] ← mkdocs + mkdocs-material, project-local, gitignored
-│   ├── {project_name}-Documents-site/          [v2.5, restructured 2026-08-19] ← mkdocs build output, gitignored,
+│   ├── mkdocs.yml                                                              ← Project Docs Site config, docs_dir: docs
+│   ├── .venv/                                         ← mkdocs + mkdocs-material, project-local, gitignored
+│   ├── {project_name}-Documents-site/                                          ← mkdocs build output, gitignored,
 │   │                                                sibling of docs/ (nested inside this folder, not a workspace-root
 │   │                                                sibling), local-only by default
-    └── docs/                                   [v2.5, restructured 2026-08-19] ← docs_dir; every renderable file lives here
+    └── docs/                                   ← docs_dir; every renderable file lives here
         ├── CLAUDE.md                           ← AI agent context file (entry point)
-        ├── project_status.md                   [v1.2] execution readiness gate
-        ├── identified_gaps.md                  [v1.1]
-        ├── research_results.md                 [v1.4] output from research_and_refine_agent
-        ├── jira_config.md                      [v2.4] ← OPTIONAL, pre-v2.5 projects only (kept working)
-        ├── tracker_config.md                   [v2.5] ← OPTIONAL, created only if tracker sync opted in at setup
-        ├── tracker_config.env                  [v2.5] ← OPTIONAL, gitignored, credential-only (OD-2, resolved 2026-08-27)
-        ├── docs_overrides/                     [v2.5, populated 2026-09-12] ← aosdf.css (aosdf-diagram panel) + aosdf.js (collapsible nav/TOC, home link) — copied from AOSDF/templates/project_docs_site/ at PJ1-T1
-        ├── reference/                          [v2.2] ← Raw product knowledge inputs (read by agents, never modified)
+        ├── project_status.md                   execution readiness gate
+        ├── identified_gaps.md
+        ├── research_results.md                 output from research_and_refine_agent
+        ├── jira_config.md                      ← OPTIONAL, legacy Jira configurations only (kept working)
+        ├── tracker_config.md                   ← OPTIONAL, created only if tracker sync opted in at setup
+        ├── tracker_config.env                  ← OPTIONAL, gitignored, credential-only (OD-2, resolved 2026-08-27)
+        ├── docs_overrides/                     ← aosdf.css (aosdf-diagram panel) + aosdf.js (collapsible nav/TOC, home link) — copied from AOSDF/templates/project_docs_site/ at PJ1-T1
+        ├── reference/                          ← Raw product knowledge inputs (read by agents, never modified)
         │   ├── README.md                       ← What goes here and how agents use it
         │   └── [human-provided raw docs]       ← briefs, research, vendor docs, stakeholder notes
         └── documents/
@@ -485,15 +436,15 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
             ├── 05_AI_Agent_System/
             │   ├── agents/
             │   ├── prompt_templates/
-            │   └── implementation_prompts/         [v1.2] ← generated prompts stored here
+            │   └── implementation_prompts/                ← generated prompts stored here
             ├── 06_Execution_Plan/
-            │   ├── execution_plan.md               [v2.2] ← Status source of truth — Status column is canonical
-            │   ├── jira_issue_map.md               [v2.4] ← OPTIONAL, pre-v2.5 projects only — Task ID ↔
+            │   ├── execution_plan.md                      ← Status source of truth — Status column is canonical
+            │   ├── jira_issue_map.md                      ← OPTIONAL, legacy Jira configurations only — Task ID ↔
             │   │                                        Jira Key ↔ Last Synced; written only by jira_sync_agent
-            │   └── tracker_issue_map.md            [v2.5] ← OPTIONAL — Task ID ↔ tracker item ↔ Last Synced;
+            │   └── tracker_issue_map.md                   ← OPTIONAL — Task ID ↔ tracker item ↔ Last Synced;
             │                                            written only by tracker_sync_agent, never edited by hand
             ├── 07_Milestones/                      ← one folder per milestone, each a stage/checkpoint grouping
-            │   ├── M0_Project_Setup/               [v1.2] ← always first milestone
+            │   ├── M0_Project_Setup/                      ← always first milestone
             │   ├── M1_Foundation/
             │   ├── M2_Core_Features/
             │   └── M3_Hardening/
@@ -501,31 +452,31 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
             ├── 09_Testing_Validation/
             ├── 10_Deployment_Runbook/
             ├── 11_Future_Extensibility/
-            ├── 12_Manual_Actions/                  [v1.7] ← two-file manual action system
+            ├── 12_Manual_Actions/                  ← two-file manual action system
             │   ├── actions.md                      ← tracker: all human steps, per-env status, milestone ref
             │   └── guides.md                       ← step-by-step instructions per action ID
-            ├── 13_Legal_Requirements/              [v1.9] ← OPTIONAL: legal obligations, regulatory liability, compliance constraints
+            ├── 13_Legal_Requirements/              ← OPTIONAL: legal obligations, regulatory liability, compliance constraints
             │   └── concern_<n>.md                  ← one file per legal topic; required reading for captain_agent when directory exists
-            ├── 14_Future_Migrations/               [v2.0] ← RECOMMENDED: infra alternatives, OSS exit paths, portability design guide
+            ├── 14_Future_Migrations/               ← RECOMMENDED: infra alternatives, OSS exit paths, portability design guide
             │   ├── research.md                     ← raw research source (optional; human-authored)
             │   └── alternatives.md                 ← authoritative alternatives + portability guide; required reading for captain_agent + architecture agents
-            ├── 15_Addendums/                       [v2.1] ← OPTIONAL: post-baseline change management; one doc per addendum
+            ├── 15_Addendums/                       ← OPTIONAL: post-baseline change management; one doc per addendum
             │   ├── <slug>.md                       ← human-authored addendum document (requirement, scope, constraints)
             │   ├── <slug>_plan.md                  ← generated by addendum_agent: scoped implementation plan
             │   └── tracking_addendums.md           ← generated by addendum_agent: append-only tracking board for all addendums
-            ├── 16_Learning_Roadmap/                [v2.5] ← OPTIONAL, created only if explicitly requested: derived-only,
+            ├── 16_Learning_Roadmap/                ← OPTIONAL, created only if explicitly requested: derived-only,
             │                                             no original content (Principle 28)
             │   ├── roadmap_index.md                ← generated by concept_indexer_agent on Learn: rebuild — human-readable table
-            │   ├── roadmap_graph.json               [v2.5 L2] ← generated by concept_indexer_agent — machine-readable node/edge graph
-            │   └── render/index.html                [v2.5 L2/L3] ← generated by concept_indexer_agent — self-contained Build Order + Learn Order viewer, localStorage review tracking
-            └── 17_Knowledge_Index/                 [v3.3] ← ON by default (not opt-in, unlike 16 —
+            │   ├── roadmap_graph.json                         ← generated by concept_indexer_agent — machine-readable node/edge graph
+            │   └── render/index.html                             ← generated by concept_indexer_agent — self-contained Build Order + Learn Order viewer, localStorage review tracking
+            └── 17_Knowledge_Index/                 ← ON by default (not opt-in, unlike 16 —
                                                           see Self-Indexing Documentation): derived-only,
                                                           no original content (Principles 28, 38)
                 ├── index.md                        ← generated by concept_indexer_agent on Index: rebuild — content catalog
-                ├── entity_index.md                  [v3.3] ← generated — one row per unique `entities` ID, with backlinks
-                └── overview.md                      [v3.3] ← generated — mechanical rollup of every doc's `summary:` field
+                ├── entity_index.md                  ← generated — one row per unique `entities` ID, with backlinks
+                └── overview.md                      ← generated — mechanical rollup of every doc's `summary:` field
 │
-└── llm-wiki/                            [v1.6, OPTIONAL as of v3.3] ← persistent wiki, LLM-maintained;
+└── llm-wiki/                            ← persistent wiki, LLM-maintained;
                                               opt-in additive layer, not the default context layer
                                               (see Self-Indexing Documentation)
     ├── WIKI.md                          ← wiki schema and rules
@@ -553,7 +504,7 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 ### Why Separate AOSDF from the Project
 
 - AOSDF is framework-level, not project-level — it should be shared and reusable across projects
-- Upgrading AOSDF (e.g., v1.4 → v1.5) does not affect project documentation
+- Upgrading AOSDF does not affect project documentation
 - Git history for application code is not polluted with AI planning artifacts
 - `.gitignore` at workspace root excludes both `AOSDF/` and `{project_name}-Documents/` in one place
 
@@ -565,17 +516,17 @@ Every project using AOSDF v1.5 uses the `{project_name}-Orchestrum` workspace ro
 **Purpose:** Define what we are building and why.
 **File:** `project_context.md`
 **Required sections:** System Name, Problem Statement, Target Users, Business Context, Constraints, Related Systems, Phase Strategy
-**[v3.3]** `project_context.md` requires the Tier 2 index-only frontmatter block (`entities`/`tags`/`summary`) — see **Concept Frontmatter Standard**.
+`project_context.md` requires the Tier 2 index-only frontmatter block (`entities`/`tags`/`summary`) — see **Concept Frontmatter Standard**.
 
 ### 01_Product_Definition
 **Files:** `PRD.md`, `FRD.md`, `BRD.md`
-**[v3.3]** All three files require the Tier 2 index-only frontmatter block — see **Concept Frontmatter Standard**.
+All three files require the Tier 2 index-only frontmatter block — see **Concept Frontmatter Standard**.
 
 ### 02_Security_Framework
 **CRITICAL — complete before any coding.**
 **Files:** `security_requirements.md`, `threat_model.md`, `compliance_checklist.md`
-**[v2.5]** `threat_model.md` requires Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
-**[v3.3]** `security_requirements.md` and `compliance_checklist.md` require the Tier 2 index-only block.
+`threat_model.md` requires Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
+`security_requirements.md` and `compliance_checklist.md` require the Tier 2 index-only block.
 
 ### 03_System_Design
 **Files:** `README.md` (module index), `system_architecture.md`, `service_design.md`, `data_flow.md`, `ADR/`, `_template/`, and one `NNN_<name>_module/` folder per core module.
@@ -589,8 +540,8 @@ Split into two tiers:
 
 ```
 NNN_<name>_module/
-├── README.md              Module index — ID, status, dependencies, prior art [v3.3: Tier 2 frontmatter]
-├── 00_overview.md         Purpose, scope, boundaries, dependencies [v3.3: Tier 2 frontmatter]
+├── README.md              Module index — ID, status, dependencies, prior art
+├── 00_overview.md         Purpose, scope, boundaries, dependencies
 ├── 01_requirements.md     Functional + non-functional requirements
 ├── 02_domain_model.md     Entities, invariants, state machine
 ├── 03_architecture.md     Components, flows, design decisions
@@ -612,43 +563,43 @@ NNN_<name>_module/
 
 A module's design must exist before its implementation milestone opens. No module ships without `00_overview.md`, `02_domain_model.md`, and `03_architecture.md` complete.
 
-**[v2.5]** Every ADR and every module's `02_domain_model.md`/`03_architecture.md` requires Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
-**[v3.3]** Every module's `README.md` and `00_overview.md` requires the Tier 2 index-only block.
+Every ADR and every module's `02_domain_model.md`/`03_architecture.md` requires Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
+Every module's `README.md` and `00_overview.md` requires the Tier 2 index-only block.
 
 ### 04_Infrastructure_Design
 **Files:** `infra_architecture.md`, `scaling_strategy.md`, `cost_estimation.md`, `observability.md`
-**[v2.5]** All four files require Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
+All four files require Concept Frontmatter (Tier 1) — see **Concept Frontmatter Standard**.
 
 ### 05_AI_Agent_System
 **Files:**
 ```
 agents/
-  workflow_initiator.md            [v1.1]  ← project setup, structure validation
-  identify_missing_documents.md   [v1.1]  ← scans project against checklist
-  research_and_review.md    [v1.1]  ← references research before architecture locks
-  research_and_refine.md    [v1.4]  ← task-driven research + 00-04 doc updates; inputs: task.md + project_root_path
-  captain_agent.md          [v1.3]  ← reads 00-05 docs, generates execution plan + milestones
-  commander_agent.md        [v1.2]  ← orchestrates execution, reads status, delegates
-  execution_agent.md        [v1.2]  ← Strategy A: single-agent implementor
-  reviewer_agent.md         [v1.3]  ← Strategy B: reviews prompt for security + scale
-  validator_agent.md        [v1.3]  ← Strategy B: runs tests, reports evidence to SA
+  workflow_initiator.md            ← project setup, structure validation
+  identify_missing_documents.md   ← scans project against checklist
+  research_and_review.md    ← references research before architecture locks
+  research_and_refine.md    ← task-driven research + 00-04 doc updates; inputs: task.md + project_root_path
+  captain_agent.md          ← reads 00-05 docs, generates execution plan + milestones
+  commander_agent.md        ← orchestrates execution, reads status, delegates
+  execution_agent.md        ← Strategy A: single-agent implementor
+  reviewer_agent.md         ← Strategy B: reviews prompt for security + scale
+  validator_agent.md        ← Strategy B: runs tests, reports evidence to SA
   architect_agent.md
   backend_agent.md
   frontend_agent.md
   infra_agent.md
   qa_agent.md
-  addendum_agent.md     [v2.1]  ← post-baseline change: parses addendum doc → plan + tracking in 15_Addendums/
+  addendum_agent.md     ← post-baseline change: parses addendum doc → plan + tracking in 15_Addendums/
 
 prompt_templates/
   task_prompt.md
   review_prompt.md
   debug_prompt.md
 
-implementation_prompts/     [v1.2]
+implementation_prompts/
   <TASK-ID>_prompt.md       ← generated per task, saved before execution
 ```
 
-### [v1.2] implementation_prompts/ — Tracking Rule
+### implementation_prompts/ — Tracking Rule
 
 Every prompt generated by the Commander or Architect Agent for a task MUST be saved as:
 ```
@@ -664,7 +615,7 @@ The tracking board references the prompt file path. This creates a full audit tr
 **Format:** Phase → Milestone → Task → Subtask | Owner | Input | Output | Validation | Status
 See execution plan format below.
 
-### [v1.2] 07_Milestones — M0 Always First
+### 07_Milestones — M0 Always First
 
 M0 = Project Setup. Contains:
 - Repo initialization with chosen tech stack
@@ -676,22 +627,22 @@ M0 = Project Setup. Contains:
 
 No code is written in M1+ until M0 is complete.
 
-**[v3.1]** Every `milestone.md`'s Status column is a denormalized display copy of `execution_plan.md` (Principle
+Every `milestone.md`'s Status column is a denormalized display copy of `execution_plan.md` (Principle
 22) — it can drift and is not auto-synced. Any agent reading a milestone.md must reconcile it against
 `execution_plan.md` and against `12_Manual_Actions/actions.md`'s current MA-xxx numbering before relying on it.
 See Principle 31.
 
 ### 08_Tracking_System — `decisions_log.md`
-**[v2.2] No separate tracking board.** `execution_plan.md`'s Status column is the only task-status record — there is no `tracking_board.md`. `08_Tracking_System/` holds only `decisions_log.md`, a lightweight log of cross-cutting decisions made during execution; it has no status authority and agents never read it to find work. Created by `captain_agent` if absent. Commander reads `execution_plan.md` to find the next `Planned` task.
+**No separate tracking board.** `execution_plan.md`'s Status column is the only task-status record — there is no `tracking_board.md`. `08_Tracking_System/` holds only `decisions_log.md`, a lightweight log of cross-cutting decisions made during execution; it has no status authority and agents never read it to find work. Created by `captain_agent` if absent. Commander reads `execution_plan.md` to find the next `Planned` task.
 
-### [v2.0] 14_Future_Migrations — Portability Reference Section
+### 14_Future_Migrations — Portability Reference Section
 
 **Status:** Recommended. Every project should have this section to prevent infrastructure lock-in and enable future migrations.
 
 **Files:**
 - `research.md` — optional; raw research source (cloud comparisons, OSS alternatives, migration timelines); human-authored; never modified by agents
 - `alternatives.md` — **the authoritative document**; structured alternatives by layer, phased migration plan, portability-first principle, and agent design guidelines
-  **[v3.3]** requires the Tier 2 index-only frontmatter block — see **Concept Frontmatter Standard**.
+  requires the Tier 2 index-only frontmatter block — see **Concept Frontmatter Standard**.
 
 **Purpose:** Documents all viable infrastructure alternatives to the current stack (cloud provider alternatives + OSS self-hosted alternatives), defines the phased migration timeline by blast radius, and establishes the mandatory portability-first design principle for all infrastructure-touching code. Distinct from `04_Infrastructure_Design/`, which describes the current chosen infrastructure — this section describes what the system can migrate to and how.
 
@@ -700,16 +651,16 @@ See Principle 31.
 - Any architecture or backend agent MUST read `alternatives.md` before designing services or writing infrastructure-touching code
 - All infrastructure clients (queue, cache, storage, secrets, database) MUST be wrapped behind abstraction interfaces — this is a design requirement, not a migration task
 - When reviewing implementation prompts: verify no provider SDK is imported directly in business logic; if found, require adapter refactor before proceeding
-- **[v3.3]** After creating or updating `alternatives.md`, the human may run `Index: rebuild` to refresh `17_Knowledge_Index/` — not required immediately, since the index is only ever a projection of frontmatter already on disk. If the project also has `llm-wiki/` enabled (opt-in, see **Self-Indexing Documentation**), the human should additionally run `Wiki: re-ingest <file>` or `Wiki: ingest <file>` to keep it in sync.
+- After creating or updating `alternatives.md`, the human may run `Index: rebuild` to refresh `17_Knowledge_Index/` — not required immediately, since the index is only ever a projection of frontmatter already on disk. If the project also has `llm-wiki/` enabled (opt-in, see **Self-Indexing Documentation**), the human should additionally run `Wiki: re-ingest <file>` or `Wiki: ingest <file>` to keep it in sync.
 
 ---
 
-### [v1.9] 13_Legal_Requirements — Optional Section
+### 13_Legal_Requirements — Optional Section
 
 **Status:** Optional. Not every project requires a dedicated legal section. When this directory exists, it has binding weight on all architecture and planning decisions.
 
 **Files:** `concern_<n>.md` — one file per legal topic, risk, regulatory requirement, or liability constraint. Files may be named descriptively (e.g., `concern_1.md`, `dlt-pe-liability.md`).
-**[v2.5]** Every `concern_*.md` requires Concept Frontmatter — see **Concept Frontmatter Standard**.
+Every `concern_*.md` requires Concept Frontmatter — see **Concept Frontmatter Standard**.
 
 **Purpose:** Documents legal obligations that affect system design: regulatory liability for operating as a platform (e.g., TRAI DLT PE registration), industry-specific compliance, contractual constraints from providers or partners, and legal risks from multi-tenant models. Distinct from `02_Security_Framework`, which covers technical security controls.
 
@@ -722,7 +673,7 @@ See Principle 31.
 
 ---
 
-### [v2.1] 15_Addendums — Post-Baseline Change Management
+### 15_Addendums — Post-Baseline Change Management
 
 **Status:** Optional. Created when post-baseline requirements arrive that are too
 cross-cutting for a single tracking board row but not large enough to warrant a full
@@ -753,7 +704,7 @@ without disrupting the in-progress milestone workflow.
 
 ---
 
-### [v1.7] 12_Manual_Actions — Two-File Manual Action System
+### 12_Manual_Actions — Two-File Manual Action System
 
 **`actions.md`** — The tracker. One row per manual action. Columns: Action ID · Description · Milestone Task · Blocks · Category · Priority · Dev Status · Staging Status · Prod Status · Owner.
 
@@ -765,12 +716,12 @@ without disrupting the in-progress milestone workflow.
 - Env status columns default to `Pending` (or `N/A` for environments where the action doesn't apply)
 - When a guide exists or can be written, add it to `guides.md` in the same session
 - When a human completes an action: move the row to the **Completed** table in `actions.md` and add the date; update env status columns accordingly
-- `manual_action.md` at the project root is the legacy file — `12_Manual_Actions/actions.md` is authoritative for v1.7+ projects
-- **[v3.1]** When an Action ID's meaning changes — e.g. a placeholder or completed ID gets reassigned to unrelated work — audit `07_Milestones/*/milestone.md` for any stale citation of that ID's old meaning and correct it in the same session. See Principle 31.
+- `manual_action.md` at the project root is the legacy file — `12_Manual_Actions/actions.md` is authoritative for projects using the current layout
+- When an Action ID's meaning changes — e.g. a placeholder or completed ID gets reassigned to unrelated work — audit `07_Milestones/*/milestone.md` for any stale citation of that ID's old meaning and correct it in the same session. See Principle 31.
 
 ---
 
-### [v1.8] Session Context Management Rules
+### Session Context Management Rules
 
 These rules apply to every agent, every session. Violations cause mid-task failures and higher token costs.
 
@@ -792,7 +743,7 @@ compact → invoke Commander → task runs to completion → compact → repeat
 - Target: never exceed 60% context usage before task start
 - A task left half-done is worse than a task not started — partial state is the hardest failure mode to recover from
 
-### [v1.2] project_status.md — Execution Gate
+### project_status.md — Execution Gate
 
 This file tracks the project's overall readiness. Located at `{project_name}-Documents/project_status.md`.
 
@@ -802,9 +753,9 @@ No execution agent may begin implementation until status = `READY`.
 
 ---
 
-## [v1.2] Agent Architecture
+## Agent Architecture
 
-### [v1.3] captain_agent — Planning & Execution Architect
+### captain_agent — Planning & Execution Architect
 
 - **Role:** Reads all completed 00–05 documents and generates the execution plan and milestones. This is the bridge from "documentation complete" to "ready to build." Must be run before `commander_agent` ever starts.
 - **Inputs:** FRD, PRD, security_requirements.md, system_architecture.md, service_design.md, data_flow.md, infra_architecture.md
@@ -814,7 +765,7 @@ No execution agent may begin implementation until status = `READY`.
 - **Sets:** `project_status.md` → `READY` on success, `PLANNING` if gaps remain.
 - **Called by:** Human (after 00–05 are complete), or workflow_initiator if all docs are present.
 
-### [v1.4] research_and_refine_agent — Task-Driven Research Output
+### research_and_refine_agent — Task-Driven Research Output
 
 - **Role:** Receives a `task.md` describing a research question and a `project_root_path`. Reads the listed 00–04 documents as context, researches the defined scope using public sources, and writes findings + a recommendation to `research_results.md` at the project root. **Never modifies any existing document.**
 - **Inputs:** `task.md` (objective, research scope, context documents, constraints), `project_root_path`
@@ -825,7 +776,7 @@ No execution agent may begin implementation until status = `READY`.
 
 ---
 
-### [v2.1] addendum_agent — Post-Baseline Change Planning
+### addendum_agent — Post-Baseline Change Planning
 
 - **Role:** Receives a human-authored addendum document from `15_Addendums/<slug>.md`.
   Parses the requirement, cross-checks existing `execution_plan.md` Status column for overlap,
@@ -842,19 +793,19 @@ No execution agent may begin implementation until status = `READY`.
 
 ---
 
-### [v1.3] reviewer_agent (Strategy B)
+### reviewer_agent (Strategy B)
 
 - **Role:** Receives the implementation prompt generated by architect_agent. Reviews for security vulnerabilities, architectural violations (especially state mutation rules), scalability concerns, and missing test coverage. Returns approval or redline.
 - **Called by:** architect_agent (Strategy B only)
 - **Calls:** implementor (on approval) or architect_agent (on redline)
 
-### [v1.3] validator_agent (Strategy B)
+### validator_agent (Strategy B)
 
 - **Role:** Receives completed implementation from implementor. Runs tests (unit, integration, schema validation). If all pass: reports completion evidence to SA and notifies the coordinator. If fail: returns to implementor with failure details.
 - **Called by:** implementor (Strategy B only)
 - **Updates:** validation evidence and status deltas to SA; never canonical status directly
 
-### [v3.2] principal_architect_agent — On-Demand External Architecture Review
+### principal_architect_agent — On-Demand External Architecture Review
 
 - **Role:** Re-reviews an existing architecture, module design, or plan against current external best practice — official documentation, established engineering references, recent community discussion — at a milestone or task boundary a human chooses. Not a periodic automatic gate: it runs only when invoked.
 - **Called by:** Human only, never by `captain_agent`, `commander_agent`, or `superman_agent`.
@@ -864,7 +815,7 @@ No execution agent may begin implementation until status = `READY`.
 - **Relationship to existing agents:** distinct from `architect_agent` (owns day-to-day design, never does broad external research) and `reviewer_agent` (reviews implementation prompts against static internal docs, no external research). Closest in spirit to `research_and_review_agent` but scoped to re-reviewing the project's *own* already-built architecture rather than studying named external systems pre-lock.
 - A human acts on its findings by tasking `architect_agent` with the accepted changes, or by re-running `captain_agent` if a finding implies new execution-plan tasks.
 
-### New Agents in v1.2
+### Execution and orchestration agents
 
 #### commander_agent
 - **Role:** The sole orchestrator of execution. Called once per session. Reads `project_status.md` and `execution_plan.md` (finds the first row with Status = `Planned`), then delegates to the right agent. There is no tracking board to consult.
@@ -892,15 +843,15 @@ These agents are NOT called by the commander. They are called by a human at spec
 | `identify_missing_documents` | Called by workflow_initiator, or manually before a milestone | Needs current project path |
 | `captain_agent` | After 00–05 docs are complete; before commander starts | Needs human to confirm 00–05 are final and locked |
 | `addendum_agent` | When a post-baseline cross-cutting requirement arrives | Needs human-authored `15_Addendums/<slug>.md`; outputs plan + tracking entirely within `15_Addendums/` |
-| `tracker_sync_agent` | On `Tracker: sync` (Export Mode) or `Tracker: import <ref>` (Import Mode) — only if `tracker_config.md` exists | **[v2.5]** Generalizes `jira_sync_agent` to Jira *or* Notion (Principle 25); never runs on its own initiative (Principle 24), needs a human-issued command every time |
-| `jira_sync_agent` | **[v2.5] Superseded** — kept working unchanged for projects mid-transition; new projects get `tracker_config.md` (`Provider: jira`) and use `tracker_sync_agent` instead | See **Tracker Board Integration** below |
-| `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, `Learn: check coverage`, `Index: rebuild`, `Index: open`, or `Index: check coverage` | **[v2.5, extended v3.3]** Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/` and `17_Knowledge_Index/`; never runs on its own initiative (Principle 24 discipline extended a fourth time). Generates `render/index.html` by inlining `AOSDF/renderer_core/` (see **Track L Renderer Core** below). See **Learning Roadmap** and **Self-Indexing Documentation** below |
-| `docs_site_agent` | On `Project Docs: build`/`Project Docs: open` | **[v2.5, restructured 2026-08-19]** Thin wrapper — runs `mkdocs build` against `{project_name}-Documents/mkdocs.yml`, or opens the already-built site; never authors config, never runs on its own initiative. Renders your project's own docs only — `AOSDF/` has no site of its own. See **MkDocs-Based Project Docs Site** below |
-| `principal_architect_agent` | At a milestone or task boundary the human chooses, for a deep external-informed re-review | **[v3.2]** Never auto-called; produces a dated findings doc, never a silent rewrite. See **principal_architect_agent** above and Principle 32 |
+| `tracker_sync_agent` | On `Tracker: sync` (Export Mode) or `Tracker: import <ref>` (Import Mode) — only if `tracker_config.md` exists | Generalizes `jira_sync_agent` to Jira *or* Notion (Principle 25); never runs on its own initiative (Principle 24), needs a human-issued command every time |
+| `jira_sync_agent` | **Superseded** — kept working unchanged for projects mid-transition; new projects get `tracker_config.md` (`Provider: jira`) and use `tracker_sync_agent` instead | See **Tracker Board Integration** below |
+| `concept_indexer_agent` | On `Learn: rebuild`, `Learn: open`, `Learn: check coverage`, `Index: rebuild`, `Index: open`, or `Index: check coverage` | Read-only over the whole documentation tree, write-only to `16_Learning_Roadmap/` and `17_Knowledge_Index/`; never runs on its own initiative (Principle 24 discipline extended a fourth time). Generates `render/index.html` by inlining `AOSDF/renderer_core/` (see **Track L Renderer Core** below). See **Learning Roadmap** and **Self-Indexing Documentation** below |
+| `docs_site_agent` | On `Project Docs: build`/`Project Docs: open` | Thin wrapper — runs `mkdocs build` against `{project_name}-Documents/mkdocs.yml`, or opens the already-built site; never authors config, never runs on its own initiative. Renders your project's own docs only — `AOSDF/` has no site of its own. See **MkDocs-Based Project Docs Site** below |
+| `principal_architect_agent` | At a milestone or task boundary the human chooses, for a deep external-informed re-review | Never auto-called; produces a dated findings doc, never a silent rewrite. See **principal_architect_agent** above and Principle 32 |
 
 ---
 
-## [v1.1] Execution Plan Format
+## Execution Plan Format
 
 | Phase | Milestone | Task | Subtask | Owner | Input | Output | Validation | Status |
 |------|----------|-----|--------|------|------|--------|----------|--------|
@@ -909,9 +860,9 @@ Human-readability rule: Group rows visually by milestone using blank separator r
 
 ---
 
-## [v1.1] Execution Strategies
+## Execution Strategies
 
-### [v1.3] Pre-Execution Phase (always required, both strategies)
+### Pre-Execution Phase (always required, both strategies)
 
 ```
 [After 00-05 docs complete]
@@ -962,9 +913,9 @@ Validator Agent → runs tests → if pass:
   → if fail: returns to Implementor with failure details
 ```
 
-**[v1.2] Notification hook (optional):** For steps requiring human approval (e.g., production deploy), agents post to a Slack/Discord webhook and poll for a reaction before proceeding.
+**Notification hook (optional):** For steps requiring human approval (e.g., production deploy), agents post to a Slack/Discord webhook and poll for a reaction before proceeding.
 
-### [v3.2] Superman Modes: Discipline vs Normal
+### Superman Modes: Discipline vs Normal
 
 `superman_agent` combines Commander's orchestration with an implementor's execution, running a whole milestone without per-task human approval. It now takes a `mode` input:
 
@@ -972,7 +923,7 @@ Validator Agent → runs tests → if pass:
 mode: normal (default)
   → Superman's pre-existing behavior: reads execution_plan.md's strategy line
     (or an explicit strategy_override) and runs Strategy A or Strategy B per task,
-    exactly as before this version.
+    according to the standard execution workflow.
 
 mode: discipline
   → Every task in the queue runs the full Strategy B pipeline regardless of what
@@ -986,7 +937,7 @@ mode: discipline
 
 Superman's session header (see `agents/superman_agent.md`) prints the active mode, and every stop/resume message carries it forward so a resumed run doesn't silently fall back to `normal`.
 
-### [v3.2] Scope Expansion Protocol — Out-of-Scope Work Discovered Mid-Task
+### Scope Expansion Protocol — Out-of-Scope Work Discovered Mid-Task
 
 Applies inside `commander_agent`'s per-task delegation, `execution_agent`'s implementation step, and `superman_agent`'s per-task loop (both modes). If completing the current task genuinely requires a task that does not exist in `execution_plan.md` or the current milestone's scope:
 
@@ -1009,7 +960,7 @@ No agent ever adds an unplanned task to `execution_plan.md` on its own initiativ
 
 ---
 
-## [v1.1] Agent Permission Model
+## Agent Permission Model
 
 | Level        | Scope                           | Example Actions                        |
 | ------------ | ------------------------------- | -------------------------------------- |
@@ -1024,7 +975,7 @@ Each agent declares a `## Permissions` section. WRITE_INFRA requires explicit hu
 
 ---
 
-## [v1.5] .gitignore Rule (updated from v1.2)
+## .gitignore Rule
 
 The workspace `.gitignore` at `{project_name}-Orchestrum/` MUST contain:
 
@@ -1038,11 +989,10 @@ AOSDF/
 
 This ensures AI planning artifacts never enter source control. The `.gitignore` lives at the workspace root, not inside the application code directory.
 
-> **v1.2 note:** The old pattern was `aosdf-*/` inside the project repo. v1.5 moves the gitignore to the workspace root and excludes the entire `AOSDF/` and `{project_name}-Documents/` directories.
 
 ---
 
-## [v1.4] Document Formatting Standard
+## Document Formatting Standard
 
 **This standard applies to every file created or updated by any agent in any AOSDF project. It is non-negotiable and not overridable at the agent level.**
 
@@ -1094,15 +1044,15 @@ Every agent that writes a file containing a table must follow Rules 1–4. This 
 
 ---
 
-## [v2.5, extended v3.3] Concept Frontmatter Standard
+## Concept Frontmatter Standard
 
-A second metadata standard, parallel to the Document Formatting Standard above — that one governs table layout, this one governs a small YAML block at the top of a file that carries a real design decision. It is the raw material an independently-tracked capability (`16_Learning_Roadmap/`, not part of this framework's own execution — see that folder's own documentation when it exists in a project) derives a personal interview-prep roadmap from, without asking anyone to write a second copy of anything. **[v3.3]** It is also the raw material `17_Knowledge_Index/` derives a searchable, always-current documentation catalog from — see **Self-Indexing Documentation** below. Since v3.3 this standard has two tiers, described together here because they share one YAML block on any document that qualifies for both.
+A second metadata standard, parallel to the Document Formatting Standard above — that one governs table layout, this one governs a small YAML block at the top of a file that carries a real design decision. It is the raw material an independently-tracked capability (`16_Learning_Roadmap/`, not part of this framework's own execution — see that folder's own documentation when it exists in a project) derives a personal interview-prep roadmap from, without asking anyone to write a second copy of anything. It is also the raw material `17_Knowledge_Index/` derives a searchable, always-current documentation catalog from — see **Self-Indexing Documentation** below. This standard has two tiers, described together here because they share one YAML block on any document that qualifies for both.
 
 ### Required on — Tier 1 (full block)
 
 Every ADR (`03_System_Design/ADR/*.md`, `03_System_Design/NNN_<name>_module/decisions/*.md`), every module `02_domain_model.md` and `03_architecture.md`, `02_Security_Framework/threat_model.md`, `04_Infrastructure_Design/*.md`, and `13_Legal_Requirements/concern_*.md` (when present). Optional on any other document that happens to carry a teachable decision.
 
-### Required on — Tier 2 (index-only block) **[v3.3]**
+### Required on — Tier 2 (index-only block)
 
 `00_Project_Context/project_context.md`; `01_Product_Definition/PRD.md`, `FRD.md`, `BRD.md`; every module's `README.md` and `00_overview.md`; `02_Security_Framework/security_requirements.md` and `compliance_checklist.md`; `14_Future_Migrations/alternatives.md` (when present). These documents establish context or scope rather than a single teachable technical decision, so they carry only the three index fields (`entities`, `tags`, `summary`) below — never the concept/learning fields, which would be busywork with no payoff here (Principle 29's spirit, applied to indexing too).
 
@@ -1127,7 +1077,7 @@ summary: >
 ---
 ```
 
-### The block (Tier 2 — index-only) **[v3.3]**
+### The block (Tier 2 — index-only)
 
 ```yaml
 ---
@@ -1148,17 +1098,17 @@ summary: >
 | `interview_angle` | One or two sentences, written by whoever made the decision, framing it as something you'd say out loud in an interview. | 1 only |
 | `built_at` | The task ID (`M2-T4`) this was written under — already known by whichever agent is executing that task. | 1 only |
 | `diagram` | `true` if the doc includes an `aosdf-diagram` fenced block (below) worth surfacing separately. | 1 only |
-| **[v3.3]** `entities` | Named external things this document references for the first time or substantively discusses — third-party services, vendors, protocols, standards, or another internal product/module. Free-text kebab-case IDs, same merge rule as `concepts`. Not required to be exhaustive — capture what's load-bearing to understanding the document. | 1 and 2 |
-| **[v3.3]** `tags` | A short, free-form keyword list — coarser and lower-ceremony than `concept_category` (which stays Tier-1-only). Used for filtering/search in `17_Knowledge_Index/`, never for grouping in the Learning Roadmap. | 1 and 2 |
-| **[v3.3]** `summary` | One or two sentences, written by whoever writes the document, saying plainly what it establishes or decides. This exact string is what `17_Knowledge_Index/index.md` and `overview.md` reuse verbatim — there is no second, re-synthesized summary anywhere (Principle 38). | 1 and 2 |
+| `entities` | Named external things this document references for the first time or substantively discusses — third-party services, vendors, protocols, standards, or another internal product/module. Free-text kebab-case IDs, same merge rule as `concepts`. Not required to be exhaustive — capture what's load-bearing to understanding the document. | 1 and 2 |
+| `tags` | A short, free-form keyword list — coarser and lower-ceremony than `concept_category` (which stays Tier-1-only). Used for filtering/search in `17_Knowledge_Index/`, never for grouping in the Learning Roadmap. | 1 and 2 |
+| `summary` | One or two sentences, written by whoever writes the document, saying plainly what it establishes or decides. This exact string is what `17_Knowledge_Index/index.md` and `overview.md` reuse verbatim — there is no second, re-synthesized summary anywhere (Principle 38). | 1 and 2 |
 
 ### Who fills it in
 
-`architect_agent` fills this in as part of authoring an ADR or a module's `02_domain_model.md`/`03_architecture.md` — the same way it already writes the document's title and status (see its `## Output` section). For the three Phase-0, human-authored document types (`threat_model.md`, `04_Infrastructure_Design/*.md`, `13_Legal_Requirements/concern_*.md`), the human fills it in while writing the document, the same glance they already give the rest of it — never a separate task, checklist item, or session (Principle 29). **[v3.3]** The same rule extends to Tier 2: whichever agent or human already writes a Tier 2 document (`captain_agent`'s Phase-0 inputs are almost always human-authored; `research_and_refine_agent` when it touches these files) adds the three-field index-only block as part of writing it — no new task is ever scheduled just to backfill this.
+`architect_agent` fills this in as part of authoring an ADR or a module's `02_domain_model.md`/`03_architecture.md` — the same way it already writes the document's title and status (see its `## Output` section). For the three Phase-0, human-authored document types (`threat_model.md`, `04_Infrastructure_Design/*.md`, `13_Legal_Requirements/concern_*.md`), the human fills it in while writing the document, the same glance they already give the rest of it — never a separate task, checklist item, or session (Principle 29). The same rule extends to Tier 2: whichever agent or human already writes a Tier 2 document (`captain_agent`'s Phase-0 inputs are almost always human-authored; `research_and_refine_agent` when it touches these files) adds the three-field index-only block as part of writing it — no new task is ever scheduled just to backfill this.
 
 ### Coverage
 
-A required Tier 1 document missing this block is a `Category: Learning, Severity: Low` gap in `identified_gaps.md` — the same table an unmapped FRD requirement uses at `Severity: Critical`, just a weight that reflects "nice to have," never a blocker to execution (Principle 29). **[v3.3]** A required Tier 1 or Tier 2 document missing `entities`/`tags`/`summary` specifically is logged instead as `Category: Indexing, Severity: Low` — a deliberately separate category so "no interview angle yet" and "not indexed yet" are distinguishable in `identified_gaps.md`. See `identify_missing_documents.md`'s Document Index Coverage Checklist.
+A required Tier 1 document missing this block is a `Category: Learning, Severity: Low` gap in `identified_gaps.md` — the same table an unmapped FRD requirement uses at `Severity: Critical`, just a weight that reflects "nice to have," never a blocker to execution (Principle 29). A required Tier 1 or Tier 2 document missing `entities`/`tags`/`summary` specifically is logged instead as `Category: Indexing, Severity: Low` — a deliberately separate category so "no interview angle yet" and "not indexed yet" are distinguishable in `identified_gaps.md`. See `identify_missing_documents.md`'s Document Index Coverage Checklist.
 
 ### The `aosdf-diagram` fenced-block convention
 
@@ -1176,7 +1126,7 @@ Any document with `diagram: true` is expected to contain at least one such block
 
 ---
 
-## [v2.5] Learning Roadmap
+## Learning Roadmap
 
 ### What This Is
 
@@ -1216,7 +1166,7 @@ Two independent layers, deliberately redundant, never allowed to disagree in sub
 
 ---
 
-## [v2.5] Track L Renderer Core (Learning Roadmap Only)
+## Track L Renderer Core (Learning Roadmap Only)
 
 ### What This Is
 
@@ -1228,7 +1178,7 @@ Only the diagram panel and shared design tokens are actually exercised today —
 
 ---
 
-## [v2.5, E0] Project Setup — Sequenced Initial Questions
+## Project Setup — Sequenced Initial Questions
 
 `workflow_initiator` Step 1 is now a fixed, ordered, 14-question sequence — asked one at a time, with two explicit branch points — rather than an unordered list with no stated rationale for its order. Full detail lives in `workflow_initiator.md` Step 1 and `aosdf_expansion_scope.md` §4.4; this is the pointer, not a third copy.
 
@@ -1253,7 +1203,7 @@ Q9 is worth calling out specifically: `aosdf_expansion_scope.md` Sec 6 item 4 co
 
 ---
 
-## [v2.5, E2-T1] `aosdf-mcp` Server
+## `aosdf-mcp` Server
 
 ### What This Is
 
@@ -1282,15 +1232,13 @@ One required environment variable, `AOSDF_DOCS_ROOT`, pointing at a project's `{
 
 Column matching is by header name, not a fixed schema, so a project's exact column set doesn't need to match `templates.md`'s example verbatim — but a table with no recognizable ID or Status column is silently skipped by the tools that need one. `aosdf_log_gap` and `aosdf_log_manual_action` each operate on one table (the first table found, or — for manual actions — the one under a heading matching "Pending"); a file with more than one candidate table beyond that convention needs its own path override or isn't yet handled generically. `id`/`status` column-name matching accepts a bare `"ID"`/`"Status"` header as well as the templated `"Gap ID"`/`"Action ID"`/`"Task ID"`/`"Phase ID"` forms, across all six tools.
 
-### `E2-T3` Principle 26 Compliance Audit — Passed 2026-08-28
+### File access model
 
-`validator_agent` read every file in `src/`: no tool caches, holds, or duplicates file content across calls — each reads its source file fresh per call and, for a write, writes straight back immediately (`index.js`'s `paths` object is just resolved file *locations* from env vars at startup, not cached content). Recorded in `{project_name}-Documents/docs/documents/02_Security_Framework/compliance_checklist.md` row 5, superseding a prior "by design" claim made before this package existed.
-
-Auditing against this meta-project's own real files — not just the checked-in test fixtures, which had all used the canonical `"Gap ID"`/`"Action ID"` headers — surfaced two real, unrelated defects, both fixed same-day: `aosdf_log_gap`/`aosdf_log_manual_action`'s ID-column regex didn't recognize this project's own bare `"ID"` header in `identified_gaps.md`, so a real call would have silently written a row with a blank ID cell; and the package's own `npm test` script (`node --test test/`) threw `MODULE_NOT_FOUND` on Node 24 — fixed to `node --test` (default discovery). Both logged and resolved as `identified_gaps.md` GAP-001/GAP-002, written by the newly-fixed tool itself as the first two rows ever added to that file. A regression test (bare-`"ID"`-header fixture) now covers the fix; suite is 14/14.
+Tools read their source files fresh on every call. They do not cache or duplicate document content across calls; writes go directly to the authoritative file. The server's `paths` object contains resolved file locations, not cached contents. ID and Status header matching supports both bare and template-specific column names, as described in the scope limits above.
 
 ---
 
-## [v2.5, E3-T1/E3-T2] Claude Code Native Integration
+## Claude Code Native Integration
 
 ### What This Is
 
@@ -1343,7 +1291,7 @@ Current Claude Code docs confirm `.claude/commands/<name>.md` still works exactl
 
 ---
 
-## [v2.5, E4-T1/E4-T2] Editor Integration MVP (Read-Only, VSCode First)
+## Editor Integration MVP (Read-Only, VSCode First)
 
 ### What This Is
 
@@ -1368,7 +1316,7 @@ Unlike `.claude/`/`.mcp.json` (`E3-T1`), `aosdf-vscode/` stays at `AOSDF/aosdf-v
 
 ---
 
-## [v2.5, E5-T1] Editor Integration Write Actions
+## Editor Integration Write Actions
 
 ### What This Is
 
@@ -1378,11 +1326,11 @@ Unlike `.claude/`/`.mcp.json` (`E3-T1`), `aosdf-vscode/` stays at `AOSDF/aosdf-v
 
 This mechanism was chosen over trying to call a hypothetical Claude Code extension API from `aosdf-vscode` (unverified, and would couple a generic VS Code extension to Anthropic's own extension internals) and over inventing a new MCP tool that "invokes an agent" (aosdf-mcp's whole design is narrow, auditable file read/write tools per Principle 26 — spawning an agent session isn't a file operation, so it doesn't belong there either).
 
-### Implementation Prompts Inbox — Closing a Real, Pre-Existing Gap
+### Implementation Prompts Inbox
 
-`templates.md` has specified `implementation_prompts/README.md`'s Log table (`Prompt File | Task | Created | Executed | Status`) since v1.2, but no agent's operating steps ever actually wrote to it — the table existed only as an unfulfilled template promise, the same category of gap `E0` found in `aosdf_expansion_scope.md`'s Q9 commitment. `E5-T1` closes it for the two paths that could be fixed without redesigning Strategy B's pipeline:
+`implementation_prompts/README.md` uses a Log table (`Prompt File | Task | Created | Executed | Status`) to surface saved prompts in the editor inbox. The following execution paths maintain it:
 
-- `execution_agent.md` (Strategy A) — Step 2 now appends a `Pending Approval` row when the prompt is saved; Step 6 flips it to `Executed` once validation passes and `execution_plan.md` is updated.
+- `execution_agent.md` (Strategy A) — Step 2 appends a `Pending Approval` row when the prompt is saved; Step 6 flips it to `Executed` once validation passes and `execution_plan.md` is updated.
 - `superman_agent.md` — Step 1.7 appends the row directly as `Executed (Superman — no approval gate)`, since Superman's whole design removes the pause between generating and executing a prompt (Step 1.4's own text: "Do NOT pause for human approval — this is the gate Superman removes"). Labeling it this way keeps the log honest about which prompts skipped the human gate, rather than making them look indistinguishable from an approved one.
 - Strategy B (`architect_agent` → `reviewer_agent` → implementor) is **not** wired — neither file currently specifies the mechanics of saving/logging a prompt concretely enough to extend safely without a larger pass over that pipeline. Logged as `identified_gaps.md` GAP-003 rather than silently left unfixed.
 
@@ -1396,7 +1344,7 @@ This mechanism was chosen over trying to call a hypothetical Claude Code extensi
 
 ---
 
-## [v3.0, E6] GA Hardening
+## GA Hardening
 
 `OD-1` (editor extension distribution model) resolved internal-only on 2026-08-29 — no public VS Code Marketplace listing, scoped to the VSCode release specifically. That unblocked `E6`'s three build tasks (`E6-T4`, the `manual.md` walkthrough update, lives in `manual.md` itself rather than being duplicated here).
 
@@ -1426,7 +1374,7 @@ Resolves `OD-4`'s deferral (`execution_plan.md` Sec 6): `aosdf-vscode` now manag
 
 ---
 
-## [v2.5, restructured 2026-08-19] MkDocs-Based Project Docs Site
+## MkDocs-Based Project Docs Site
 
 ### What This Is
 
@@ -1503,7 +1451,7 @@ Same human-triggered pattern as `Wiki:`, `Tracker:`/`Jira:`, and `Learn:` (Princ
 
 ---
 
-## [v3.3] Self-Indexing Documentation (Knowledge Index)
+## Self-Indexing Documentation (Knowledge Index)
 
 ### What This Is
 
@@ -1522,7 +1470,7 @@ comparing it to the real documentation tree.
 
 ```
 documents/
-└── 17_Knowledge_Index/            ← [v3.3] derived-only, no original content (Principle 38)
+└── 17_Knowledge_Index/            ← derived-only, no original content (Principle 38)
     ├── index.md                   ← generated — content catalog: path, summary, tags, per Tier 1/2 doc
     ├── entity_index.md            ← generated — one row per unique `entities` ID, with backlinks
     └── overview.md                ← generated — every doc's own `summary:` field, concatenated in
@@ -1600,23 +1548,23 @@ self-contained, executable procedure — see
 
 ---
 
-## [v1.6, revised v3.3] LLM Wiki Integration
+## LLM Wiki Integration
 
 ### What the Wiki Is
 A persistent, compounding knowledge base maintained by the LLM across sessions.
 It lives in `llm-wiki/` and contains structured summaries, entity pages, concept pages,
 and session records derived from `{project_name}-Documents/`.
 
-**[v3.3]** No longer scaffolded by default for new projects, and no longer what `captain_agent`
+No longer scaffolded by default for new projects, and no longer what `captain_agent`
 depends on for its context layer — see **Self-Indexing Documentation** above. A project opts in to
 `llm-wiki/` explicitly (`workflow_initiator` Step 1) as an *additional* layer on top of
 `17_Knowledge_Index/`, for the genuinely interpretive things a deterministic index cannot do
 (cross-document synthesis, contradiction-spotting, session journaling). Everything below this line
-is unchanged from v1.6 and describes how `llm-wiki/` works for any project that does opt in.
+describes how `llm-wiki/` works for any project that opts in.
 
 ### Agent Read Protocol
 Before starting any task involving design, research, or architecture decisions:
-1. **[v3.3]** Read `17_Knowledge_Index/index.md` and `overview.md` first — the primary context
+1. Read `17_Knowledge_Index/index.md` and `overview.md` first — the primary context
    layer, always current by construction (Principle 38).
 2. If the project has `llm-wiki/` enabled: read `llm-wiki/index.md` — identify relevant pages
 3. Read those pages — extract relevant context
@@ -1656,10 +1604,10 @@ After any of these agent actions, the human must sync the wiki:
 
 ---
 
-## [v2.5] Tracker Board Integration
+## Tracker Board Integration
 
-**[v2.5]** Generalizes the v2.4 Jira-only integration to Jira *or* Notion, per Principle 25. A v2.4
-project with an existing `jira_config.md` is unaffected — see **Migrating from v2.4 Jira-Only Sync**
+Supports Jira *or* Notion, per Principle 25. A project with an existing
+`jira_config.md` keeps its current integration — see **Migrating from Jira-Only Sync**
 below.
 
 ### What This Is
@@ -1691,7 +1639,7 @@ a human deliberately revisiting the decision. If enabled:
   option (the human must pick), and the credential is never written into `tracker_config.md` itself
   (OD-2/OD-5, resolved 2026-08-27 — see `tracker_mapping.md` §2a).
 - If declined (the default), no tracker-related file is created and `tracker_sync_agent` is never
-  invoked — the project runs exactly as it did pre-v2.4.
+  invoked — the project runs without tracker integration.
 
 ### The Mapping (Summary — full detail in `tracker_mapping.md`)
 
@@ -1711,7 +1659,7 @@ No agent calls a tracker MCP tool on its own initiative — ever. A human runs:
 Tracker: sync
 ```
 
-(`Jira: sync` / `Notion: sync` remain accepted aliases, so v2.4 muscle memory and docs don't break)
+(`Jira: sync` / `Notion: sync` remain accepted aliases for existing project commands)
 exactly mirroring the existing `Wiki: re-ingest` / `Wiki: full-sync` command pattern (§ LLM Wiki
 Integration above). This command invokes `tracker_sync_agent` in **Export Mode**, dispatched to the
 provider named in `tracker_config.md`'s `Provider:` field (reads `execution_plan.md`, milestone files,
@@ -1745,7 +1693,7 @@ traceability discipline as everything else in AOSDF, instead of creating a side 
 | `tracker_sync_agent` Export Mode run | `06_Execution_Plan/tracker_issue_map.md` (created/updated); tracker items (external) | Human already ran `Tracker: sync` to trigger this — no further wiki action needed unless the human also wants `llm-wiki/` to note the sync happened |
 | `tracker_sync_agent` Import Mode run | `15_Addendums/<slug>.md` (drafted) | None yet — run `addendum_agent` next, which triggers its own normal wiki-sync guidance |
 
-### Migrating from v2.4 Jira-Only Sync
+### Migrating from Jira-Only Sync
 
 A project with an existing `jira_config.md` keeps working completely unchanged — `jira_sync_agent` is
 untouched and still runs on `Jira: sync` / `Jira: import <key>`. To move to the generalized agent (not
@@ -1767,10 +1715,10 @@ required):
 
 **Everything must be:** Versioned | Testable | Traceable
 
-**[v1.1]** Gaps logged to `identified_gaps.md` immediately. **[v1.7]** Manual steps logged to `12_Manual_Actions/actions.md` immediately (not the legacy `manual_action.md`).
+Gaps logged to `identified_gaps.md` immediately. Manual steps logged to `12_Manual_Actions/actions.md` immediately (not the legacy `manual_action.md`).
 
-**[v1.2]** `project_status.md` = READY before execution. Implementation prompts saved before running. M0 complete before M1.
+`project_status.md` = READY before execution. Implementation prompts saved before running. M0 complete before M1.
 
-**[v1.4]** All agent-generated files with tables must follow the Document Formatting Standard. Separator dashes match column width. Data cells padded. Consistent widths across files.
+All agent-generated files with tables must follow the Document Formatting Standard. Separator dashes match column width. Data cells padded. Consistent widths across files.
 
-**[v1.8]** `git push` is a human-only action. Agents NEVER push to remote branches — not feature, not staging, not main. An agent may `git add`, `git commit`, and show the diff, but must stop there and wait for explicit human instruction to push.
+`git push` is a human-only action. Agents NEVER push to remote branches — not feature, not staging, not main. An agent may `git add`, `git commit`, and show the diff, but must stop there and wait for explicit human instruction to push.

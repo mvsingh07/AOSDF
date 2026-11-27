@@ -1,0 +1,136 @@
+{
+  "schema": "aosdf-source-adaptations/v1",
+  "update": "update5",
+  "source": "registry-selected frozen payloads; SHA-256 verified",
+  "adapted_files": [
+    {
+      "source": "payload/update5/06_Execution_Plan/current-workflow-rules.md.txt",
+      "sha256": "c2438f4697aeb43b2e0451da1a932f6999e370e7e7df00c56b11ba864a04ddc3",
+      "destination": "reference/current-workflow-rules.md",
+      "action": "merge-policy"
+    },
+    {
+      "source": "payload/update5/06_Execution_Plan/deferred-to-hardening.md.txt",
+      "sha256": "8eb7caa4c363b6119c45e339d5b8d27c8e28f73d79d8d61d7764b821d6a75c13",
+      "destination": "templates/execution_plan/deferred-to-hardening.md",
+      "action": "adapt"
+    },
+    {
+      "source": "payload/update5/worker-definition.md.txt",
+      "sha256": "cd02c9a189365c8f3832013f5ceedb99ad41cbc357e1e784e87d47fab0fc9173",
+      "destination": "automation/coordination-threads/worker-definition.md",
+      "action": "adapt"
+    },
+    {
+      "source": "payload/update5/coordinator-definition.md.txt",
+      "sha256": "c6426571488cf8b1504b8dfa9ce4543461db5ebafabf064d3190d709e6f7016a",
+      "destination": "automation/coordination-threads/coordinator-definition.md",
+      "action": "adapt"
+    },
+    {
+      "source": "payload/update5/solution-architect.md.txt",
+      "sha256": "8070fb203cbb6fc0241adc9d1f60d3b664cf0ee7ae0848bc9f30d09bb96c184d",
+      "destination": "automation/coordination-threads/solution-architect.md",
+      "action": "adapt"
+    },
+    {
+      "source": "payload/update5/agents/solution_architect_agent.md.txt",
+      "sha256": "5261302fec196327ff8632f2d13c7afcc517e4a72bf91723e427624e2735f1c4",
+      "destination": "agents/solution_architect_agent.md",
+      "action": "merge-role"
+    },
+    {
+      "source": "payload/update5/agents/reviewer_agent.md.txt",
+      "sha256": "92a27942156872a70e1a1a45562a90707c62b8fce15689d7bce8bf7bd75c1698",
+      "destination": "agents/reviewer_agent.md",
+      "action": "merge-role"
+    },
+    {
+      "source": "payload/update5/12_Manual_Actions/human-actions.md.txt",
+      "sha256": "55b82a64860f82cb93632f18624371081dfa9cd05efbeafda0a42bb60fbdfbe9",
+      "destination": "templates/manual_actions/human-actions.md",
+      "action": "adapt"
+    },
+    {
+      "source": "payload/update5/automation/channel_rotate.py.txt",
+      "sha256": "d30801ab4475f476b053f6ae5f1c21b4a1749c47bedf7ec515c596d81400cd49",
+      "destination": "automation/channel_rotate.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/automode.py.txt",
+      "sha256": "720a8ffbb4ae3dfce955e78d48fc652bd0632e11fa95f9060509ad83e210955f",
+      "destination": "automation/automode.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/owner_wake.py.txt",
+      "sha256": "0b1d00076244f1fbae70476a56848ad390e8fddf3cd9e64fdcc855c5877bb18e",
+      "destination": "automation/owner_wake.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/founder_inbox.py.txt",
+      "sha256": "4b87491c0dde57d39b34a43e517eff0f191841f768b5f02b2889d667b0034641",
+      "destination": "automation/founder_inbox.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/modes/ultimate-auto/ultimate_auto.py.txt",
+      "sha256": "a53f97359ee76da3af4623fbfbe6d66a0fe9b3da0fe871292bdb7f0d58ad5926",
+      "destination": "automation/modes/ultimate-auto/ultimate_auto.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/tests/test_channel_rotate.py.txt",
+      "sha256": "cb5f61f84a85fedb99d2a6cfb9510bc1e752f22f5ab7ca494e0f2f948e4f8980",
+      "destination": "automation/tests/test_channel_rotate.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/tests/test_founder_inbox.py.txt",
+      "sha256": "078d885b0a253c2f447f1d61635250f59810514d292ec6a5d67eaaf43937fbbe",
+      "destination": "automation/tests/test_founder_inbox.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/FILE-COORDINATION.md.txt",
+      "sha256": "f50d081db99d672f8af348cfa9199f66dccb6c3316483d6e140e537035e3d13a",
+      "destination": "automation/FILE-COORDINATION.md",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/bounded_job.py.txt",
+      "sha256": "1feaaff2169e14c98d26d0963859efe2b03dbaab01e006479fd54279a2ba4760",
+      "destination": "automation/bounded_job.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/tests/test_owner_wake.py.txt",
+      "sha256": "21517a9c906282e3b4765a5b77cdedd5bd6d15cc7e0737c4baeb1b506b3f142f",
+      "destination": "automation/tests/test_owner_wake.py",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/README.md.txt",
+      "sha256": "452a9b65f9c051620edb43ed3117740321cb6a6aba5f751e4ae721c2b7e50ee1",
+      "destination": "automation/README.md",
+      "action": "adapt-inactive"
+    },
+    {
+      "source": "payload/update5/automation/modes/ultimate-auto/README.md.txt",
+      "sha256": "700b91353510087dfd2b5f1f94254ceea3de5240c5a6a338efe67be6a7fb0c73",
+      "destination": "automation/modes/ultimate-auto/README.md",
+      "action": "adapt-inactive"
+    }
+  ],
+  "decisions": [
+    "Merge generic C16/C17 and roles semantically; do not copy product policy/history.",
+    "Use the consolidated automation layout and explicit documents/tool/project settings.",
+    "Keep generic bounded_job inactive; merge only old-round live/history lookup.",
+    "Create empty metadata-valid templates with new identities, no seeded product rows.",
+    "Keep visible_launch.py, separate sprint controller, and all runtime state excluded.",
+    "Add backwards-compatible result fields/types for deferred/new_files."
+  ],
+  "runtime_activation": false
+}

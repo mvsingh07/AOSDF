@@ -1,5 +1,5 @@
 # Document Formatting Standard
-# AOSDF v3.6.0 — Quick Reference
+# AOSDF v3.8.0 — Quick Reference
 # Applies to every file with a table created or updated by any agent. Non-negotiable.
 
 ---

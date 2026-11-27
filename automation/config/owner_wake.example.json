@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "wave_id": null,
+  "founder_auth_ref": null,
+  "expires_utc": null,
+  "socket_link": null,
+  "owners": [],
+  "max_wakes_per_owner": 48,
+  "min_gap_seconds": 30,
+  "communication_only": true,
+  "claude_bg_resume": false,
+  "adapters": {},
+  "idle_after_seconds": 900,
+  "_comment": "Inactive example. Supported cap is 96; conservative example budget remains 48. No identities, live wave or runtime grant."
+}

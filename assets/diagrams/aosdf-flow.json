@@ -1,0 +1,158 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AOSDF: strategy to verified product increments",
+    "animation": "trace",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "strategy",
+      "label": "Product strategy"
+    },
+    {
+      "id": "coordination",
+      "label": "Coordination threads"
+    },
+    {
+      "id": "delivery",
+      "label": "Implementation and evidence"
+    }
+  ],
+  "mainPath": [
+    "intent",
+    "spec",
+    "plan",
+    "architect",
+    "coordinator",
+    "worker",
+    "validation",
+    "accepted"
+  ],
+  "nodes": [
+    {
+      "id": "intent",
+      "lane": "strategy",
+      "col": 0,
+      "type": "external",
+      "label": "Product intent",
+      "sublabel": "Founder sets direction",
+      "width": 160
+    },
+    {
+      "id": "spec",
+      "lane": "strategy",
+      "col": 1,
+      "type": "database",
+      "label": "Specifications",
+      "sublabel": "Requirements + design",
+      "width": 160
+    },
+    {
+      "id": "plan",
+      "lane": "strategy",
+      "col": 2,
+      "type": "backend",
+      "label": "Captain planning",
+      "sublabel": "Tasks + acceptance",
+      "width": 160
+    },
+    {
+      "id": "architect",
+      "lane": "coordination",
+      "col": 2,
+      "type": "backend",
+      "label": "Solution Architect",
+      "sublabel": "Canonical plan owner",
+      "width": 160
+    },
+    {
+      "id": "coordinator",
+      "lane": "coordination",
+      "col": 3,
+      "type": "backend",
+      "label": "Thread coordinators",
+      "sublabel": "Ownership + dependencies",
+      "width": 172
+    },
+    {
+      "id": "worker",
+      "lane": "delivery",
+      "col": 3,
+      "type": "backend",
+      "label": "Specialist agents",
+      "sublabel": "Bounded implementation",
+      "width": 180
+    },
+    {
+      "id": "validation",
+      "lane": "delivery",
+      "col": 4,
+      "type": "security",
+      "label": "Review + validation",
+      "sublabel": "Risk-based checks",
+      "width": 170
+    },
+    {
+      "id": "accepted",
+      "lane": "delivery",
+      "col": 5,
+      "type": "database",
+      "label": "Accepted evidence",
+      "sublabel": "Verified product increment",
+      "width": 180
+    }
+  ],
+  "edges": [
+    {
+      "from": "intent",
+      "to": "spec"
+    },
+    {
+      "from": "spec",
+      "to": "plan"
+    },
+    {
+      "from": "plan",
+      "to": "architect",
+      "label": "approved scope"
+    },
+    {
+      "from": "architect",
+      "to": "coordinator"
+    },
+    {
+      "from": "coordinator",
+      "to": "worker",
+      "label": "assign"
+    },
+    {
+      "from": "worker",
+      "to": "validation"
+    },
+    {
+      "from": "validation",
+      "to": "accepted",
+      "label": "passes"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Framework defines the work",
+      "items": [
+        "Requirements, design and risk determine the plan.",
+        "People authorize scope and protected operations."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Automation carries the handoffs",
+      "items": [
+        "Bound existing owners; deliver messages within budgets.",
+        "SA reconciles accepted evidence into the next increment."
+      ]
+    }
+  ]
+}

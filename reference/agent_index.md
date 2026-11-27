@@ -1,5 +1,5 @@
 # Agent Index
-# AOSDF v3.6.0 — Quick Reference
+# AOSDF v3.8.0 — Quick Reference
 # Read this to understand which agent to call and when.
 
 ---
@@ -7,7 +7,7 @@
 
 ## Current coordination and authoring entry
 
-Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../automation/coordination-threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
 
 
 ## Agent Call Sequence (Full Lifecycle)
@@ -133,5 +133,5 @@ These agents require human judgment or human-authored input — they are never c
 
 - [Solution Architect](../agents/solution_architect_agent.md): objective/dependencies/ownership and sole ongoing canonical-plan writer.
 - [Principal Engineer](../agents/principal_engineer_agent.md): one thread, scoped dispatch and receipt reconciliation.
-- [Coordinator entry](../templates/coordination_threads/coordinator-definition.md): coordinated Strategy B.
-- [Worker entry](../templates/coordination_threads/worker-definition.md): proportional task execution and evidence.
+- [Coordinator entry](../automation/coordination-threads/coordinator-definition.md): coordinated Strategy B.
+- [Worker entry](../automation/coordination-threads/worker-definition.md): proportional task execution and evidence.

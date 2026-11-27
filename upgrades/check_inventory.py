@@ -5,7 +5,13 @@ import json
 from pathlib import Path
 
 root = Path(__file__).resolve().parent.parent
-manifest = json.loads((root / "upgrades/releases/3.6.0/inventory.json").read_text())
+registry = json.loads((root / "upgrades/registry.json").read_text())
+manifest_path = (root / "upgrades" / registry["inventory"]).resolve()
+if not manifest_path.is_relative_to(root / "upgrades"):
+    raise SystemExit("Inventory path escapes upgrades directory")
+manifest = json.loads(manifest_path.read_text())
+if manifest["framework_version"] != registry["framework_version"]:
+    raise SystemExit("Inventory and registry framework versions disagree")
 failures = []
 for entry in manifest["files"]:
     name = entry["path"]

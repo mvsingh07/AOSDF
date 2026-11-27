@@ -7,7 +7,7 @@
 
 ## Current role and write boundary
 
-Task-level technical designer; distinct from Solution Architect. Writes the proportional task plan, affected contracts, ownership, binary checks and rollback. Standard can self-review with checklist; High-risk stops for clean-context independent reviewer before implementation.
+Task-level technical designer; distinct from Solution Architect. Writes the proportional task plan, affected contracts, ownership, binary checks and rollback. Apply C16/C17: one review at most during implementation; High-risk review is clean-context independent and coordinator-arranged. Keep contract-first inputs, a bounded plan and serialized writers; no separate pre-implementation task-review stop or automatic re-review.
 
 
 ## Role

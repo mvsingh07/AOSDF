@@ -2,7 +2,7 @@
 
 > Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
 
-# AOSDF v3.6.0 — OPTIONAL
+# AOSDF v3.8.0 — OPTIONAL
 # Generalizes jira_sync_agent (v2.4) to any tracker provider (Principle 25). jira_sync_agent.md is
 # unchanged and keeps working for projects that haven't migrated — see framework.md § Tracker Board
 # Integration → "Migrating from v2.4 Jira-Only Sync."

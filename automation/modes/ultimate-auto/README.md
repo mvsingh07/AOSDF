@@ -1,0 +1,18 @@
+# Ultimate Auto
+
+Optional delivery extension: wake the existing bound owners for owed rounds, peer mail, worker results, founder notices or drained threads. It does not replace worker dispatch.
+
+1. Read [the automation guide](../../README.md) and [Mode index](../README.md).
+2. Select this Mode as an explicit project decision. Record topology, ownership, scope, environment, model policy, budgets and stop conditions.
+3. Install project-specific configuration from reviewed examples; keep source examples inactive. Reconcile existing processes and owner sessions before any start or stop.
+4. Inspect available commands with `python3 automation/modes/ultimate-auto/ultimate_auto.py --help`, or preview with:
+
+```sh
+MODE_DRY_RUN=1 python3 automation/modes/ultimate-auto/ultimate_auto.py status
+```
+
+For Ultimate Auto, bind existing sessions and verify a delivery-only wave with an original deadline first. Configure adapters only after checking installed CLI support. Keep `claude_bg_resume` false unless separately adopted. Wake budgets are at most 96 per owner; idle windows are 300–7200 seconds; no automatic wave/deadline renewal. First wakes and protected operations require the adopting project's authority.
+
+## Founder visibility and channel maintenance
+
+The front door exposes `ask`, `decisions`, `answer`, `dismiss`, `learn`, `learning`, `done` and `rotate` through the shared controller. No action is executed by copying this guide. Blocking decisions must be visible before an owner stops. Learning/design-doc catch-up stays off while Ultimate Auto is RUNNING; keep Summary and required task evidence. `rotate --dry-run` is a write-free preview; an actual quiet-channel rotation retains every historical round verbatim. Source config and inbox remain inactive and empty.

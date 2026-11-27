@@ -19,9 +19,9 @@ jobs:
       - run: npm test
         working-directory: aosdf-vscode
       - run: python -m unittest discover -s tests -q
-        working-directory: templates/coordination_threads/automation
+        working-directory: automation
       - run: python -m unittest discover -s tests -q
-        working-directory: templates/coordination_threads/file-signals
+        working-directory: automation/file-signals
       - run: python -m unittest discover -s tools/tests -q
       - run: python upgrades/check_inventory.py
   website:

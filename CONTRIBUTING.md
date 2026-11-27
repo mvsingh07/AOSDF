@@ -7,8 +7,8 @@ For a change, describe the user-visible behavior and run the relevant checks:
 ```sh
 (cd aosdf-mcp && npm test)
 (cd aosdf-vscode && npm test)
-(cd templates/coordination_threads/automation && python3 -m unittest discover -s tests -v)
-(cd templates/coordination_threads/file-signals && python3 -m unittest discover -s tests -v)
+(cd automation/coordination-threads/automation && python3 -m unittest discover -s tests -v)
+(cd automation/coordination-threads/file-signals && python3 -m unittest discover -s tests -v)
 python3 -m pip install -r tools/requirements-metadata.txt
 python3 -m unittest discover -s tools/tests -v
 (cd website && npm ci && npm run build)

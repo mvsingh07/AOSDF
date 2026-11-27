@@ -1,5 +1,7 @@
 # Strategy B role boundaries and founder review control (2026-11-05)
 
+Current C16/C17 in [current-workflow-rules.md](current-workflow-rules.md) govern review timing/count, acceptance checks and outcome-first delivery wherever this dated directive conflicts. Required security, scope and protected-operation gates remain.
+
 The portable authority is [current workflow rules](current-workflow-rules.md). C1–C13 resolve older conflicting prose below; project-specific authorizations are never inherited.
 
 ## Execution contract

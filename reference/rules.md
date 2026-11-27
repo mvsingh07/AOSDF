@@ -1,5 +1,5 @@
 # AOSDF Rules
-# AOSDF v3.6.0 — Quick Reference
+# AOSDF v3.8.0 — Quick Reference
 # Non-negotiable. Every agent and human must follow these.
 
 ---
@@ -7,7 +7,7 @@
 
 ## Current coordination and authoring entry
 
-Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../automation/coordination-threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
 
 
 ## The Principles (Condensed)

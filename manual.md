@@ -2,7 +2,7 @@
 
 
 # A Plain-Language Guide
-# AOSDF v3.6.0
+# AOSDF v3.8.0
 
 ---
 
@@ -15,11 +15,11 @@ All new project Markdown documents use one `aosdf-doc/v1` header from creation, 
 
 Read [current workflow rules](reference/current-workflow-rules.md) for C1–C13. The Solution Architect owns ongoing canonical execution-plan writes after Captain creation/replanning; Principal Engineers coordinate threads; workers and validators report evidence. Strategy B task design/review roles are distinct from these coordination roles. Exactly four process Modes: Manual → Semi-auto → Easy → Auto; transitions are explicit and rollout stages are separate.
 
-Use proportional Small/Standard/High-risk plans and initial verdicts; High-risk workers stop for independent review. Additional review or plan revision requires founder approval. Reconcile accepted receipts once and preserve live ownership/history. Coordinated Strategy B enters `05_AI_Agent_System/coordination-threads/coordinator-definition.md`; Strategy A is explicit legacy compatibility.
+Use proportional Small/Standard/High-risk plans and initial verdicts; High-risk workers stop for independent review. Additional review or plan revision requires founder approval. Reconcile accepted receipts once and preserve live ownership/history. Coordinated Strategy B enters `05_AI_Agent_System/automation/coordination-threads/coordinator-definition.md`; Strategy A is explicit legacy compatibility.
 
-New setup records coordination opt-in and project-owned topology/model/ownership inputs, installs `templates/coordination_threads/` inactive and creates empty records only after those inputs are known. Root `reference/` policies install into project `06_Execution_Plan/`; roles into `05_AI_Agent_System/agents/`; prompts into `05_AI_Agent_System/prompt_templates/`. Rewrite source-relative links to these installed paths. Never copy foreign live state or enable a daemon/session from a template. See [portable upgrade protocol](reference/upgrades.md) for independent existing-project migration.
+New setup records coordination opt-in and project-owned topology/model/ownership inputs, installs `automation/coordination-threads/` inactive and creates empty records only after those inputs are known. Root `reference/` policies install into project `06_Execution_Plan/`; roles into `05_AI_Agent_System/agents/`; prompts into `05_AI_Agent_System/prompt_templates/`. Rewrite source-relative links to these installed paths. Never copy foreign live state or enable a daemon/session from a template. See [portable upgrade protocol](reference/upgrades.md) for independent existing-project migration.
 
-File notifications are notification-only, bounded and target-configured; observer and receiver are separate. An ended conversation is not woken without an attached receive call. Events do not grant authorization or task acceptance. See `templates/coordination_threads/file-signals/README.md`.
+File notifications are notification-only, bounded and target-configured; observer and receiver are separate. An ended conversation is not woken without an attached receive call. Events do not grant authorization or task acceptance. See `automation/file-signals/README.md`.
 
 Documentation itself is the knowledge source; self-indexing and existing learning/docs tooling remain. No separate llm-wiki folder is required. See [indexable authoring standard](reference/document_authoring.md) for required new-document metadata, creation tooling, fixed legacy compatibility and build validation.
 

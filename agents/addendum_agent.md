@@ -2,7 +2,7 @@
 
 > Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
 
-# AOSDF v3.6.0 — General Template
+# AOSDF v3.8.0 — General Template
 # Copy to {project_name}-Documents/documents/05_AI_Agent_System/agents/ and customize.
 
 > **STOP. Read this fully before doing anything.**

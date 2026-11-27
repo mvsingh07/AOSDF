@@ -2,7 +2,7 @@
 
 > Current coordination policy: [current workflow rules](../reference/current-workflow-rules.md). Captain creates/replans; SA alone writes canonical status thereafter. Workers and validators report evidence. This entry governs conflicting older role examples.
 
-# AOSDF v3.6.0 — OPTIONAL [PJ1, restructured 2026-08-19]
+# AOSDF v3.8.0 — OPTIONAL [PJ1, restructured 2026-08-19]
 # Part of Track P (Project Docs Site) only — Track D (Docs Browser) was built, then cancelled
 # 2026-08-19 (execution_plan.md D0's Cancelled note): AOSDF/ is the product this framework
 # produces, not documentation about a product, so it doesn't get a rendered site any more than

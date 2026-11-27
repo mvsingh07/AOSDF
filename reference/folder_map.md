@@ -1,5 +1,5 @@
 # Folder Map
-# AOSDF v3.6.0 — Quick Reference
+# AOSDF v3.8.0 — Quick Reference
 # Canonical workspace layout. Every project using AOSDF follows this structure.
 
 ---
@@ -7,7 +7,7 @@
 
 ## Current coordination and authoring entry
 
-Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../templates/coordination_threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
+Read [current workflow rules](../reference/current-workflow-rules.md) for C1–C13, exactly four process Modes and canonical write ownership. Use [coordination templates](../automation/coordination-threads/README.md) for opt-in setup and inactive tooling; [upgrades](../reference/upgrades.md) for per-project migration; [document authoring](../reference/document_authoring.md) for native indexes without a wiki folder. Existing Strategy A and self-indexing/learning/docs capabilities remain available.
 
 
 ## Workspace Layout
@@ -282,4 +282,8 @@ AOSDF/
 
 ## Added coordination and authoring surfaces
 
-`agents/{solution_architect_agent,principal_engineer_agent}.md`; `reference/current-workflow-rules.md`, dated directives, `upgrades.md`, `document_authoring.md`; `templates/coordination_threads/` (contracts, alignment, inactive automation and file-signals); `templates/prompt_templates/` (task, Standard, High-risk/review/debug); `templates/document.md` (proposed additive metadata profile). No project runtime/claims/topology is part of the root.
+`agents/{solution_architect_agent,principal_engineer_agent}.md`; `reference/current-workflow-rules.md`, dated directives, `upgrades.md`, `document_authoring.md`; `automation/coordination-threads/` (contracts, alignment, inactive automation and file-signals); `templates/prompt_templates/` (task, Standard, High-risk/review/debug); `templates/document.md` (proposed additive metadata profile). No project runtime/claims/topology is part of the root.
+
+## Consolidated automation source and installation
+
+The source bundle lives at `AOSDF/automation/`: `modes/`, `coordination-threads/`, `file-signals/`, engine scripts, inactive example config, schemas and tests. Install this entire folder into project `05_AI_Agent_System/automation/`; root roles stay in project `05_AI_Agent_System/agents/`. Historical template layouts do not describe the current source. Use `automation/README.md` for current paths and the 3.7.0 migration recipe for an existing project.
